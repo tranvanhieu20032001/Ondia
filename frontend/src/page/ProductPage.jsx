@@ -1,24 +1,42 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CiHeart } from "react-icons/ci";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation } from "swiper/modules";
 import "swiper/swiper-bundle.css";
 import "swiper/css/navigation";
-import Cardproduct from "../components/cart/Cardproduct";
-import products from "../constants/products";
 import { Rating } from "@material-tailwind/react";
 import Comment from "../components/layouts/Comment";
-import { useParams } from "react-router-dom";
-import freedelivery from '../assets/icons/FreeDelivery.svg'
-import ReturnDelivery from '../assets/icons/Return.svg'
+import { useLocation } from "react-router-dom";
+import freedelivery from "../assets/icons/FreeDelivery.svg";
+import ReturnDelivery from "../assets/icons/Return.svg";
+import axios from "axios";
+import SummaryApi from "../common";
 const ProductPage = () => {
-  const { type, brand, productDetails } = useParams();
-  const product = products.find(
-    (item) => item.brand === brand && item.href === productDetails
-  );
+  let { state } = useLocation();
+  const [product, setProduct] = useState([]);
+  const showProduct = async (productId) => {
+    try {
+      const url = SummaryApi.getProductById.url.replace(":id", productId);
 
-  const [mainImage, setMainImage] = useState(product.img);
+      const dataResponse = await axios({
+        url: url,
+        method: SummaryApi.getProductById.method,
+        withCredentials: true,
+      });
+      const dataApi = await dataResponse.data;
+      setProduct(dataApi.product)
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    showProduct(state.id);
+  }, []);
+
+  // const [mainImage, setMainImage] = useState(product.img);
 
   const thumbnails = [
     "https://images.unsplash.com/photo-1505751171710-1f6d0ace5a85?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxMnx8aGVhZHBob25lfGVufDB8MHx8fDE3MjEzMDM2OTB8MA&ixlib=rb-4.0.3&q=80&w=1080",
@@ -28,15 +46,15 @@ const ProductPage = () => {
   ];
 
   const changeImage = (src) => {
-    setMainImage(src);
+    // setMainImage(src);
   };
-    return (
+  return (
     <div className="max-w-screen-lg mx-auto">
       <div className="shadow-md my-8 container mx-auto px-4 py-8">
         <div className="flex flex-wrap -mx-4">
           <div className="w-full md:w-1/2 px-4 mb-8">
             <img
-              src={mainImage}
+              src="https://images.unsplash.com/photo-1505751171710-1f6d0ace5a85?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxMnx8aGVhZHBob25lfGVufDB8MHx8fDE3MjEzMDM2OTB8MA&ixlib=rb-4.0.3&q=80&w=1080"
               alt="Product"
               className="size-96 lg:size-[480px] object-cover rounded-lg shadow-md mb-4"
               id="mainImage"
@@ -54,25 +72,21 @@ const ProductPage = () => {
             </div>
           </div>
           <div className="w-full md:w-1/2 px-4">
-            <h2 className="text-xl lg:text-2xl font-bold mb-2">
-              {product.title}
-            </h2>
+            <h2 className="text-xl lg:text-2xl font-bold mb-2">{product.name}</h2>
             <div className="flex items-center mb-4">
-              <Rating value={5} className="text-primary text-sm" />
+              <Rating value={4} className="text-primary text-sm" readonly />
               <span className="ml-2 text-gray-600">(120 reviews)</span>
             </div>
             <div className="mb-4">
-              <span className="text-lg lg:text-2xl mr-2">
-                ${product.sale_price}
-              </span>
+              <span className="text-lg lg:text-2xl mr-2">$dfjkasd</span>
               <span className="text-gray-500 text-sm lg:text-base line-through">
-                ${product.regular_price}
+                $dssadasd
               </span>
             </div>
-            <p className="text-gray-700 text-sm mb-6">{product.desc}</p>
+            <p className="text-gray-700 text-sm mb-6">daksdjakskdasjg</p>
             <hr className="my-8" />
             <div className="mb-6 flex gap-6 items-center">
-              {product.color ? (
+              {/* {product.color ? (
                 <>
                   <h3 className="text-sm lg:text-base">Color:</h3>
                   <div className="flex space-x-2">
@@ -87,20 +101,20 @@ const ProductPage = () => {
                 </>
               ) : (
                 ""
-              )}
+              )} */}
             </div>
 
             <div className="mb-6 flex gap-6 items-center">
               <h3 className="text-sm lg:text-base">Size:</h3>
               <div className="flex space-x-2">
-                {product.size.map((size, index) => (
+                {/* {product.size.map((size, index) => (
                   <button
                     key={index}
                     className="px-3 py-1 flex text-sm items-center justify-center rounded-md border-2 focus:bg-primary focus:text-white"
                   >
                     {size}
                   </button>
-                ))}
+                ))} */}
               </div>
             </div>
             <div className="mb-6 flex gap-6 items-center">
@@ -135,7 +149,7 @@ const ProductPage = () => {
               </div>
             </div>
             <div className="flex items-center gap-8 px-4 py-3 border">
-                <img src={ReturnDelivery} alt="" />
+              <img src={ReturnDelivery} alt="" />
               <div>
                 <h3 className="font-semibold">Return Delivery</h3>
                 <span className="text-[13px]">
@@ -155,7 +169,7 @@ const ProductPage = () => {
             <span className="text-primary font-bold text-lg">Related Item</span>
           </div>
         </div>
-        {products.filter((item) => item.type === type).length > 4 ? (
+        {/* {products.filter((item) => item.type === type).length > 4 ? (
           <div className="flex mx-3 relative group">
             <Swiper
               spaceBetween={20}
@@ -213,7 +227,7 @@ const ProductPage = () => {
                 <Cardproduct key={index} item={item} />
               ))}
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

@@ -1,11 +1,21 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import logo from "../assets/images/Ondia.png";
-import { CiHeart, CiLogin, CiSearch, CiUser } from "react-icons/ci";
+import { CiHeart, CiLogin, CiLogout, CiSearch, CiUser } from "react-icons/ci";
 import { BsCart3, BsPersonCircle } from "react-icons/bs";
-import { AiOutlineMenuUnfold, AiOutlineClose } from "react-icons/ai";
+import { useSelector } from "react-redux";
+import {
+  AiOutlineMenuUnfold,
+  AiOutlineClose,
+  AiOutlineUser,
+  AiOutlineShopping,
+} from "react-icons/ai";
 import { NavLink } from "react-router-dom";
+import SummaryApi from "../common";
+import axios from "axios";
 
 function Header() {
+  const user = useSelector((state) => state?.user?.user?.user);
+
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -16,14 +26,50 @@ function Header() {
 
   const toggleSearch = useCallback(() => setIsSearchOpen((prev) => !prev), []);
   const toggleMenu = useCallback(() => setIsMenuOpen((prev) => !prev), []);
-  const toggleDropdown = useCallback(() => setIsDropdownOpen((prev) => !prev), []);
+  const toggleDropdown = useCallback(
+    () => setIsDropdownOpen((prev) => !prev),
+    []
+  );
+
+  const handleLogout = async () => {
+    try {
+      await axios({
+        url: SummaryApi.logout.url,
+        method: SummaryApi.logout.method,
+        withCredentials: true,
+        credentials: "include",
+      });
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const items = [
+    {
+      name: "Manage my Acount",
+      icon: <AiOutlineUser size={23} />,
+      url: "/myaccount",
+    },
+    {
+      name: "My orders",
+      icon: <AiOutlineShopping size={23} />,
+      url: "/myacount",
+    },
+  ];
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        searchRef.current && !searchRef.current.contains(event.target) &&
-        menuRef.current && !menuRef.current.contains(event.target) &&
-        dropdownRef.current && !dropdownRef.current.contains(event.target)
+        searchRef.current &&
+        !searchRef.current.contains(event.target) &&
+        menuRef.current &&
+        !menuRef.current.contains(event.target) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
       ) {
         setIsSearchOpen(false);
         setIsMenuOpen(false);
@@ -58,13 +104,19 @@ function Header() {
       <div className="w-full border">
         <div className="main-header flex justify-between max-w-screen-xl mx-4 lg:mx-auto mt-3 lg:pt-5 pb-2 gap-8">
           <div className="logo w-1/4 flex items-center">
-            <img src={logo} alt="Ondia Logo" className="h-10 lg:h-16 w-auto" />
+            <NavLink to="/">
+              <img
+                src={logo}
+                alt="Ondia Logo"
+                className="h-10 lg:h-16 w-auto"
+              />
+            </NavLink>
           </div>
 
           {/* Desktop Menu */}
           <ul className="hidden lg:flex items-center justify-start gap-10 w-1/3">
             {["/", "/contact", "/about", "/signup"].map((path, index) => {
-              const labels = ["Home", "Contact", "About", "Sign Up"];
+              const labels = ["Home", "Contact", "About"];
               return (
                 <li key={index}>
                   <NavLink to={path} className={getNavLinkClass}>
@@ -104,7 +156,7 @@ function Header() {
             </ul>
           </div>
 
-          <div className="navbar w-3/4 lg:w-1/3 flex items-center justify-between relative">
+          <div className="navbar w-3/4 lg:w-2/3 flex items-center justify-end gap-10 relative">
             {/* Search Bar for small screens */}
             <div
               ref={searchRef}
@@ -159,27 +211,70 @@ function Header() {
 
             {/* User Icon with Dropdown */}
             <div className="relative" ref={dropdownRef}>
-              <BsPersonCircle
-                size={25}
+              <span
+                className={`flex items-center gap-2 cursor-pointer hover:text-primary ${
+                  isDropdownOpen ? "text-primary" : ""
+                }`}
                 onClick={toggleDropdown}
-                className={`${isDropdownOpen ? 'text-primary' : ''} cursor-pointer hover:text-primary`}
-              />
+              >
+                <BsPersonCircle size={25} />
+                {user?.name ? `Hello, ${user.name}` : ""}
+              </span>
+
               {isDropdownOpen && (
                 <div className="absolute right-0 bg-[rgba(97,91,97,0.8)] border border-gray-200 shadow-lg rounded mt-2 z-50 min-w-max">
-                  <ul className="flex flex-col p-2 text-white text-[14px] lg:text-[15px]">
-                    <li className="py-1 px-3 hover:text-primary cursor-pointer flex items-center gap-3">
-                      <CiLogin size={23} />
-                      <NavLink to="/login" onClick={() => setIsDropdownOpen(false)}>
-                        Login
-                      </NavLink>
-                    </li>
-                    <li className="py-1 px-3 hover:text-primary cursor-pointer flex items-center gap-3">
-                      <CiUser size={23} />
-                      <NavLink to="/register" onClick={() => setIsDropdownOpen(false)}>
-                        Register
-                      </NavLink>
-                    </li>
-                  </ul>
+                  {user?.userId ? (
+                    <ul className="flex flex-col p-2 text-white text-[14px] lg:text-[15px]">
+                      {items.map((item) => (
+                        <li
+                          key={item.name}
+                          className="py-1 px-3 capitalize hover:text-primary cursor-pointer flex items-center gap-3"
+                        >
+                          {item.icon}
+                          <NavLink
+                            to={item.url}
+                            onClick={() => setIsDropdownOpen(false)}
+                            className={({ isActive }) =>
+                              isActive ? "text-primary" : "text-white"
+                            }
+                          >
+                            {item.name}
+                          </NavLink>
+                        </li>
+                      ))}
+                      <li className="py-1 px-3 capitalize hover:text-primary cursor-pointer flex items-center gap-3">
+                        <CiLogout size={23} />
+                        <NavLink onClick={handleLogout}>Logout</NavLink>
+                      </li>
+                    </ul>
+                  ) : (
+                    <ul className="flex flex-col p-2 text-white text-[14px] lg:text-[15px]">
+                      <li className="py-1 px-3 hover:text-primary cursor-pointer flex items-center gap-3">
+                        <CiLogin size={23} />
+                        <NavLink
+                          to="/login"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className={({ isActive }) =>
+                            isActive ? "text-primary" : "text-white"
+                          }
+                        >
+                          Login
+                        </NavLink>
+                      </li>
+                      <li className="py-1 px-3 hover:text-primary cursor-pointer flex items-center gap-3">
+                        <CiUser size={23} />
+                        <NavLink
+                          to="/register"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className={({ isActive }) =>
+                            isActive ? "text-primary" : "text-white"
+                          }
+                        >
+                          Register
+                        </NavLink>
+                      </li>
+                    </ul>
+                  )}
                 </div>
               )}
             </div>

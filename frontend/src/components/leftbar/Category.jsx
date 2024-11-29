@@ -1,14 +1,13 @@
-import React from "react";
 import { IoIosArrowForward } from "react-icons/io";
 
 function Category({ item }) {
   return (
     <li
-      key={item.text}
+      key={item._id} 
       className="flex flex-col px-4 py-2 capitalize group border cursor-pointer border-transparent hover:shadow hover:shadow-primary rounded-[9999px]"
     >
       <div className="flex items-center gap:3 lg:gap-8 group-hover:text-primary">
-        <span className="w-36">{item.text}</span>
+        <span className="w-36">{item.name}</span>
         <IoIosArrowForward />
       </div>
       {item.data && (

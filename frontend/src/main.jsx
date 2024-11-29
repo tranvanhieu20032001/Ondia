@@ -1,9 +1,8 @@
-// index.js
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import App from "./App.jsx"; // Import App
+import App from "./App.jsx"; // Layout chính cho người dùng
 import Home from "./page/Home.jsx";
 import Login from "./page/Login.jsx";
 import Register from "./page/Register.jsx";
@@ -16,6 +15,12 @@ import Contact from "./page/Contact.jsx";
 import NotFound from "./page/NotFound.jsx";
 import ProductPage from "./page/ProductPage.jsx";
 import Policy from "./page/Policy.jsx";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
+import AdminLayout from "./page/admin/AdminLayout.jsx";
+import AdminPanel from "./page/admin/AdminPanel.jsx";
+import UserManagement from "./page/admin/usermanagement/UserManagement.jsx";
+import ProductManagement from "./page/admin/productmanagement/ProductManagement.jsx";
 
 const router = createBrowserRouter([
   {
@@ -28,14 +33,24 @@ const router = createBrowserRouter([
       { path: "/cart/checkout", element: <Checkout /> },
       { path: "/about", element: <About /> },
       { path: "/contact", element: <Contact /> },
-      { path: "/:type/:brand/:productDetails", element: <ProductPage /> },
+      { path: "/products/:productDetails", element: <ProductPage /> },
       { path: "/myaccount", element: <MyAccount /> },
       { path: "/login", element: <Login /> },
       { path: "/register", element: <Register /> },
       { path: "/policy", element: <Policy /> },
-
     ],
   },
+
+  {
+    path: "/admin",
+    element: <AdminLayout />,
+    children: [
+      { path: "dashboard", element: <AdminPanel /> },
+      { path: "users", element: <UserManagement /> },
+      { path: "products", element: <ProductManagement /> },
+    ],
+  },
+
   {
     path: "*",
     element: <NotFound />,
@@ -44,6 +59,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   </StrictMode>
 );

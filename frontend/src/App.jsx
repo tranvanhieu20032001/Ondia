@@ -1,17 +1,28 @@
-// App.js
-import './App.css';
-import Footer from './components/Footer';
-import Header from './components/Header';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
+import LoadingPage from "./components/loading/LoadingPage";
+import { useFetchCurrentUser } from "./utils/useFetchCurrentUser";
 
 function App() {
+  const {loading} = useFetchCurrentUser();
+  const location = useLocation();
+
+  if (loading) {
+    return <LoadingPage />;
+  }
+
+  const isAdminRoute = location.pathname.startsWith("/admin");
+
   return (
     <div className="App">
-      <Header />
+      <ToastContainer />
+      {!isAdminRoute && <Header />}
       <main>
         <Outlet />
       </main>
-      <Footer />
+      {!isAdminRoute && <Footer />}
     </div>
   );
 }
