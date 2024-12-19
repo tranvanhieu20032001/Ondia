@@ -9,11 +9,11 @@ function NewArrival() {
     <div className="relative lg:mt-24 mt-20">
       <div className="flex items-center gap-4">
         <span className="inline-block w-5 h-11 rounded-md border bg-primary"></span>
-        <span className="text-primary font-bold text-lg">Featured</span>
+        <span className="text-primary font-bold text-lg">Nổi bật</span>
       </div>
       <div className="flex items-center gap-10 lg:gap-32 mt-5 mb-8">
         <span className="capitalize font-bold text-xl lg:text-4xl">
-          New Arrival
+          Sản phẩm nổi bật
         </span>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -39,7 +39,7 @@ function NewArrival() {
             <div className="absolute text-white w-1/2 left-10 bottom-8">
               <h1 className="text-2xl font-semibold capitalize">Women’s Collections</h1>
               <h3 className="text-[14px] my-2 uppercase">
-              Featured woman collections that give you another vibe.
+              Nổi bật woman collections that give you another vibe.
               </h3>
               <a href="/" className="border-b inline-block">
                 Shop Now

@@ -6,18 +6,15 @@ import LoadingPage from "../../components/loading/LoadingPage";
 
 function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const { loading, userData } = useFetchCurrentUser(); // Fetch user data and loading state
+  const { loading, userData } = useFetchCurrentUser();
   const navigate = useNavigate();
 
-  // Wait until userData is available and loading is finished before proceeding
   useEffect(() => {
-    if (loading) return; // Don't check if loading
+    if (loading) return;
     if (!userData || userData.user.role !== "admin") {
-      navigate("/"); // Redirect to home if the user is not admin
+      navigate("/");
     }
   }, [userData, loading, navigate]);
-
-  // While loading or before we get user data, render a loading spinner
   if (loading || !userData) {
     return <LoadingPage />;
   }

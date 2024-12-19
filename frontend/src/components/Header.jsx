@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useContext } from "react";
 import logo from "../assets/images/Ondia.png";
 import { CiHeart, CiLogin, CiLogout, CiSearch, CiUser } from "react-icons/ci";
 import { BsCart3, BsPersonCircle } from "react-icons/bs";
@@ -9,13 +9,15 @@ import {
   AiOutlineUser,
   AiOutlineShopping,
 } from "react-icons/ai";
-import { NavLink } from "react-router-dom";
-import SummaryApi from "../common";
+import { Link, NavLink } from "react-router-dom";
+import { SummaryApi } from "../common";
 import axios from "axios";
+import Context from "../context";
+import Search from "./Search";
 
 function Header() {
   const user = useSelector((state) => state?.user?.user?.user);
-
+  const { cart } = useContext(Context);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -52,12 +54,12 @@ function Header() {
     {
       name: "Manage my Acount",
       icon: <AiOutlineUser size={23} />,
-      url: "/myaccount",
+      url: "/myaccount/" + user?.userId,
     },
     {
       name: "My orders",
       icon: <AiOutlineShopping size={23} />,
-      url: "/myacount",
+      url: "/myaccount/orders",
     },
   ];
 
@@ -82,6 +84,16 @@ function Header() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+  const [totalQuantity, setTotalQuantity] = useState(0);
+
+  useEffect(() => {
+    if (cart?.products) {
+      const updatedTotalQuantity = cart.products.reduce((total, product) => {
+        return total + product.quantity;
+      }, 0);
+      setTotalQuantity(updatedTotalQuantity);
+    }
+  }, [cart]);
 
   const getNavLinkClass = ({ isActive }) =>
     isActive
@@ -92,17 +104,17 @@ function Header() {
     <div>
       <div className="sub-header bg-black text-white text-center text-[12px] py-3">
         <span>
-          Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%!
+        Mua ngay và tiết kiệm lớn - Miễn phí giao hàng cho tất cả các đơn hàng
         </span>
-        <a
-          href="https://www.facebook.com/"
+        <Link
+          to={'/shop'}
           className="font-semibold mx-3 underline"
         >
           Shop now
-        </a>
+        </Link>
       </div>
       <div className="w-full border">
-        <div className="main-header flex justify-between max-w-screen-xl mx-4 lg:mx-auto mt-3 lg:pt-5 pb-2 gap-8">
+        <div className="main-header flex justify-between max-w-screen-xl mx-4 lg:mx-auto mt-3 lg:pt-5 pb-2 gap-3">
           <div className="logo w-1/4 flex items-center">
             <NavLink to="/">
               <img
@@ -114,9 +126,9 @@ function Header() {
           </div>
 
           {/* Desktop Menu */}
-          <ul className="hidden lg:flex items-center justify-start gap-10 w-1/3">
-            {["/", "/contact", "/about", "/signup"].map((path, index) => {
-              const labels = ["Home", "Contact", "About"];
+          <ul className="hidden lg:flex items-center justify-start gap-10 w-1/2">
+            {["/","/shop","/contact", "/about"].map((path, index) => {
+              const labels = ["Trang chủ","Cửa hàng" ,"Liên hệ", "Chúng tôi"];
               return (
                 <li key={index}>
                   <NavLink to={path} className={getNavLinkClass}>
@@ -140,7 +152,7 @@ function Header() {
             </div>
             <ul className="flex flex-col items-center gap-4 mt-6">
               {["/", "/contact", "/about", "/signup"].map((path, index) => {
-                const labels = ["Home", "Contact", "About", "Sign Up"];
+                const labels = ["Trang chủ", "Liên hệ", "Chúng tôi", "Đăng xuất"];
                 return (
                   <li key={index}>
                     <NavLink
@@ -156,7 +168,7 @@ function Header() {
             </ul>
           </div>
 
-          <div className="navbar w-3/4 lg:w-2/3 flex items-center justify-end gap-10 relative">
+          <div className="navbar w-3/4 lg:w-1/2 flex items-center justify-end gap-10 relative">
             {/* Search Bar for small screens */}
             <div
               ref={searchRef}
@@ -167,7 +179,7 @@ function Header() {
               <input
                 type="search"
                 className="text-black block w-full rounded bg-transparent py-2 px-3 font-normal placeholder:text-gray-600 leading-[1.6] text-surface outline-none transition duration-200 ease-in-out focus:z-[3] focus:border-primary focus:shadow-inset focus:outline-none motion-reduce:transition-none text-[13px]"
-                placeholder="What are you looking for?"
+                placeholder="Bạn đang tìm kiếm ...?"
                 aria-label="Search"
                 aria-describedby="button-addon2"
               />
@@ -177,18 +189,7 @@ function Header() {
             </div>
 
             {/* Search Bar for large screens */}
-            <div className="hidden lg:flex items-center bg-gray-300 rounded relative">
-              <input
-                type="search"
-                className="text-black block flex-grow rounded bg-transparent bg-clip-padding w-[210px] py-2 px-3 font-normal placeholder:text-gray-600 leading-[1.6] text-surface outline-none transition duration-200 ease-in-out focus:z-[3] focus:border-primary focus:shadow-inset focus:outline-none motion-reduce:transition-none text-[13px]"
-                placeholder="What are you looking for?"
-                aria-label="Search"
-                aria-describedby="button-addon2"
-              />
-              <div className="flex items-center p-2 cursor-pointer">
-                <CiSearch className="text-black size-5" />
-              </div>
-            </div>
+            <Search/>
 
             <AiOutlineMenuUnfold
               className="block lg:hidden cursor-pointer"
@@ -202,11 +203,18 @@ function Header() {
             />
 
             {/* Wishlist and Cart Links */}
-            <NavLink to="/wishlist" className={getNavLinkClass}>
+            {/* <NavLink to="/wishlist" className={getNavLinkClass}>
               <CiHeart className="hover:text-primary" size={25} />
-            </NavLink>
+            </NavLink> */}
             <NavLink to="/cart" className={getNavLinkClass}>
-              <BsCart3 className="hover:text-primary" size={25} />
+              <div className="relative">
+                <BsCart3 className="hover:text-primary" size={25} />
+                {cart?.products?.length > 0 && (
+                  <span className="absolute -top-4 left-1 bg-primary text-white text-[10px] rounded-full px-1.5 py-0.5">
+                    {totalQuantity}
+                  </span>
+                )}
+              </div>
             </NavLink>
 
             {/* User Icon with Dropdown */}
@@ -218,7 +226,7 @@ function Header() {
                 onClick={toggleDropdown}
               >
                 <BsPersonCircle size={25} />
-                {user?.name ? `Hello, ${user.name}` : ""}
+                <span className="hidden lg:inline-block">{user?.name ? `Hello, ${user.name}` : ""}</span>
               </span>
 
               {isDropdownOpen && (

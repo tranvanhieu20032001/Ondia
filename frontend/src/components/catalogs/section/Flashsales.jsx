@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Cardproduct from "../../cart/Cardproduct";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation, Autoplay } from "swiper/modules";
@@ -6,24 +6,47 @@ import "swiper/swiper-bundle.css";
 import "swiper/css/navigation";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import Countdown from "../../countdown/Countdown";
-import products from "../../../constants/products";
+import { SummaryApi } from "../../../common";
+import axios from "axios";
 
 function Flashsales() {
   const [viewAll, setViewAll] = useState(false);
+  const [products, setProducts] = useState([]);
+  
+  const renderProduct = async () => {
+    try {
+      const dataResponse = await axios({
+        url: `${SummaryApi.getAllProducts.url}?page=1&limit=100`,
+        method: SummaryApi.getAllProducts.method,
+        withCredentials: true,
+        credentials: "include",
+      });
+      const dataApi = await dataResponse.data;
+      setProducts(dataApi.products.filter((product) => product.flashsale === true));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    renderProduct();
+  }, []);
 
   return (
     <div className="mt-12 lg:mt-24">
       <div className="flex items-center gap-4">
         <span className="inline-block w-5 h-11 rounded-md border bg-primary"></span>
-        <span className="text-primary font-bold text-lg">Today's</span>
+        <span className="text-primary font-bold text-lg">Hôm nay</span>
       </div>
       <div className="flex items-center gap-6 lg:gap-32 mt-5 mb-8">
         <span className="capitalize font-bold text-xl lg:text-4xl">
           Flash Sales
         </span>
-        <Countdown targetDate={'2024-10-18T00:00:00'} />
+        <Countdown />
       </div>
-      {viewAll ? (
+      
+      {/* Nếu số lượng sản phẩm <= 4, hiển thị dưới dạng grid */}
+      {products.length <= 4 || viewAll ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {products.map((item, index) => (
             <Cardproduct key={index} item={item} />
@@ -69,7 +92,7 @@ function Flashsales() {
           >
             {products.map((item, index) => (
               <SwiperSlide key={index}>
-                <Cardproduct item={item} /> {/* Use Cartproducy component */}
+                <Cardproduct item={item} />
               </SwiperSlide>
             ))}
           </Swiper>
@@ -84,12 +107,15 @@ function Flashsales() {
         </div>
       )}
 
+      {/* Hiển thị nút Xem tất cả nếu số lượng sản phẩm > 4 */}
+      {products.length > 4 && (
         <button
           className="mx-auto text-[12px] lg:text-[16px] my-4 lg:my-8 px-6 py-2 bg-primary text-white flex justify-center items-center rounded-sm"
           onClick={() => setViewAll(!viewAll)}
         >
-          {viewAll ? "View less products" : "View all products"}
+          {viewAll ? "Xem ít hơn" : "Xem tất cả"}
         </button>
+      )}
     </div>
   );
 }

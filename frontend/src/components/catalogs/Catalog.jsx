@@ -14,6 +14,8 @@ function Catalog() {
       <hr className="my-16" />
       <Catagory />
       <hr className="my-16" />
+      <ExploreOurProducts type={"Robot Hút Bụi"}/>
+      <ExploreOurProducts type={"Máy lọc không khí"}/>
       <BestSelling />
       <SpecialEvent/>
       <ExploreOurProducts/>

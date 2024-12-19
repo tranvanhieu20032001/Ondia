@@ -1,13 +1,207 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import product from "../assets/images/products/iphon15prm.jpg";
+import React, { useContext, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import BillingDetails from "../components/checkout/BillingDetails";
+import YourOrder from "../components/checkout/YourOrder";
+import Context from "../context";
+import LoadingPage from "../components/loading/LoadingPage";
+import { toast } from "react-toastify";
+import CouponForm from "./Cart/CouponForm";
+import { SummaryApi } from "../common";
 
 function Checkout() {
-  const [selectedMethod, setSelectedMethod] = useState("bank");
+  const { userData } = useContext(Context);
+  const { setCart } = useContext(Context);
+  const { state } = useLocation();
+  const navigate = useNavigate();
 
-  const handleRadioChange = (event) => {
-    setSelectedMethod(event.target.id);
+  const [errors, setErrors] = useState({});
+  const [user, setUser] = useState({});
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [billingData, setBillingData] = useState({});
+  const [coupon, setCoupon] = useState(null);
+
+  const userDetails = useSelector((state) => state?.user?.user?.user);
+
+  // Fetch user data
+  const fetchUser = async (id) => {
+    try {
+      const url = SummaryApi.getUser.url.replace(":id", id);
+      const { data } = await axios({
+        url,
+        method: SummaryApi.getUser.method,
+        withCredentials: true,
+      });
+      setUser(data.user);
+    } catch (error) {
+      console.error("Failed to load user data:", error);
+      toast.error("Không thể tải thông tin người dùng.");
+    }
   };
+
+  // Fetch cart products
+  const fetchCartProducts = async () => {
+    try {
+      const { data } = await axios({
+        url: SummaryApi.getCart.url,
+        method: SummaryApi.getCart.method,
+        withCredentials: true,
+      });
+      setOrders(data.cart.products);
+    } catch (error) {
+      console.error("Error fetching cart products:", error);
+      toast.error("Không thể tải giỏ hàng. Vui lòng thử lại.");
+    }
+  };
+
+  // Fetch single product by ID
+  const fetchProductById = async (productId) => {
+    try {
+      const url = SummaryApi.getProductById.url.replace(":id", productId);
+      const { data } = await axios({
+        url,
+        method: SummaryApi.getProductById.method,
+        withCredentials: true,
+      });
+      setOrders([
+        {
+          product: data.product,
+          quantity: state.quantity,
+        },
+      ]);
+    } catch (error) {
+      console.error("Error fetching product by ID:", error);
+      toast.error("Không thể tải thông tin sản phẩm.");
+    }
+  };
+
+  // Validate billing inputs
+  const validateInputs = () => {
+    const errors = {};
+    if (!billingData?.name) errors.name = "Tên là bắt buộc.";
+    if (!billingData?.address) errors.address = "Địa chỉ là bắt buộc.";
+    if (!billingData?.phone) {
+      errors.phone = "Số điện thoại là bắt buộc.";
+    } else if (!/^[0-9]{10}$/.test(billingData.phone)) {
+      errors.phone = "Số điện thoại sai định dạng.";
+    }
+    if (!billingData?.email) {
+      errors.email = "Email là bắt buộc.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(billingData.email)) {
+      errors.email = "Email sai định dạng.";
+    }
+    return errors;
+  };
+
+  // Handle checkout
+  const handleCheckout = async () => {
+    if (!userData) {
+      toast.error("Bạn phải đăng nhập để mua hàng");
+      return;
+    }
+    setLoading(true);
+
+    const newErrors = validateInputs();
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      setLoading(false);
+      return;
+    }
+
+    setErrors({}); // Clear previous errors
+
+    const formattedProducts = orders.map((order) => {
+      const price =
+        order.product.saleprice !== 0
+          ? order.product.saleprice
+          : order.product.price;
+
+      return {
+        product: order.product._id,
+        quantity: order.quantity,
+        price: price,
+        variant: order.variant?._id,
+      };
+    });
+
+
+    const checkoutData = {
+      products: formattedProducts,
+      shippingAddress: billingData?.address,
+      phone: billingData?.phone,
+      email: billingData?.email,
+      discount: coupon?.value || 0,
+      paymentMethod: "Cash on delivery",
+    };
+
+    try {
+      const response = await axios({
+        url: SummaryApi.createOrder.url,
+        method: SummaryApi.createOrder.method,
+        data: checkoutData,
+        withCredentials: true,
+      });
+
+      toast.success("Đặt hàng thành công!");
+
+      if (!state?.id) {
+        await axios({
+          url: SummaryApi.clearCart.url,
+          method: SummaryApi.clearCart.method,
+          withCredentials: true,
+        });
+        setCart([]);
+      }
+
+      setTimeout(() => {
+        setLoading(false);
+        navigate(`/cart/checkout/order-received/${response?.data?.order?._id}`);
+      }, 800);
+    } catch (error) {
+      setLoading(false);
+      console.error("Error during checkout:", error);
+      toast.error("Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại.");
+    }
+  };
+
+  useEffect(() => {
+    if (userDetails?.userId) {
+      fetchUser(userDetails.userId);
+    } else {
+      console.error("User details are missing.");
+    }
+  }, [userDetails?.userId]);
+
+  useEffect(() => {
+    if (state?.id) {
+      fetchProductById(state.id);
+    } else {
+      fetchCartProducts();
+    }
+  }, [state?.id]);
+
+  const getDiscountByName = async (name) => {
+    try {
+      const response = await axios({
+        url: SummaryApi.getDiscountByName.url,
+        method: SummaryApi.getDiscountByName.method,
+        data: { name },
+        withCredentials: true,
+      });
+      setCoupon(response.data.discount);
+    } catch (error) {
+      console.error(
+        "Error fetching discount:",
+        error.response?.data?.message || error.message
+      );
+      toast.error("Không thể áp dụng mã giảm giá.");
+    }
+  };
+
+  if (loading) return <LoadingPage />;
+
   return (
     <div className="max-w-screen-xl mx-auto px-4 lg:px-0">
       <p className="my-10">
@@ -18,267 +212,20 @@ function Checkout() {
         <Link to="/cart" className="text-gray-500 hover:underline">
           Cart
         </Link>
-        / <span>Checkout</span>
+        /<span>Checkout</span>
       </p>
       <div className="grid grid-cols-1 lg:grid-cols-2 mb-10 gap-20">
-        <div className="space-y-8 shadow-md px-4 max-h-max pb-8">
-          <h1 className="text-xl lg:text-4xl my-10">Billing Details</h1>
-          <div className="border focus-within:border-primary focus-within:text-primary transition-all duration-500 relative rounded p-1">
-            <div className="-mt-4 absolute tracking-wider px-1 uppercase text-xs">
-              <p>
-                <label htmlFor="name" className="bg-white text-gray-600 px-1">
-                  First name *
-                </label>
-              </p>
-            </div>
-            <p>
-              <input
-                id="name"
-                autoComplete="false"
-                tabIndex="0"
-                type="text"
-                className="py-1 px-1 text-gray-900 outline-none block h-full w-full"
-              />
-            </p>
-          </div>
-          <div className="border focus-within:border-primary focus-within:text-primary transition-all duration-500 relative rounded p-1">
-            <div className="-mt-4 absolute tracking-wider px-1 uppercase text-xs">
-              <p>
-                <label
-                  htmlFor="lastname"
-                  className="bg-white text-gray-600 px-1"
-                >
-                  Last name *
-                </label>
-              </p>
-            </div>
-            <p>
-              <input
-                id="lastname"
-                autoComplete="false"
-                tabIndex="0"
-                type="text"
-                className="py-1 px-1 text-gray-900 outline-none block h-full w-full"
-              />
-            </p>
-          </div>
-          <div className="border focus-within:border-primary focus-within:text-primary transition-all duration-500 relative rounded p-1">
-            <div className="-mt-4 absolute tracking-wider px-1 uppercase text-xs">
-              <p>
-                <label
-                  htmlFor="address"
-                  className="bg-white text-gray-600 px-1"
-                >
-                  Street Address*
-                </label>
-              </p>
-            </div>
-            <p>
-              <input
-                id="address"
-                autoComplete="false"
-                tabIndex="0"
-                type="text"
-                className="py-1 px-1 text-gray-900 outline-none block h-full w-full"
-              />
-            </p>
-          </div>
-          <div className="border focus-within:border-primary focus-within:text-primary transition-all duration-500 relative rounded p-1">
-            <div className="-mt-4 absolute tracking-wider px-1 uppercase text-xs">
-              <p>
-                <label
-                  htmlFor="apartment"
-                  className="bg-white text-gray-600 px-1"
-                >
-                  Apartment, floor, etc. (optional)
-                </label>
-              </p>
-            </div>
-            <p>
-              <input
-                id="apartment"
-                autoComplete="false"
-                tabIndex="0"
-                type="text"
-                className="py-1 px-1 text-gray-900 outline-none block h-full w-full"
-              />
-            </p>
-          </div>
-          <div className="border focus-within:border-primary focus-within:text-primary transition-all duration-500 relative rounded p-1">
-            <div className="-mt-4 absolute tracking-wider px-1 uppercase text-xs">
-              <p>
-                <label htmlFor="town" className="bg-white text-gray-600 px-1">
-                  Town/City*
-                </label>
-              </p>
-            </div>
-            <p>
-              <input
-                id="town"
-                autoComplete="false"
-                tabIndex="0"
-                type="text"
-                className="py-1 px-1 text-gray-900 outline-none block h-full w-full"
-              />
-            </p>
-          </div>
-
-          <div className="border focus-within:border-primary focus-within:text-primary transition-all duration-500 relative rounded p-1">
-            <div className="-mt-4 absolute tracking-wider px-1 uppercase text-xs">
-              <p>
-                <label htmlFor="phone" className="bg-white text-gray-600 px-1">
-                  Phone Number*
-                </label>
-              </p>
-            </div>
-            <p>
-              <input
-                id="phone"
-                autoComplete="false"
-                tabIndex="0"
-                type="text"
-                className="py-1 px-1 text-gray-900 outline-none block h-full w-full"
-              />
-            </p>
-          </div>
-          <div className="border focus-within:border-primary focus-within:text-primary transition-all duration-500 relative rounded p-1">
-            <div className="-mt-4 absolute tracking-wider px-1 uppercase text-xs">
-              <p>
-                <label htmlFor="email" className="bg-white text-gray-600 px-1">
-                  Email Address*
-                </label>
-              </p>
-            </div>
-            <p>
-              <input
-                id="email"
-                autoComplete="false"
-                tabIndex="0"
-                type="text"
-                className="py-1 px-1 text-gray-900 outline-none block h-full w-full"
-              />
-            </p>
-          </div>
-          <div className="inline-flex items-center gap-4">
-            <label
-              className="relative flex cursor-pointer items-center rounded-full"
-              htmlFor="checkbox-1"
-              data-ripple-dark="true"
-            >
-              <input
-                type="checkbox"
-                className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-primary checked:bg-primary checked:before:bg-primary hover:before:opacity-10"
-                id="checkbox-1"
-              />
-              <div className="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-3.5 w-3.5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  stroke="currentColor"
-                  strokeWidth="1"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  ></path>
-                </svg>
-              </div>
-            </label>
-            <label htmlFor="">
-              Save this information for faster check-out next time
-            </label>
-          </div>
+        <div>
+          <BillingDetails
+            user={user}
+            setBillingData={setBillingData}
+            errors={errors}
+          />
+          <CouponForm getDiscountByName={getDiscountByName} />
         </div>
-
-        <div className="space-y-8 shadow-md bg-slate-100 px-4">
-          <h1 className="text-xl lg:text-4xl my-10">Your Order</h1>
-          <hr />
-          <div className="grid grid-cols-5 items-center gap-2">
-            <div className="flex justify-end">
-              <img src={product} alt="" className="w-14 h-14" />
-            </div>
-            <div className="col-span-2 lg:col-span-3 flex flex-col justify-center">
-              <h1 className="font-semibold text-[12px] lg:text-[15px] line-clamp-2 lg:line-clamp-1">
-                Điện thoại 15 promax màu xanh 1TG
-              </h1>
-              <p className="flex gap-3 text-[11px] lg:text-sm text-gray-500">
-                <span>12.000.000 đ</span> x <span>5</span>
-              </p>
-            </div>
-            <div className="col-span-2 lg:col-span-1 justify-end flex items-center font-semibold text-[12px] lg:text-[15px]">
-              60.000.000 đ
-            </div>
-          </div>
-          <div className="grid grid-cols-5 items-center gap-2">
-            <div className="flex justify-end">
-              <img src={product} alt="" className="w-14 h-14" />
-            </div>
-            <div className="col-span-2 lg:col-span-3 flex flex-col justify-center">
-              <h1 className="font-semibold text-[12px] lg:text-[15px] line-clamp-2 lg:line-clamp-1">
-                Điện thoại 15 promax màu xanh 1TG
-              </h1>
-              <p className="flex gap-3 text-[11px] lg:text-sm text-gray-500">
-                <span>12.000.000 đ</span> x <span>5</span>
-              </p>
-            </div>
-            <div className="col-span-2 lg:col-span-1 justify-end flex items-center font-semibold text-[12px] lg:text-[15px]">
-              60.000.000 đ
-            </div>
-          </div>
-          <hr />
-          <div className="space-y-4 pb-4">
-            <p className="text-sm lg:text-base flex justify-between pl-10">
-              Subtotal
-              <span className="font-semibold text-sm lg:text-[16px]">
-                300.000.000 đ
-              </span>
-            </p>
-            <p className="text-sm lg:text-base flex justify-between pl-10">
-              Discount
-              <span className="font-semibold text-sm lg:text-[16px]">
-                2.000.000 đ
-              </span>
-            </p>
-            <p className="text-sm lg:text-base flex justify-between pl-10">
-              Shipping
-              <span className="font-semibold text-sm lg:text-[16px]">Free</span>
-            </p>
-            <hr />
-            <p className="text-sm lg:text-base flex justify-between pl-10">
-              Totals{" "}
-              <span className="font-semibold text-sm lg:text-[16px]">
-                298.000.000 đ
-              </span>
-            </p>
-          </div>
-          <hr className="border-t-black" />
-
-          <div className=" space-y-5 pb-8">
-            <div className="flex items-center">
-              <label
-                className="relative flex items-center cursor-pointer"
-                htmlFor="bank"
-              >
-                <input
-                  name="checkout"
-                  type="radio"
-                  className="peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-slate-300 checked:border-slate-400 transition-all"
-                  id="bank"
-                  checked={selectedMethod === "bank"}
-                  onChange={handleRadioChange}
-                />
-                <span className="absolute bg-slate-800 w-3 h-3 rounded-full opacity-0 peer-checked:opacity-100 transition-opacity duration-200 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></span>
-              </label>
-              <label
-                className="ml-2 text-slate-600 cursor-pointer text-sm"
-                htmlFor="bank"
-              >
-                Bank
-              </label>
-            </div>
+        <div>
+          <YourOrder orders={orders} coupon={coupon} />
+          <div className="space-y-8 py-4 shadow-md bg-slate-100 px-4">
             <div className="flex items-center">
               <label
                 className="relative flex items-center cursor-pointer"
@@ -289,8 +236,8 @@ function Checkout() {
                   type="radio"
                   className="peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-slate-300 checked:border-slate-400 transition-all"
                   id="cash"
-                  checked={selectedMethod === "cash"}
-                  onChange={handleRadioChange}
+                  checked={true}
+                  readOnly
                 />
                 <span className="absolute bg-slate-800 w-3 h-3 rounded-full opacity-0 peer-checked:opacity-100 transition-opacity duration-200 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></span>
               </label>
@@ -301,11 +248,18 @@ function Checkout() {
                 Cash on delivery
               </label>
             </div>
-             <button
+            <button
               type="button"
-              className="text-sm px-4 py-2.5 w-full font-semibold tracking-wide bg-transparent text-primary border border-primary hover:bg-primary hover:text-white rounded-md"
+              className={`text-sm px-4 py-2.5 w-full font-semibold tracking-wide border rounded-md transition 
+                ${
+                  loading
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-transparent text-primary border-primary hover:bg-primary hover:text-white"
+                }`}
+              onClick={handleCheckout}
+              disabled={loading}
             >
-              Checkout
+              {loading ? "Đang xử lý..." : "Đặt hàng"}
             </button>
           </div>
         </div>

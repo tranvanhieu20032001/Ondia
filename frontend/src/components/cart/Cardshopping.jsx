@@ -1,40 +1,124 @@
-import React, { useState } from 'react';
-import { TiDelete } from 'react-icons/ti';
+import React, { useState, useEffect, useCallback } from "react";
+import { RiDeleteBack2Line } from "react-icons/ri";
+import { backendDomain, SummaryApi } from "../../common";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-export const Cardshopping = ({ item }) => {
-  const [quantity, setQuantity] = useState(1);
+export const Cardshopping = ({ item, onQuantityChange, onRemoveItem }) => {
+  const [inventory, setInventory] = useState(0);
+  const [quantity, setQuantity] = useState(item?.quantity || 1);
 
-  // Tính subtotal
-  const subtotal = item.sale_price * quantity;
+  // Fetch product details and inventory status
+  const showProduct = async (productId) => {
+    try {
+      const url = SummaryApi.getProductById.url.replace(":id", productId);
+      const dataResponse = await axios({
+        url: url,
+        method: SummaryApi.getProductById.method,
+        withCredentials: true,
+      });
+      const dataApi = await dataResponse.data;
+      setInventory(dataApi.product.inventory);
+      console.log("Inventory:", dataApi.product.inventory);
 
-  // Xử lý khi người dùng thay đổi số lượng
-  const handleQuantityChange = (e) => {
-    const value = Math.max(1, Number(e.target.value)); // Đảm bảo giá trị không dưới 1
-    setQuantity(value);
+      // Adjust quantity if it's greater than available inventory
+      if (quantity > dataApi?.product?.inventory) {
+        setQuantity(dataApi?.product?.inventory);
+        toast.error(
+          `Số lượng của ${item?.product?.name} đã được giảm xuống ${dataApi.product.inventory} vì kho hàng`
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
+  // Recalculate subtotal
+  const subtotal =
+    (item?.product?.saleprice || item?.product?.price || 0) * quantity;
+
+  // Synchronize quantity and inventory when either of them changes
+  useEffect(() => {
+    setQuantity(item?.quantity || 1);
+  }, [item?.quantity]);
+
+  useEffect(() => {
+    if (item?.product?._id) {
+      showProduct(item?.product?._id);
+    }
+  }, [item?.product?._id]);
+
+  // Handle quantity change and check against inventory
+  const handleQuantityChange = useCallback(
+    (e) => {
+      const value = Math.max(1, parseInt(e.target.value, 10));
+      if (!isNaN(value)) {
+        if (value > inventory) {
+          toast.error(`Số lượng của ${item?.product?.name} vượt quá kho`);
+        } else {
+          setQuantity(value);
+          if (onQuantityChange) {
+            onQuantityChange(item?.product?._id, value);
+          }
+        }
+      }
+    },
+    [inventory, item?.product?._id, onQuantityChange]
+  );
+
+  // Handle removal of item from cart
+  const handleRemoveItem = useCallback(() => {
+    if (item?.product?._id && onRemoveItem) {
+      onRemoveItem(item.product._id);
+    } else {
+      console.error("Product ID is missing");
+    }
+  }, [item?.product?._id, onRemoveItem]);
+
   return (
-    <div className="relative grid grid-cols-5 gap-2 lg:gap-8 px-4 mt-2 bg-white border-none outline-none py-3 shadow-md text-[14px] lg:text-base">
+    <div className="relative grid grid-cols-5 gap-2 lg:gap-8 px-4 mt-2 bg-white border-none outline-none py-3 shadow-md text-[14px] lg:text-base group">
+      {/* Product details */}
       <div className="product flex items-center col-span-3 lg:col-span-2 gap-2">
         <img
-          src={item.img}
-          alt={item.title}
-          className="w-14 h-14 lg:w-16 lg:h-16 object-cover"
+          src={`${backendDomain}/${item?.product?.images?.[0]}`}
+          alt={item?.product?._id}
+          className="w-10 h-10 lg:w-16 lg:h-16 object-cover"
         />
         <div className="detail">
-          <h1 className="capitalize font-normal text-[12px] lg:text-base line-clamp-2 lg:line-clamp-1">{item.title}</h1>
-          <span className="text-[11px] lg:text-sm text-gray-600">Màu: Đen</span>
+          <h1 className="capitalize font-normal text-[11px] lg:text-base line-clamp-2 lg:line-clamp-1">
+            {item?.product?.name}
+          </h1>
+          <span className="inline-block lg:hidden font-normal text-[11px]">
+            {item?.product?.saleprice !== 0
+              ? item?.product?.saleprice?.toLocaleString()
+              : item?.product?.price?.toLocaleString()}
+            đ
+          </span>
         </div>
       </div>
-      
+
+      {/* Price and Quantity */}
       <div className="col-span-1 lg:col-span-2 flex flex-col lg:flex-row justify-around">
-        <div className="price flex items-center text-[12px] lg:text-base">
-          {item.sale_price.toLocaleString()}
+        <div className="hidden lg:block price items-center text-[11px] lg:text-base">
+          <span className="block">
+            {item?.product?.saleprice !== 0
+              ? item?.product?.saleprice?.toLocaleString()
+              : item?.product?.price?.toLocaleString()}{" "}
+            đ
+          </span>
+          {item?.product?.saleprice !== 0 &&
+            item?.product?.price &&
+            item?.product?.saleprice < item?.product?.price && (
+              <span className="block text-xs line-through text-gray-400">
+                {item?.product?.price?.toLocaleString()} đ
+              </span>
+            )}
         </div>
 
-        <div className="quantity flex items-center">
+        {/* Quantity input */}
+        <div className="quantity flex flex-col items-center">
           <input
-            className="outline-none border lg:p-2 w-12 lg:w-20 rounded-md text-[12px] lg:text-base text-center"
+            className="outline-none border lg:p-2 w-10 lg:w-20 rounded-md text-[11px] lg:text-base text-center"
             type="number"
             value={quantity}
             onChange={handleQuantityChange}
@@ -45,11 +129,18 @@ export const Cardshopping = ({ item }) => {
         </div>
       </div>
 
-      <div className="subtotal flex items-center text-[12px] lg:text-base">
-        {subtotal.toLocaleString()} đ
+      {/* Subtotal */}
+      <div className="subtotal flex items-center text-[11px] lg:text-base">
+        {subtotal?.toLocaleString()} đ
       </div>
 
-      <TiDelete className="absolute cursor-pointer" size={25} color="red" />
+      {/* Remove item button */}
+      <RiDeleteBack2Line
+        className="absolute cursor-pointer top-4 right-0 transform -translate-y-1/2 block group-[hover:block]:"
+        size={20}
+        color="red"
+        onClick={handleRemoveItem}
+      />
     </div>
   );
 };

@@ -22,10 +22,6 @@ function AdminPanel() {
 
   return (
     <div className="flex h-screen">
-      {/* Sidebar */}
-      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
-      {/* Main Content */}
       <div className="flex-1 p-8">
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h1 className="text-3xl font-semibold mb-6">Admin Panel</h1>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import axios from 'axios';
-import SummaryApi from './../common/index'
+import { SummaryApi } from './../common/index'
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/loading/Loading";
@@ -66,7 +66,7 @@ function Register() {
 
     // console.log("Form submitted:", data);
     try {
-      const dataResponse = await axios({
+      await axios({
         url: SummaryApi.register.url,
         method: SummaryApi.register.method,
         headers: {
@@ -75,8 +75,8 @@ function Register() {
         withCredentials: true,
         data: data,
       });
+      toast.success("User successfully registered.");
       setTimeout(() => {
-        toast.success("User successfully registered.");
         setLoading(false);
         navigate('/login');
       }, 1000); 
@@ -98,7 +98,7 @@ function Register() {
         />
         <div className="w-full my-auto p-4 lg:w-1/2">
           <h2 className="text-2xl font-semibold text-gray-700 text-center">
-            Create an account
+            Tạo tài khoản
           </h2>
           <form onSubmit={handleSubmit} className="divide-y divide-gray-200">
             <div className="py-4 text-base leading-6 space-y-8 text-gray-700 sm:text-lg sm:leading-7">
@@ -117,9 +117,9 @@ function Register() {
                 />
                 <label
                   htmlFor="name"
-                  className="absolute left-2 -top-5 text-gray-600 text-base transition-all duration-200 ease-in-out peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-focus:-top-5 peer-focus:left-0 peer-focus:text-gray-600 peer-focus:text-[13px] peer-valid:-top-5 peer-valid:left-0 peer-valid:text-[13px]"
+                  className="absolute left-2 -top-5 text-gray-600 text-base transition-all duration-200 ease-in-out top-2 peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-focus:-top-5 peer-focus:left-0 peer-focus:text-gray-600 peer-focus:text-[13px] peer-valid:-top-5 peer-valid:left-0 peer-valid:text-[13px]"
                 >
-                  Name
+                  Tên
                 </label>
                 {errorName && <span className="text-xs text-red-500">{errorName}</span>}
               </div>
@@ -138,9 +138,9 @@ function Register() {
                 />
                 <label
                   htmlFor="email"
-                  className="absolute left-2 -top-5 text-gray-600 text-base transition-all duration-200 ease-in-out peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-focus:-top-5 peer-focus:left-0 peer-focus:text-gray-600 peer-focus:text-[13px] peer-valid:-top-5 peer-valid:left-0 peer-valid:text-[13px]"
+                  className="absolute left-2 -top-5 text-gray-600 text-base transition-all duration-200 ease-in-out top-2 peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-focus:-top-5 peer-focus:left-0 peer-focus:text-gray-600 peer-focus:text-[13px] peer-valid:-top-5 peer-valid:left-0 peer-valid:text-[13px]"
                 >
-                  Email or phone number
+                  Email
                 </label>
                 {errorEmail && <span className="text-xs text-red-500">{errorEmail}</span>}
               </div>
@@ -159,9 +159,9 @@ function Register() {
                 />
                 <label
                   htmlFor="password"
-                  className="absolute left-2 -top-5 text-gray-600 text-base transition-all duration-200 ease-in-out peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-focus:-top-5 peer-focus:left-0 peer-focus:text-gray-600 peer-focus:text-[13px] peer-valid:-top-5 peer-valid:left-0 peer-valid:text-[13px]"
+                  className="absolute left-2 -top-5 text-gray-600 text-base transition-all duration-200 ease-in-out top-2 peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-focus:-top-5 peer-focus:left-0 peer-focus:text-gray-600 peer-focus:text-[13px] peer-valid:-top-5 peer-valid:left-0 peer-valid:text-[13px]"
                 >
-                  Password
+                  Mật khẩu
                 </label>
                 <span
                   className="absolute right-3 top-2 cursor-pointer"
@@ -186,9 +186,9 @@ function Register() {
                 />
                 <label
                   htmlFor="confirmPassword"
-                  className="absolute left-2 -top-5 text-gray-600 text-base transition-all duration-200 ease-in-out peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-focus:-top-5 peer-focus:left-0 peer-focus:text-gray-600 peer-focus:text-[13px] peer-valid:-top-5 peer-valid:left-0 peer-valid:text-[13px]"
+                  className="absolute left-2 -top-5 text-gray-600 text-base transition-all duration-200 ease-in-out top-2 peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-focus:-top-5 peer-focus:left-0 peer-focus:text-gray-600 peer-focus:text-[13px] peer-valid:-top-5 peer-valid:left-0 peer-valid:text-[13px]"
                 >
-                  Confirm Password
+                  Xác nhận mật khẩu
                 </label>
                 <span
                   className="absolute right-3 top-2 cursor-pointer"

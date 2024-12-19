@@ -2,44 +2,71 @@ import React from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 
-const UserManagementTable = ({ users, onEdit, onDelete }) => {
+const UserManagementTable = ({ users, onDelete }) => {
   return (
-    <div className="overflow-x-auto">
-      <table className="table-auto w-full border-collapse border border-gray-300 text-left text-sm">
-        <thead className="bg-gray-200">
-          <tr>
-            <th className="px-4 py-3 border">Name</th>
-            <th className="px-4 py-3 border">Email</th>
-            <th className="px-4 py-3 border">Address</th>
-            <th className="px-4 py-3 border">Phone</th>
-            <th className="px-4 py-3 border">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user._id} className="hover:bg-gray-100">
-              <td className="px-4 py-2 border">{user?.name}</td>
-              <td className="px-4 py-2 border">{user?.email}</td>
-              <td className="px-4 py-2 border">{user?.address}</td>
-              <td className="px-4 py-2 border whitespace-nowrap">{user?.phone}</td>
-              <td className="px-4 py-2 border flex items-center justify-around">
-                <button
-                  onClick={() => onEdit(user)}
-                  className="text-blue-500 hover:underline mr-2"
-                >
-                  <FaRegEdit size={20} />
-                </button>
-                <button
-                  onClick={() => onDelete(user)}
-                  className="text-red-500 hover:underline"
-                >
-                  <MdDeleteForever size={20} />
-                </button>
-              </td>
+    <div className="-my-2 py-1 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 pr-10 lg:px-8">
+      <div className="align-middle inline-block min-w-full shadow overflow-hidden bg-white shadow-dashboard px-8 pt-3 rounded-bl-lg rounded-br-lg">
+        <table className="min-w-full">
+          <thead>
+            <tr>
+            <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-primary tracking-wider">
+                User Id
+              </th>
+              <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-primary tracking-wider">
+                Name
+              </th>
+              <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-primary tracking-wider">
+                Email
+              </th>
+              <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-primary tracking-wider">
+                Address
+              </th>
+              <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-primary tracking-wider">
+                Phone
+              </th>
+              <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-primary tracking-wider">
+                Ngày tạo
+              </th>
+              
+              <th className="px-6 py-3 border-b-2 border-gray-300 text-center text-sm leading-4 text-primary tracking-wider">
+                Actions
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="bg-white">
+            {users.map((user, index) => (
+              <tr key={user._id}>
+                <td className="px-6 py-2 whitespace-no-wrap border-b border-gray-500 text-blue-900 text-sm leading-5">
+                  {user._id}
+                </td>
+                <td className="px-6 py-2 whitespace-no-wrap border-b border-gray-500">
+                  <div className="text-sm leading-5 text-blue-900">{user.name}</div>
+                </td>
+                <td className="px-6 py-2 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5">
+                  {user.email}
+                </td>
+                <td className="px-6 py-2 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5">
+                  {user.address}
+                </td>
+                <td className="px-6 py-2 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5">
+                  {user.phone}
+                </td>
+                <td className="px-6 py-2 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5">
+                {new Date(user.createdAt).toLocaleString()}
+                </td>
+                <td className="px-6 py-2 whitespace-no-wrap text-center border-b border-gray-500 text-sm leading-5">
+                  <button
+                    onClick={() => onDelete(user)}
+                    className="text-red-500 hover:text-red-700 mx-2"
+                  >
+                    <MdDeleteForever size={20} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

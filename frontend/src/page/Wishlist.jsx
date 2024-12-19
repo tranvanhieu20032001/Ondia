@@ -80,7 +80,7 @@ function Wishlist() {
         className="text-[12px] lg:text-[16px] my-4 lg:my-8 px-6 py-2 bg-primary text-white flex justify-center items-center rounded-sm mx-auto"
         onClick={() => setViewAllWishlist(!viewAllWishlist)}
       >
-        {viewAllWishlist ? "View less products" : "View all products"}
+        {viewAllWishlist ? "Xem ít hơn" : "Xem tất cả"}
       </button>
       <hr className="my-16" />
 

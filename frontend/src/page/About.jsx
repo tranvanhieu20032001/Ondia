@@ -15,23 +15,23 @@ import { Link } from "react-router-dom";
 
 function About() {
   const descriptions = [
-    { number: "10.5k", des: "Sallers active our site", icon: <CiShop /> },
-    { number: "15k", des: "Mopnthly Produduct Sale", icon: <BsCoin /> },
-    { number: "45.5k", des: "Customer active in our site", icon: <CiGift /> },
-    { number: "25k", des: "Anual gross sale in our site", icon: <CiBag1 /> },
+    { number: "10.5k", des: "Người bán hoạt động trên trang của chúng tôi", icon: <CiShop /> },
+    { number: "15k", des: "Sản phẩm bán hàng tháng", icon: <BsCoin /> },
+    { number: "45.5k", des: "Khách hàng hoạt động trên trang của chúng tôi", icon: <CiGift /> },
+    { number: "25k", des: "Tổng doanh thu hàng năm trên trang của chúng tôi", icon: <CiBag1 /> },
     {
-      number: "FREE AND FAST DELIVERY",
-      des: "Free delivery for all orders over $140",
+      number: "GIAO HÀNG MIỄN PHÍ VÀ NHANH",
+      des: "Miễn phí giao hàng cho tất cả các đơn hàng trên $140",
       icon: <FaShippingFast />,
     },
     {
-      number: "24/7 CUSTOMER SERVICE",
-      des: "Friendly 24/7 customer support",
+      number: "DỊCH VỤ KHÁCH HÀNG 24/7",
+      des: "Hỗ trợ khách hàng thân thiện 24/7",
       icon: <MdOutlineHeadsetMic />,
     },
     {
-      number: "MONEY BACK GUARANTEE",
-      des: "We reurn money within 30 days",
+      number: "ĐẢM BẢO HOÀN TIỀN",
+      des: "Chúng tôi hoàn tiền trong vòng 30 ngày",
       icon: <AiOutlineFileProtect />,
     },
   ];
@@ -39,26 +39,20 @@ function About() {
     <div className="max-w-screen-xl lg:mx-auto my-16 mx-2">
       <p className="my-10">
         <Link to="/" className="text-gray-500 hover:underline">
-          Home
+          Trang chủ
         </Link>
-        /<span>About</span>
+        /<span>Giới thiệu</span>
       </p>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
         <div className="space-y-8">
           <h2 className="capitalize text-2xl font-semibold lg:text-5xl">
-            Our Story
+            Câu chuyện của chúng tôi
           </h2>
           <p className="font-normal text-[14px] lg:text-base text-justify">
-            Launced in 2015, Exclusive is South Asia’s premier online shopping
-            makterplace with an active presense in Bangladesh. Supported by wide
-            range of tailored marketing, data and service solutions, Exclusive
-            has 10,500 sallers and 300 brands and serves 3 millioons customers
-            across the region.
+            Được ra mắt vào năm 2015, Exclusive là một trong những nền tảng mua sắm trực tuyến hàng đầu tại Nam Á, với sự hiện diện mạnh mẽ tại Bangladesh. Với sự hỗ trợ của nhiều giải pháp marketing, dữ liệu và dịch vụ, Exclusive có 10.500 người bán và 300 thương hiệu, phục vụ 3 triệu khách hàng trong khu vực.
           </p>
           <p className="font-normal text-[14px] lg:text-base text-justify">
-            Exclusive has more than 1 Million products to offer, growing at a
-            very fast. Exclusive offers a diverse assotment in categories
-            ranging from consumer.
+            Exclusive có hơn 1 triệu sản phẩm để cung cấp và đang phát triển rất nhanh. Exclusive cung cấp một loạt sản phẩm đa dạng trong nhiều ngành nghề, từ tiêu dùng đến các mặt hàng khác.
           </p>
         </div>
         <img
@@ -89,56 +83,6 @@ function About() {
               </div>
             )
         )}
-      </div>
-      <div className="grid grid-cols-3 gap-3 lg:ap-8">
-        <div className="w-full h-auto space-y-3">
-          <img
-            className="w-full max-w-[370px] object-cover max-h-[420px] h-auto"
-            src="https://studiochupanhdep.com/Upload/Images/Album/anh-cv-02.jpg"
-            alt=""
-          />
-          <h2 className="capitalize text-sm lg:text-3xl font-semibold">
-            Tom cruise
-          </h2>
-          <span className="text-[12px] lg:text-base">Founder & Chairman</span>
-          <p className="flex gap-4 items-center">
-            <CiTwitter size={25} />
-            <CiInstagram size={25} />
-            <CiFacebook size={25} />
-          </p>
-        </div>
-        <div className="w-full h-auto space-y-3">
-          <img
-            className="w-full max-w-[370px] object-cover max-h-[420px] h-auto"
-            src="https://hthaostudio.com/wp-content/uploads/2021/12/Anh-avatar-linkedin-dep-4.jpg"
-            alt=""
-          />
-          <h2 className="capitalize text-sm lg:text-3xl font-semibold">
-            emma wation
-          </h2>
-          <span className="text-[12px] lg:text-base">Managing Director</span>
-          <p className="flex gap-4 items-center">
-            <CiTwitter size={25} />
-            <CiInstagram size={25} />
-            <CiFacebook size={25} />
-          </p>
-        </div>
-        <div className="w-full h-auto space-y-3">
-          <img
-            className="w-full max-w-[370px] object-cover max-h-[420px] h-auto"
-            src="https://studiochupanhdep.com/Upload/Images/Album/anh-cv-02.jpg"
-            alt=""
-          />
-          <h2 className="capitalize text-sm lg:text-3xl font-semibold">
-            Will Smith
-          </h2>
-          <span className="text-[12px] lg:text-base">Product Designer</span>
-          <p className="flex gap-4 items-center">
-            <CiTwitter size={25} />
-            <CiInstagram size={25} />
-            <CiFacebook size={25} />
-          </p>
-        </div>
       </div>
 
       <div className="grid grid-cols-3 gap-2 lg:gap-8 my-16">

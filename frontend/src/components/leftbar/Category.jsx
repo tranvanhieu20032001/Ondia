@@ -1,38 +1,49 @@
-import { IoIosArrowForward } from "react-icons/io";
+import { IoIosArrowForward, IoIosArrowDown } from "react-icons/io";
+import { Link, useLocation } from "react-router-dom";
 
-function Category({ item }) {
+function Category({ item, childCategories }) {
+  const location = useLocation();
+  const isActive = location.pathname === `/shop/${item?._id}`;
+
+  // Lọc danh mục con thuộc danh mục cha hiện tại
+  const filteredChildren = childCategories?.filter(
+    (child) => child.parentCategory?._id === item._id
+  );
+
   return (
     <li
-      key={item._id} 
-      className="flex flex-col px-4 py-2 capitalize group border cursor-pointer border-transparent hover:shadow hover:shadow-primary rounded-[9999px]"
+      className={`relative px-4 py-1.5 capitalize group cursor-pointer shadow-sm shadow-transparent rounded-lg hover:shadow-primary ${
+        isActive ? "shadow-primary" : ""
+      }`}
     >
-      <div className="flex items-center gap:3 lg:gap-8 group-hover:text-primary">
-        <span className="w-36">{item.name}</span>
-        <IoIosArrowForward />
+      <div className=" bg-white flex items-center justify-between">
+        <Link
+          to={`/shop/${item?._id}`}
+          className={`flex items-center gap-3 group-hover:text-primary w-full ${
+            isActive ? "text-primary" : "text-gray-800"
+          }`}
+        >
+          {item.name}
+        </Link>
+        {filteredChildren && filteredChildren.length > 0 && (
+          <span className="cursor-pointer text-gray-600">
+            <IoIosArrowForward />
+          </span>
+        )}
       </div>
-      {item.data && (
-        <div className="mt-2 pl-4 hidden group-hover:block absolute z-20 left-full -top-2 bg-white lg:bg-transparent lg:max-h-full w-[230px] lg:w-[65.7rem]">
-          <ul className="shadow-primary shadow rounded-[1rem] bg-white min-h-[405px] px-4 py-6 grid grid-cols-1 lg:grid-cols-4 gap-4">
-            {/* Đặt vị trí cố định cho submenu */}
-            {item.data.map((subItem) => (
-              <li
-                key={subItem.title}
-                className="flex flex-col text-[14px] group"
-              >
-                <span className="font-semibold text-primary">
-                  {subItem.title}
-                </span>
-                <ul className="pl-4 text-[13px]">
-                  {subItem.subTitles.map((subTitle, index) => (
-                    <li key={index} className="mt-1 hover:text-primary">
-                      {subTitle}
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            ))}
-          </ul>
-        </div>
+
+      {/* Danh mục con hiển thị khi hover */}
+      {filteredChildren && filteredChildren.length > 0 && (
+        <ul className="absolute z-40 left-0 top-full w-full bg-white border rounded shadow-lg group-hover:block hidden">
+          {filteredChildren.map((child) => (
+            <li
+              key={child._id}
+              className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary"
+            >
+              <Link to={`/shop/${child._id}`}>{child.name}</Link>
+            </li>
+          ))}
+        </ul>
       )}
     </li>
   );

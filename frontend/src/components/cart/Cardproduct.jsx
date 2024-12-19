@@ -1,68 +1,153 @@
 /* eslint-disable react/prop-types */
-// Cardproduct.js
 import { Rating } from "@material-tailwind/react";
 import { CiHeart } from "react-icons/ci";
 import { PiEyeThin } from "react-icons/pi";
 import { Link } from "react-router-dom";
 import { removeAccents } from "../../utils/helpers";
+import noimages from "../../assets/images/noimages.jpg";
+import axios from "axios";
+import { backendDomain, SummaryApi } from "../../common";
+import { toast } from "react-toastify";
+import { useContext } from "react";
+import Context from "../../context";
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 
 const Cardproduct = ({ item }) => {
+  const { setCart, userData } = useContext(Context); // Lấy setCart từ context
+
+  const addToCart = async () => {
+    if (!userData) {
+      toast.error("Bạn phải đăng nhập để mua hàng");
+      return;
+    }
+    if (item.inventory === 0) {
+      toast.error("Sản phẩm đã hết hàng");
+      return;
+    }
+
+    const data = {
+      productId: item._id,
+      quantity: 1,
+      price: item.saleprice !== 0 ? item.saleprice : item.price,
+      variantId: null,
+    };
+
+    try {
+      const response = await axios({
+        url: SummaryApi.addToCart.url,
+        method: SummaryApi.addToCart.method,
+        data: data,
+        withCredentials: true,
+      });
+      toast.success("Sản phẩm đã được thêm vào giỏ hàng");
+
+      setCart(response.data.cart);
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+    }
+  };
+
   return (
-    <div className="relative flex w-full max-w-[12rem] lg:max-w-[16rem] flex-col overflow-hidden rounded-md border border-gray-100 bg-white shadow-md group/cart">
+    <div className="relative flex w-full max-w-[12rem] lg:max-w-[16rem] h-full flex-col overflow-hidden rounded-md border border-gray-100 bg-white shadow-md group/cart">
       <div className="relative mx-2 mt-2">
         <Link
           to={`/products/${removeAccents(item.name).replaceAll(" ", "-")}`}
-          state={{ id: item?._id }} // Đúng cách truyền state
-          className="flex h-36 lg:h-56 overflow-hidden rounded-md"
+          state={{ id: item?._id }}
+          className={`flex h-36 lg:h-56 overflow-hidden rounded-md ${
+            item.inventory === 0 ? "pointer-events-none" : ""
+          }`}
         >
           <img
-            className="object-cover w-full"
-            src={`http://localhost:5000${item.images}`}
-            alt=""
+            className="object-cover w-full hover:scale-105 transition-all duration-500 ease-in-out"
+            src={
+              item.images?.length > 0
+                ? `${backendDomain}/${item.images[0]}`
+                : noimages
+            }
+            alt={item.name || "Product Image"}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = noimages;
+            }}
           />
         </Link>
-        <span className="absolute top-0 left-0 m-1 lg:m-2 rounded-md bg-primary px-1 lg:px-3 py-1 text-center text-[10px] lg:text-[12px] text-white">
-          -39%
-        </span>
-        <a
-          href="/some/valid/uri"
-          className="absolute bottom-0 right-0 left-0 opacity-0 group-hover/cart:opacity-100 group-hover/cart:translate-y-0 transform translate-y-2 transition-all duration-300 ease-in-out flex w-full items-center justify-center rounded-md bg-slate-900 px-2 py-2 text-center text-sm font-medium text-white hover:bg-primary focus:outline-none focus:ring-4 focus:ring-blue-300"
-        >
-          Add to cart
-        </a>
+        {item.inventory === 0 && (
+          <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-60 flex items-center justify-center text-white text-lg font-medium">
+            Hết hàng
+          </div>
+        )}
+        {item?.saleprice !== 0 && (
+          <span className="absolute top-0 left-0 m-1 lg:m-2 rounded-md bg-primary px-1 lg:px-3 py-1 text-center text-[10px] lg:text-[12px] text-white">
+            {((1 - item?.saleprice / item?.price) * 100).toFixed(0) || 0}%
+          </span>
+        )}
+        {item.inventory !== 0 && (
+          <button
+            className="absolute bottom-0 right-0 left-0 opacity-0 group-hover/cart:opacity-100 group-hover/cart:translate-y-0 transform translate-y-2 transition-all duration-500 ease-in-out flex w-full items-center justify-center rounded-md bg-slate-900 px-2 py-2 text-center text-sm font-medium text-white hover:bg-primary focus:outline-none focus:ring-1 focus:ring-blue-300"
+            onClick={addToCart}
+            disabled={item.inventory === 0}
+          >
+            Add to cart
+          </button>
+        )}
 
-        <div className="absolute top-1 right-2 opacity-0 transform translate-y-2 group-hover/cart:opacity-100 group-hover/cart:translate-y-0 transition-all duration-300 ease-in-out">
+        {/* <div className="absolute top-1 right-2 opacity-0 transform translate-y-2 group-hover/cart:opacity-100 group-hover/cart:translate-y-0 transition-all duration-300 ease-in-out">
           <span className="flex justify-center items-center w-8 h-8 rounded-full my-1 bg-gray-100 cursor-pointer hover:text-primary transition-colors duration-200">
             <CiHeart size={20} />
           </span>
           <span className="flex justify-center items-center w-8 h-8 rounded-full my-1 bg-gray-100 cursor-pointer hover:text-primary transition-colors duration-200">
             <PiEyeThin size={20} />
           </span>
-        </div>
+        </div> */}
       </div>
-      <div className="mt-4 px-5 pb-5">
+      <div className="mt-4 px-2 lg:px-5 pb-5">
         <Link
-          to={`/products/${removeAccents(item.name).replaceAll(" ", "-")}`}
-          state={{ id: item?._id }} // Đúng cách truyền state
+          to={`/products/${removeAccents(item?.name).replaceAll(" ", "-")}`}
+          state={{ id: item?._id }}
         >
-          <h5 className="text-[12px] lg:text-[14px] font-semibold tracking-tight text-slate-900 line-clamp-1">
-            {item.name}
+          <h5 className="text-[12px] lg:text-[15px] font-medium tracking-tight text-slate-900 line-clamp-1">
+            {item?.name}
           </h5>
         </Link>
-        <div className="">
-          <p className="pb-1 flex items-center gap-2">
-            <span className="font-semibold text-primary text-[14px] lg:text-[16px]">
-              {item.sale_price}
+        <div>
+          <p className="pb-1 flex flex-col items-start gap-1">
+            <span className="font-medium text-primary text-[14px]">
+              {(item?.saleprice || item?.price)?.toLocaleString()} VND
             </span>
-            <span className="lg:text-[14px] text-slate-900 text-[12px] line-through">
-              {item.regular_price}
-            </span>
+            {item?.saleprice !== 0 && (
+              <span className="lg:text-[12px] text-gray-400 text-[10px] line-through">
+                {item?.price?.toLocaleString()} VND
+              </span>
+            )}
           </p>
-          <div className="flex items-center">
-            <Rating value={5} className="text-primary text-sm" readonly />
-            <span className="mr-2 ml-2 rounded px-2.5 py-0.5 text-xs font-semibold">
-              ({item.averageRating})
-            </span>
+          <div className="flex items-center mb-4">
+            {item?.numOfReviews > 0 && (
+              <div className="">
+                <div className="flex items-center">
+                  <span className="text-gray-600 text-xs">
+                    {item?.averageRating?.toFixed(1)}
+                  </span>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <span key={star}>
+                      {item?.averageRating >= star ? (
+                        <AiFillStar className="text-yellow-500" size={18} />
+                      ) : item?.averageRating >= star - 0.5 ? (
+                        <AiFillStar
+                          className="text-yellow-500"
+                          size={18}
+                          style={{ clipPath: "inset(0 50% 0 0)" }}
+                        />
+                      ) : (
+                        <AiOutlineStar className="text-gray-400" size={18} />
+                      )}
+                    </span>
+                  ))}
+                </div>
+                <span className="text-gray-600 text-sm">
+                  ({item?.numOfReviews} reviews)
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>

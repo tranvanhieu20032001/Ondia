@@ -154,7 +154,7 @@ function Policy() {
       </p>
       <div className="flex items-center flex-col">
         <p className="py-3 px-5 border border-primary w-full lg:w-1/2 text-center">
-          Khách hàng gửi thông tin yêu cầu bảo hành tới GIGA
+          Khách hàng gửi thông tin yêu cầu bảo hành tới Ondia
         </p>
         <IoIosArrowRoundDown size={35} />
         <p className="py-3 px-5 border border-primary w-full lg:w-1/2 text-center">
@@ -162,12 +162,12 @@ function Policy() {
         </p>
         <IoIosArrowRoundDown size={35} />
         <p className="py-3 px-5 border border-primary w-full lg:w-1/2 text-center">
-          GIGA thực hiện đánh giá, đưa ra phương án sửa chữa bảo hành (Thông
+          Ondia thực hiện đánh giá, đưa ra phương án sửa chữa bảo hành (Thông
           báo, xác nhận phí dịch vụ và sửa chữa nếu có từ khách hàng)
         </p>
         <IoIosArrowRoundDown size={35} />
         <p className="py-3 px-5 border border-primary w-full lg:w-1/2 text-center">
-          GIGA thông báo sản phẩm đã hoàn thành sửa chữa, xác nhận thông tin địa
+          Ondia thông báo sản phẩm đã hoàn thành sửa chữa, xác nhận thông tin địa
           chỉ và thực hiện hoàn trả sản phẩm
         </p>
         <IoIosArrowRoundDown size={35} />

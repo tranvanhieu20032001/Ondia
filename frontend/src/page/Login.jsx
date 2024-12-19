@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import axios from 'axios';
-import SummaryApi from './../common/index'
+import { SummaryApi } from './../common/index'
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/loading/Loading";
@@ -102,7 +102,7 @@ function Login() {
         />
         <div className="w-full my-auto p-4 lg:w-1/2">
           <h2 className="text-2xl font-semibold text-gray-700 text-center">
-            Log in to Ondia
+            Đăng nhập Ondia
           </h2>
           <form className="divide-y divide-gray-200" onSubmit={handleSubmit}>
             <div className="py-4 text-base leading-6 space-y-8 text-gray-700 sm:text-lg sm:leading-7">
@@ -120,8 +120,8 @@ function Login() {
                 />
                 <label
                   htmlFor="email"
-                  className="absolute left-2 -top-5 text-gray-600 text-base transition-all duration-200 ease-in-out
-    peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440
+                  className="absolute left-0 -top-5 text-gray-600 text-[13px] transition-all duration-200 ease-in-out
+    peer-placeholder-shown:-top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440
     peer-focus:-top-5 peer-focus:left-0 peer-focus:text-gray-600 peer-focus:text-[13px]
     peer-valid:-top-5 peer-valid:left-0 peer-valid:text-[13px]"
                 >
@@ -143,8 +143,8 @@ function Login() {
                 />
                 <label
                   htmlFor="password"
-                  className="absolute left-2 -top-5 text-gray-600 text-base transition-all duration-200 ease-in-out
-    peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440
+                  className="absolute left-0 -top-5 text-gray-600 text-[13px] transition-all duration-200 ease-in-out
+    peer-placeholder-shown:-top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440
     peer-focus:-top-5 peer-focus:left-0 peer-focus:text-gray-600 peer-focus:text-[13px]
     peer-valid:-top-5 peer-valid:left-0 peer-valid:text-[13px]"
                 >
@@ -166,15 +166,15 @@ function Login() {
                 <div className="w-full lg:w-auto mb-0">
                   <label className="flex text-sm items-center" htmlFor="">
                     <input type="checkbox" />
-                    <span className="ml-1">Remember me</span>
+                    <span className="ml-1">Ghi nhớ mật khẩu</span>
                   </label>
                 </div>
                 <div className="w-full lg:w-auto">
                   <a
                     className="text-sm inline-block text-gray-600 hover:underline focus:text-gray-800 focus:outline-none w-full"
-                    href="#"
+                    href="/forgot-password"
                   >
-                    Forgot your password?
+                    Quên mật khẩu?
                   </a>
                 </div>
               </div>
@@ -193,14 +193,14 @@ function Login() {
             </span>
           </div>
           <p className="text-center text-sm text-gray-500">
-            Don&#x27;t have an account yet?
+            Bạn chưa có tài khoản?
             <a
-              href="#!"
+              href="/register"
               className="font-semibold text-gray-600 hover:underline focus:text-gray-800 focus:outline-none px-2"
             >
-              Sign up
+              Đăng kí
             </a>
-            .
+
           </p>
         </div>
       </div>

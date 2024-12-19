@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
+  MdCategory,
   MdOutlineKeyboardDoubleArrowLeft,
   MdOutlineKeyboardDoubleArrowRight,
 } from "react-icons/md";
@@ -9,16 +10,18 @@ import { FaUsersGear } from "react-icons/fa6";
 import { CiShoppingCart } from "react-icons/ci";
 import logo from "../../assets/images/Ondia.png";
 import { useSelector } from "react-redux";
+import { BiSolidCoupon } from "react-icons/bi";
+import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
+import { VscFeedback } from "react-icons/vsc";
+import { TfiCommentAlt } from "react-icons/tfi";
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
-    const user = useSelector((state) => state?.user?.user);
-  console.log("fhdajk",user); // Lấy người dùng từ Redux
   const menuItems = [
-    {
-      label: "Bảng điều khiển",
-      icon: <AiOutlineControl size={25} />,
-      link: "/admin",
-    },
+    // {
+    //   label: "Bảng điều khiển",
+    //   icon: <AiOutlineControl size={25} />,
+    //   link: "/admin",
+    // },
     {
       label: "Quản lý người dùng",
       icon: <FaUsersGear size={25} />,
@@ -33,6 +36,31 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
       label: "Quản lý sản phẩm",
       icon: <AiOutlineProduct size={25} />,
       link: "/admin/products",
+    },
+    {
+      label: "Quản lý danh mục",
+      icon: <MdCategory size={25} />,
+      link: "/admin/categories",
+    },
+    {
+      label: "Mã giảm giá",
+      icon: <BiSolidCoupon size={25} />,
+      link: "/admin/coupons",
+    },
+    {
+      label: "Bảo hành",
+      icon: <HiOutlineWrenchScrewdriver size={25} />,
+      link: "/admin/warranty",
+    },
+    {
+      label: "Phản hồi",
+      icon: <VscFeedback size={25} />,
+      link: "/admin/feedbacks",
+    },
+    {
+      label: "Đánh giá",
+      icon: <TfiCommentAlt size={25} />,
+      link: "/admin/reviews",
     },
   ];
 
@@ -69,11 +97,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             key={index}
             className={`flex items-center ${
               sidebarOpen ? "justify-start" : "justify-center"
-            } gap-2 py-2 cursor-pointer text-gray-500 border-b border-b-transparent hover:text-primary hover:border-b-primary`}
+            } gap-2 py-2 cursor-pointer`}
           >
             <NavLink
               to={item.link}
-              className="flex items-center gap-2 py-2 px-4 rounded"
+              className={({ isActive }) =>
+                `flex items-center gap-2 w-full py-2 px-4 rounded border-b border-transparent ${
+                  isActive
+                    ? "text-primary border-b-primary"
+                    : "text-gray-500 hover:text-primary hover:border-b-primary"
+                }`
+              }
             >
               {item.icon}
               <span

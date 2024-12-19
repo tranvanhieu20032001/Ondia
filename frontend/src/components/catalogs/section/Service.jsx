@@ -79,16 +79,80 @@ function Service() {
           </defs>
         </svg>
 
-        <span className="text-center text-[14px] lg:text-[20px] font-semibold">
-          FREE AND FAST DELIVERY
+        <span className="text-center text-[13px] lg:text-[16px] font-semibold">
+          Miễn phí và Nhanh chóng
         </span>
         <span className="text-center text-[10px] lg:text-[14px]">
-          Free delivery for all orders over $140
+          Miễn phí tất cả các đơn hàng
         </span>
       </div>
       <div className="relative flex w-full max-w-[256px] flex-col items-center overflow-hidden rounded-md bg-white transition-colors duration-300 ease-in-out">
         <svg
-          className="w-[60px] h-[60px] lg:w-[80px] lg:h-[80px]"
+          width="80"
+          height="80"
+          viewBox="0 0 80 80"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            opacity="0.3"
+            d="M80 40C80 62.0914 62.0914 80 40 80C17.9086 80 0 62.0914 0 40C0 17.9086 17.9086 0 40 0C62.0914 0 80 17.9086 80 40ZM10.9071 40C10.9071 56.0675 23.9325 69.0929 40 69.0929C56.0675 69.0929 69.0929 56.0675 69.0929 40C69.0929 23.9325 56.0675 10.9071 40 10.9071C23.9325 10.9071 10.9071 23.9325 10.9071 40Z"
+            fill="#2F2E30"
+          />
+          <circle cx="40" cy="40" r="29" fill="black" />
+          <g clipPath="url(#clip0_1170_3979)">
+            <path
+              d="M33.3332 44.9998C33.3332 43.1589 31.8408 41.6665 29.9998 41.6665C28.1589 41.6665 26.6665 43.1589 26.6665 44.9998V48.3332C26.6665 50.1741 28.1589 51.6665 29.9998 51.6665C31.8408 51.6665 33.3332 50.1741 33.3332 48.3332V44.9998Z"
+              stroke="white"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M53.3332 44.9998C53.3332 43.1589 51.8408 41.6665 49.9998 41.6665C48.1589 41.6665 46.6665 43.1589 46.6665 44.9998V48.3332C46.6665 50.1741 48.1589 51.6665 49.9998 51.6665C51.8408 51.6665 53.3332 50.1741 53.3332 48.3332V44.9998Z"
+              stroke="white"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M26.6665 44.9998V39.9998C26.6665 36.4636 28.0713 33.0722 30.5717 30.5717C33.0722 28.0713 36.4636 26.6665 39.9998 26.6665C43.5361 26.6665 46.9274 28.0713 49.4279 30.5717C51.9284 33.0722 53.3332 36.4636 53.3332 39.9998V44.9998"
+              stroke="white"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M50 51.6665C50 52.9926 48.9464 54.2644 47.0711 55.202C45.1957 56.1397 42.6522 56.6665 40 56.6665"
+              stroke="white"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </g>
+          <defs>
+            <clipPath id="clip0_1170_3979">
+              <rect
+                width="40"
+                height="40"
+                fill="white"
+                transform="translate(20 20)"
+              />
+            </clipPath>
+          </defs>
+        </svg>
+
+        <span className="text-center text-[13px] lg:text-[16px] font-semibold">
+          Chăm sóc khách hàng
+        </span>
+        <span className="text-center text-[10px] lg:text-[14px]">
+          Phản hồi nhanh chóng
+        </span>
+      </div>
+      <div className="relative flex w-full max-w-[256px] flex-col items-center overflow-hidden rounded-md bg-white transition-colors duration-300 ease-in-out">
+        <svg
+          width="80"
+          height="80"
           viewBox="0 0 80 80"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -111,90 +175,11 @@ function Service() {
           />
         </svg>
 
-        <span className="text-center text-[14px] lg:text-[20px] font-semibold">MONEY BACK GUARANTEE</span>
-        <span className="text-center text-[10px] lg:text-[14px]">We reurn money within 30 days</span>
-      </div>
-      <div className="relative flex w-full max-w-[256px] flex-col items-center overflow-hidden rounded-md bg-white transition-colors duration-300 ease-in-out">
-        <svg
-          className="w-[60px] h-[60px] lg:w-[80px] lg:h-[80px]"
-          viewBox="0 0 81 80"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            opacity="0.3"
-            d="M80.5 40C80.5 62.0914 62.5914 80 40.5 80C18.4086 80 0.5 62.0914 0.5 40C0.5 17.9086 18.4086 0 40.5 0C62.5914 0 80.5 17.9086 80.5 40ZM11.4071 40C11.4071 56.0675 24.4325 69.0929 40.5 69.0929C56.5675 69.0929 69.5929 56.0675 69.5929 40C69.5929 23.9325 56.5675 10.9071 40.5 10.9071C24.4325 10.9071 11.4071 23.9325 11.4071 40Z"
-            fill="#2F2E30"
-          />
-          <circle cx="40.5" cy="40" r="29" fill="black" />
-          <g clipPath="url(#clip0_1004_3228)">
-            <path
-              d="M32.1668 51.6667C34.0078 51.6667 35.5002 50.1743 35.5002 48.3333C35.5002 46.4924 34.0078 45 32.1668 45C30.3259 45 28.8335 46.4924 28.8335 48.3333C28.8335 50.1743 30.3259 51.6667 32.1668 51.6667Z"
-              stroke="#FAFAFA"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M48.8333 51.6667C50.6743 51.6667 52.1667 50.1743 52.1667 48.3333C52.1667 46.4924 50.6743 45 48.8333 45C46.9924 45 45.5 46.4924 45.5 48.3333C45.5 50.1743 46.9924 51.6667 48.8333 51.6667Z"
-              stroke="#FAFAFA"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M28.8335 48.3335H27.5002C26.3956 48.3335 25.5002 47.4381 25.5002 46.3335V41.6668M23.8335 28.3335H40.1668C41.2714 28.3335 42.1668 29.2289 42.1668 30.3335V48.3335M35.5002 48.3335H45.5002M52.1668 48.3335H53.5002C54.6047 48.3335 55.5002 47.4381 55.5002 46.3335V38.3335M55.5002 38.3335H42.1668M55.5002 38.3335L51.0828 30.9712C50.7213 30.3688 50.0703 30.0002 49.3678 30.0002H42.1668"
-              stroke="#FAFAFA"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M28.5 48H27.1667C26.0621 48 25.1667 47.1046 25.1667 46V41.3333M23.5 28H39.8333C40.9379 28 41.8333 28.8954 41.8333 30V48M35.5 48H45.1667M52.5 48H53.1667C54.2712 48 55.1667 47.1046 55.1667 46V38M55.1667 38H41.8333M55.1667 38L50.7493 30.6377C50.3878 30.0353 49.7368 29.6667 49.0343 29.6667H41.8333"
-              stroke="#FAFAFA"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M25.5 31.8184H32.1667"
-              stroke="#FAFAFA"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M22.3184 35.4546H28.985"
-              stroke="#FAFAFA"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M25.5 39.0908H32.1667"
-              stroke="#FAFAFA"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </g>
-          <defs>
-            <clipPath id="clip0_1004_3228">
-              <rect
-                width="40"
-                height="40"
-                fill="white"
-                transform="translate(20.5 20)"
-              />
-            </clipPath>
-          </defs>
-        </svg>
-
-        <span className="text-center text-[14px] lg:text-[20px] font-semibold">
-          FREE AND FAST DELIVERY
+        <span className="text-center text-[13px] lg:text-[16px] font-semibold">
+          Bảo vệ khách hàng
         </span>
         <span className="text-center text-[10px] lg:text-[14px]">
-          Free delivery for all orders over $140
+          Chính sách bảo hàng rõ ràng
         </span>
       </div>
     </div>

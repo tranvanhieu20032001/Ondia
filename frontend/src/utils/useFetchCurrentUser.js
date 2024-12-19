@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { setUserDetails } from "../store/userSlice";
-import SummaryApi from "../common";
+import { SummaryApi } from "../common";
 
 export const useFetchCurrentUser = () => {
   const [loading, setLoading] = useState(true);

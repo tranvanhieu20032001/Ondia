@@ -1,8 +1,10 @@
 import React from "react";
 import event from "../../../assets/images/event.png";
 import Countdown from "../../countdown/Countdown";
+import { useNavigate } from "react-router-dom";
 
 function SpecialEvent() {
+  const navigate = useNavigate();
   return (
     <div className="w-full h-[500px] bg-black flex flex-col lg:flex-row items-center p-1 lg:p-10 mt-20">
       <div className="w-full lg:w-2/5 flex flex-col justify-center p-4 gap-y-4">
@@ -10,8 +12,8 @@ function SpecialEvent() {
         <p className="text-white text-[24px] lg:text-[48px] font-normal lg:font-semibold">
           Enhance Your Music Experience
         </p>
-        <Countdown targetDate={'2024-10-18T00:00:00'} />
-        <button className="capitalize mt-4 bg-[#00FF66] text-white p-2 text-[12px] lg:text-[16px] rounded-md w-20 md:w-44">
+        {/* <Countdown targetDate={'2024-10-18T00:00:00'} /> */}
+        <button onClick={() => navigate("/shop")} className="capitalize mt-4 bg-[#00FF66] text-white p-2 text-[12px] lg:text-[16px] rounded-md w-20 md:w-44">
           Buy now
         </button>
       </div>

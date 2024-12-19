@@ -1,74 +1,105 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import Editprofile from "../components/layouts/editprofile";
-import Myorder from "../components/layouts/Myorder";
-import Wishlist from "./Wishlist";
+import { Link, Outlet, NavLink } from "react-router-dom";
 import { BsPersonCircle } from "react-icons/bs";
 import { CiHeart, CiLogout, CiViewList } from "react-icons/ci";
-// import Mywishlist from "../components/layouts/Mywishlist"; // Thêm MyWishlist component nếu có
+import { useSelector } from "react-redux";
+import { MdManageAccounts } from "react-icons/md";
+import ROLE from "../common/role";
 
 function MyAccount() {
-  const [activeSection, setActiveSection] = useState("profile");
-
+  const user = useSelector((state) => state?.user?.user?.user);
+  console.log('user',user);
+  
   return (
     <div className="max-w-screen-xl mx-auto lg:px-0 pb-8">
+      {/* Breadcrumb */}
       <div className="flex justify-between items-center my-10 px-2">
-        <p className="">
+        <p>
           <Link to="/" className="text-gray-500 hover:underline">
             Home
           </Link>
-          / <span className="">My Account</span>
+          / <span>My Account</span>
         </p>
         <p>
-          Welcome, <span className="text-primary">Admin</span>
+          Welcome, <span className="text-primary">{user.name}</span>
         </p>
       </div>
+
+      {/* Main layout */}
       <div className="relative grid grid-cols-8 lg:grid-cols-5 gap-1">
+        {/* Sidebar Navigation */}
         <nav className="space-y-6 col-span-1 shadow-lg">
           <ul className="space-y-6 text-gray-500">
-            <li
-              className={`flex items-center justify-center lg:justify-start gap-2 px-1 lg:px-6 py-2 cursor-pointer hover:text-primary ${
-                activeSection === "profile"
-                  ? "text-primary border-b border-b-primary"
-                  : ""
-              }`}
-              onClick={() => setActiveSection("profile")}
-            >
-              <BsPersonCircle size={25} />
-              <span className="hidden lg:inline-block">My Profile</span>
+            <li>
+              <NavLink
+                 to={`/myaccount/${user?.userId}`}
+                end
+                className={({ isActive }) =>
+                  `flex items-center justify-center lg:justify-start gap-2 px-1 lg:px-6 py-2 cursor-pointer hover:text-primary ${
+                    isActive ? "text-primary border-b border-b-primary" : ""
+                  }`
+                }
+              >
+                <BsPersonCircle size={25} />
+                <span className="hidden lg:inline-block">My Profile</span>
+              </NavLink>
             </li>
-            <li
-              className={`flex items-center justify-center lg:justify-start gap-2 px-1 lg:px-6 py-2 cursor-pointer hover:text-primary ${
-                activeSection === "orders"
-                  ? "text-primary border-b border-b-primary"
-                  : ""
-              }`}
-              onClick={() => setActiveSection("orders")}
-            >
-              <CiViewList size={25} />{" "}
-              <span className="hidden lg:inline-block">My Orders</span>
+            <li>
+              <NavLink
+                to="/myaccount/orders"
+                className={({ isActive }) =>
+                  `flex items-center justify-center lg:justify-start gap-2 px-1 lg:px-6 py-2 cursor-pointer hover:text-primary ${
+                    isActive ? "text-primary border-b border-b-primary" : ""
+                  }`
+                }
+              >
+                <CiViewList size={25} />
+                <span className="hidden lg:inline-block">My Orders</span>
+              </NavLink>
             </li>
+            {/* <li>
+              <NavLink
+                to="/myaccount/wishlist"
+                className={({ isActive }) =>
+                  `flex items-center justify-center lg:justify-start gap-2 px-1 lg:px-6 py-2 cursor-pointer hover:text-primary ${
+                    isActive ? "text-primary border-b border-b-primary" : ""
+                  }`
+                }
+              >
+                <CiHeart size={25} />
+                <span className="hidden lg:inline-block">My Wishlist</span>
+              </NavLink>
+            </li> */}
+           {
+            user?.role === ROLE.ADMIN && ( <li>
+              <NavLink
+                to="/admin/users"
+                className={({ isActive }) =>
+                  `flex items-center justify-center lg:justify-start gap-2 px-1 lg:px-6 py-2 cursor-pointer hover:text-primary ${
+                    isActive ? "text-primary border-b border-b-primary" : ""
+                  }`
+                }
+              >
+                <MdManageAccounts size={25} />
+                <span className="hidden lg:inline-block">Admin management</span>
+              </NavLink>
+            </li>)
+           }
             <li
-              className={`flex items-center justify-center lg:justify-start gap-2 px-1 lg:px-6 py-2 cursor-pointer hover:text-primary ${
-                activeSection === "wishlist"
-                  ? "text-primary border-b border-b-primary"
-                  : ""
-              }`}
-              onClick={() => setActiveSection("wishlist")}
+              className="flex items-center justify-center lg:justify-start gap-2 px-1 lg:px-6 py-2 cursor-pointer hover:text-primary"
+              onClick={() => {
+                localStorage.removeItem("authToken"); // Xóa token đăng nhập
+                window.location.href = "/login"; // Redirect đến trang đăng nhập
+              }}
             >
-              <CiHeart size={25} />{" "}
-              <span className="hidden lg:inline-block">My Wishlist</span>
-            </li>
-            <li className="flex items-center justify-center lg:justify-start gap-2 px-1 lg:px-6 py-2 cursor-pointer hover:text-primary">
               <CiLogout size={23} />
               <span className="hidden lg:inline-block">Logout</span>
             </li>
           </ul>
         </nav>
+
+        {/* Content */}
         <div className="col-span-7 lg:col-span-4">
-          {activeSection === "profile" && <Editprofile />}
-          {activeSection === "orders" && <Myorder />}
-          {activeSection === "wishlist" && <Wishlist />}
+          <Outlet /> {/* Render nội dung từ các route con */}
         </div>
       </div>
     </div>

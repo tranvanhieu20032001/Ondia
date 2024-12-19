@@ -24,11 +24,11 @@ function Catagory() {
     <div className="mt-12 lg:mt-24">
       <div className="flex items-center gap-4">
         <span className="inline-block w-5 h-11 rounded-md border bg-primary"></span>
-        <span className="text-primary font-bold text-lg">Category</span>
+        <span className="text-primary font-bold text-lg">Danh mục</span>
       </div>
       <div className="flex items-center gap-10 lg:gap-32 mt-5 mb-8">
         <span className="capitalize font-bold text-xl lg:text-4xl">
-          Browse By Category
+          Danh mục nổi bật
         </span>
       </div>
       <div className="flex mx-3 relative">
