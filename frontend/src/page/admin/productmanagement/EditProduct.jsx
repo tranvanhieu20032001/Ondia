@@ -164,7 +164,7 @@ const EditProduct = () => {
     setImagePreview(newImagePreview);
 
     // Remove image from product's images
-    const newImages = product.images.filter((_, idx) => idx !== index);
+    const newImages = product?.images.filter((_, idx) => idx !== index);
     setProduct((prev) => ({
       ...prev,
       images: newImages,
@@ -254,7 +254,7 @@ const EditProduct = () => {
                     </button>
                   </div>
                 ))
-              : product.images.map((image, idx) => (
+              : product?.images.map((image, idx) => (
                   <div key={idx} className="relative">
                     <img
                       src={`${backendDomain}/${image}`}
@@ -291,7 +291,7 @@ const EditProduct = () => {
         <div className="col-span-5 space-y-8 text-sm">
           {/* Tên sản phẩm */}
           <div className="flex gap-4">
-            <div className="border w-4/6 focus-within:border-primary focus-within:text-primary transition-all duration-500 relative rounded p-1">
+            <div className="border w-1/2 focus-within:border-primary focus-within:text-primary transition-all duration-500 relative rounded p-1">
               <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
                 <label htmlFor="name" className="bg-white text-gray-600 px-1">
                   Tên sản phẩm
@@ -301,32 +301,11 @@ const EditProduct = () => {
                 id="name"
                 name="name"
                 type="text"
-                value={product.name || ""}
+                value={product?.name || ""}
                 onChange={handleInputChange}
                 className="py-1 px-1 text-gray-900 outline-none block h-full w-full"
               />
             </div>
-            <div className="w-2/6">
-              <label className="inline-flex items-center mt-3">
-                <input
-                  type="checkbox"
-                  className="form-checkbox h-5 w-5 text-gray-600"
-                  name="flashSale"
-                  checked={product.flashsale} // Liên kết với trạng thái
-                  onChange={(e) =>
-                    setProduct((prev) => ({
-                      ...prev,
-                      flashsale: e.target.checked, // Cập nhật giá trị checkbox
-                    }))
-                  }
-                />
-                <span className="ml-2 text-gray-700">Flash Sale</span>
-              </label>
-            </div>
-          </div>
-
-          {/* Giá, Danh mục, Công ty */}
-          <div className="flex gap-4">
             <div className="border w-1/4 relative rounded p-1">
               <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
                 <label htmlFor="price" className="bg-white text-gray-600 px-1">
@@ -360,7 +339,11 @@ const EditProduct = () => {
                 className="py-1 px-1 text-gray-900 outline-none block h-full w-full"
               />
             </div>
-            <div className="border w-1/4 relative rounded p-1">
+          </div>
+
+          {/* Danh mục, Công ty */}
+          <div className="grid grid-cols-3 gap-4">
+            <div className="border relative rounded p-1">
               <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
                 <label
                   htmlFor="category"
@@ -372,7 +355,7 @@ const EditProduct = () => {
               <select
                 id="category"
                 name="mainCategory"
-                value={product.subCategory || product.mainCategory}
+                value={product?.subCategory || product?.mainCategory}
                 onChange={(e) => handleCategory(e.target.value)}
                 className="py-1 px-1 text-gray-900 outline-none block h-full w-full"
               >
@@ -391,7 +374,7 @@ const EditProduct = () => {
               </select>
             </div>
 
-            <div className="border w-1/4 relative rounded p-1">
+            <div className="border relative rounded p-1">
               <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
                 <label className="bg-white text-gray-600 px-1">
                   Gói bảo hành
@@ -400,7 +383,7 @@ const EditProduct = () => {
               <select
                 id="warranties"
                 name="warranties"
-                value={product.warranties}
+                value={product?.warranties}
                 onChange={handleInputChange}
                 className="py-1 px-1 text-gray-900 outline-none block h-full w-full"
               >
@@ -412,23 +395,71 @@ const EditProduct = () => {
                 ))}
               </select>
             </div>
-            <div className="border w-1/4 relative rounded p-1">
-              <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
-                <label
-                  htmlFor="company"
-                  className="bg-white text-gray-600 px-1"
-                >
-                  Công ty
-                </label>
-              </div>
-              <input
+            <div className="border relative rounded p-1">
+              <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs"><label className="bg-white text-gray-600 px-1">
+                Thương hiệu
+              </label></div>
+              <select
                 id="company"
                 name="company"
-                type="text"
                 value={product.company || ""}
-                onChange={handleInputChange}
+                onChange={(e) =>
+                  setProduct({ ...product, company: e.target.value })
+                }
                 className="py-1 px-1 text-gray-900 outline-none block h-full w-full"
-              />
+              >
+                <option value="">-- Chọn thương hiệu --</option>
+                {[
+                  "Xiaomi",
+                  "Ecovacs",
+                  "Tineco",
+                  "Xiaomi-Redmi",
+                  "Xiaomi - Lumias",
+                  "NWT-Lumias",
+                  "Xiaomi- Lumias",
+                  "Xiaomi-KingSmith",
+                ].map((company, index) => (
+                  <option key={index} value={company}>
+                    {company}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <div className="">
+              <label className="block mb-2 text-sm font-medium text-gray-700">
+                Tags
+              </label>
+              <div className="grid grid-cols-4 gap-4 items-end mb-4">
+                {["flashsale", "outstanding", "promotion", "new"].map((tag) => (
+                  <div key={tag} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={tag}
+                      value={tag}
+                      checked={product?.tags?.includes(tag)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setProduct({
+                            ...product,
+                            tags: [...product.tags, tag],
+                          });
+                        } else {
+                          setProduct({
+                            ...product,
+                            tags: product?.tags.filter((t) => t !== tag),
+                          });
+                        }
+                      }}
+                    />
+                    <label htmlFor={tag} className="ml-2">
+                      {tag}
+                    </label>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -446,7 +477,7 @@ const EditProduct = () => {
               <textarea
                 id="description"
                 name="description"
-                value={product.description || ""}
+                value={product?.description || ""}
                 onChange={handleInputChange}
                 className="py-1 px-1 text-gray-900 outline-none block h-full w-full"
                 rows="4"

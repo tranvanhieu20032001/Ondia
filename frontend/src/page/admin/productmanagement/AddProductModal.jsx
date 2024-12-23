@@ -16,12 +16,13 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
     description: "",
     images: [],
     mainCategory: "",
-    warranties:"",
+    warranties: "",
     subCategory: null,
-    flashsale: false,
+    tags: [], // <-- Thêm mảng tags vào state
     company: "",
     specifications: [],
   });
+
   const [imagePreview, setImagePreview] = useState([]);
 
   const handleImageChange = (e) => {
@@ -194,9 +195,38 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
               className="mt-1 px-3 py-2 w-full border rounded outline-none"
             />
           </div>
-
-          
           <div className="mb-4 col-span-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Giá
+            </label>
+            <input
+              type="number"
+              value={product.price}
+              onChange={(e) =>
+                setProduct({ ...product, price: Number(e.target.value) })
+              }
+              min="0"
+              className="mt-1 px-3 py-2 w-full border rounded outline-none"
+            />
+          </div>
+          <div className="mb-4 col-span-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Giá khuyến mãi
+            </label>
+            <input
+              type="number"
+              value={product.saleprice}
+              onChange={(e) =>
+                setProduct({ ...product, saleprice: Number(e.target.value) })
+              }
+              min="0"
+              className="mt-1 px-3 py-2 w-full border rounded outline-none"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4 items-end mb-4">
+          <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
               Danh mục
             </label>
@@ -222,14 +252,14 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
             </select>
           </div>
 
-          <div className="mb-4 col-span-2">
+          <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
-             Gói bảo hành
+              Gói bảo hành
             </label>
             <select
               id="warranties"
               name="warranties"
-              value={product.warranties ||""}
+              value={product.warranties || ""}
               onChange={(e) =>
                 setProduct({ ...product, warranties: e.target.value })
               }
@@ -237,78 +267,72 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
             >
               <option value="">-- Chọn gói bảo hành --</option>
               {warranties?.map((warranty) => (
-                <option
-                  key={warranty?._id}
-                  value={warranty?._id}
-                 
-                >
+                <option key={warranty?._id} value={warranty?._id}>
                   {warranty?.name}
                 </option>
               ))}
             </select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-4 gap-4 items-end">
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Giá
-            </label>
-            <input
-              type="number"
-              value={product.price}
-              onChange={(e) =>
-                setProduct({ ...product, price: Number(e.target.value) })
-              }
-              min="0"
-              className="mt-1 px-3 py-2 w-full border rounded outline-none"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Giá khuyến mãi
-            </label>
-            <input
-              type="number"
-              value={product.saleprice}
-              onChange={(e) =>
-                setProduct({ ...product, saleprice: Number(e.target.value) })
-              }
-              min="0"
-              className="mt-1 px-3 py-2 w-full border rounded outline-none"
-            />
           </div>
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
               Thương hiệu
             </label>
-            <input
-              type="text"
-              value={product.company}
+            <select
+              id="company"
+              name="company"
+              value={product.company || ""}
               onChange={(e) =>
                 setProduct({ ...product, company: e.target.value })
               }
               className="mt-1 px-3 py-2 w-full border rounded outline-none"
-            />
+            >
+              <option value="">-- Chọn thương hiệu --</option>
+              {[
+                "Xiaomi",
+                "Ecovacs",
+                "Tineco",
+                "Xiaomi-Redmi",
+                "Xiaomi - Lumias",
+                "NWT-Lumias",
+                "Xiaomi- Lumias",
+                "Xiaomi-KingSmith",
+              ].map((company, index) => (
+                <option key={index} value={company}>
+                  {company}
+                </option>
+              ))}
+            </select>
           </div>
-
-          <div className="mb-4">
-            <label className="inline-flex items-center mt-3">
-              <input
-                type="checkbox"
-                className="form-checkbox h-5 w-5 text-gray-600"
-                name="flashSale"
-                checked={product.flashsale}
-                onChange={(e) =>
-                  setProduct({
-                    ...product,
-                    flashsale: e.target.checked,
-                  })
-                }
-              />
-              <span className="ml-2 text-gray-700">Flash Sale</span>
+        </div>
+        <div className="">
+            <label className="block mb-2 text-sm font-medium text-gray-700">
+              Chọn Tags
             </label>
+          <div className="grid grid-cols-4 gap-4 items-end mb-4">
+            {["flashsale", "outstanding", "promotion", "new"].map((tag) => (
+              <div key={tag} className="flex items-center">
+                <input
+                  type="checkbox"
+                  id={tag}
+                  value={tag}
+                  checked={product.tags.includes(tag)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setProduct({ ...product, tags: [...product.tags, tag] });
+                    } else {
+                      setProduct({
+                        ...product,
+                        tags: product.tags.filter((t) => t !== tag),
+                      });
+                    }
+                  }}
+                />
+                <label htmlFor={tag} className="ml-2">
+                  {tag}
+                </label>
+              </div>
+            ))}
           </div>
         </div>
 

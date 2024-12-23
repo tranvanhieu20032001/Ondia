@@ -18,50 +18,80 @@ import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import RelatedItem from "../components/catalogs/section/RelatedItem";
 
 const ProductPage = () => {
-  let { state } = useLocation();
+  const { state } = useLocation();
+
   const [product, setProduct] = useState([]);
-  const [reviews, setReviews] = useState([]); // Local state for reviews
+  const [reviews, setReviews] = useState([]);
   const [mainImage, setMainImage] = useState(noimage);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [quantity, setQuantity] = useState(1); 
-
+  const [quantity, setQuantity] = useState(1);
+  const { setCart ,userData } = useContext(Context);
+  
   const showProduct = async (productId) => {
+    setLoading(true);
     try {
       const url = SummaryApi.getProductById.url.replace(":id", productId);
-      const dataResponse = await axios({
+      const { data } = await axios({
         url: url,
         method: SummaryApi.getProductById.method,
         withCredentials: true,
       });
-      const dataApi = await dataResponse.data;
-      setProduct(dataApi.product);
-      setReviews(dataApi.product.reviews || []); // Initialize reviews from API
-
-      if (dataApi.product.images?.length > 0) {
-        setMainImage(`${backendDomain}/${dataApi.product.images[0]}`);
+  
+      setProduct(data.product);
+      setReviews(data.product.reviews || []);
+      if (data.product.images?.length > 0) {
+        setMainImage(`${backendDomain}/${data.product.images[0]}`);
       }
-      console.log("produtc", product);
+      console.log("Product:", data.product);
     } catch (error) {
-      console.log(error);
+      console.error("Error loading product:", error);
+      setError(error);
+    } finally {
+      setLoading(false);
     }
   };
-
-  const { setCart } = useContext(Context);
-
+  
+  const handleAddToLocalCart = (product) => {
+    const cartKey = "cart";
+    const cartFromStorage = JSON.parse(localStorage.getItem(cartKey)) || [];
+    const existingProductIndex = cartFromStorage.findIndex(
+      (pro) => pro.productId === product._id
+    );
+  
+    if (existingProductIndex !== -1) {
+      cartFromStorage[existingProductIndex].quantity += 1;
+    } else {
+      cartFromStorage.push({
+        productId: product._id,
+        quantity: 1,
+        price: product.saleprice !== 0 ? product.saleprice : product.price,
+      });
+    }
+  
+    localStorage.setItem(cartKey, JSON.stringify(cartFromStorage));
+    toast.success("Sản phẩm đã được thêm vào giỏ hàng");
+    setCart({ products: cartFromStorage });
+  };
+  
   const addToCart = async () => {
     if (product.inventory === 0) {
       toast.error("Sản phẩm đã hết hàng");
       return;
     }
-
+  
+    if (!userData) {
+      handleAddToLocalCart(product);
+      return;
+    }
+  
     const data = {
       productId: product._id,
       quantity: quantity || 1,
       price: product.saleprice !== 0 ? product.saleprice : product.price,
       variantId: null,
     };
-
+  
     try {
       const response = await axios({
         url: SummaryApi.addToCart.url,
@@ -70,12 +100,13 @@ const ProductPage = () => {
         withCredentials: true,
       });
       toast.success("Sản phẩm đã được thêm vào giỏ hàng");
-
       setCart(response.data.cart);
     } catch (error) {
       console.error("Failed to add to cart:", error);
+      toast.error("Có lỗi xảy ra khi thêm vào giỏ hàng.");
     }
   };
+  
 
   const handleAddComment = async (rating, comment, username) => {
     setLoading(true);

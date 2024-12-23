@@ -33,7 +33,7 @@ function BillingDetails({ user, setBillingData, errors }) {
 
   return (
     <div className="space-y-8 shadow-md px-4 max-h-max pb-8">
-      <h1 className="text-xl lg:text-4xl my-10">Billing Details</h1>
+      <h1 className="text-xl lg:text-4xl my-10">Chi tiết thanh toán</h1>
       <div className="border focus-within:border-primary focus-within:text-primary transition-all duration-500 relative rounded p-1">
         <div className="-mt-4 absolute tracking-wider px-1 uppercase text-xs">
           <label htmlFor="name" className="bg-white text-gray-600 px-1">

@@ -20,6 +20,8 @@ function Myorder() {
         withCredentials: true,
       });
       setOrders(response.data.orders);
+      console.log("Order",orders);
+      
       setFilteredOrders(response.data.orders); // Initialize filtered orders
     } catch (error) {
       console.error("Failed to fetch orders:", error);

@@ -7,17 +7,25 @@ import { SummaryApi } from "../../common";
 function OrderReceived() {
   const { id } = useParams();
   const [orderDetails, setOrderDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const showOrder = async (orderId) => {
+    setLoading(true);
+    setError(null);
     try {
       const response = await axios({
         url: SummaryApi.getOrderById.url.replace(":id", orderId),
         method: SummaryApi.getOrderById.method,
         withCredentials: true,
       });
+
       setOrderDetails(response.data.order);
     } catch (error) {
-      console.error("Error fetching order details:", error);
+      console.error("Lỗi khi lấy thông tin đơn hàng:", error);
+      setError("Không thể lấy thông tin đơn hàng. Vui lòng thử lại.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -32,35 +40,39 @@ function OrderReceived() {
       <div className="bg-green-100 text-center text-green-800 p-6">
         <div className="flex items-center gap-4 justify-center">
           <IoMdCheckmarkCircleOutline size={50} />
-          <h2 className="text-xl font-semibold">Payment Successful!</h2>
+          <h2 className="text-xl font-semibold">Thanh toán thành công!</h2>
         </div>
         <p className="mt-2">
-          Thank you for your order! Your payment has been processed successfully.
+          Cảm ơn bạn đã đặt hàng! Thanh toán của bạn đã được xử lý thành công.
         </p>
       </div>
 
-      {orderDetails ? (
+      {loading ? (
+        <div className="text-center mt-4">Đang tải thông tin đơn hàng...</div>
+      ) : error ? (
+        <div className="text-center text-red-600 mt-4">{error}</div>
+      ) : orderDetails ? (
         <div className="bg-white p-6 rounded-lg shadow-md mb-6 text-green-800">
-          <h3 className="text-xl font-semibold mb-4">Order Summary</h3>
+          <h3 className="text-xl font-semibold mb-4">Tóm tắt đơn hàng</h3>
           <div className="space-y-4">
             <div>
-              <span className="font-semibold">Order Number:</span> # {orderDetails._id}
+              <span className="font-semibold">Mã đơn hàng:</span> # {orderDetails._id}
             </div>
             <div>
-              <span className="font-semibold">Payment Method:</span>{" "}
+              <span className="font-semibold">Phương thức thanh toán:</span>{" "}
               {orderDetails.paymentMethod}
             </div>
             <div>
-              <span className="font-semibold">Shipping Address:</span>{" "}
+              <span className="font-semibold">Địa chỉ giao hàng:</span>{" "}
               {orderDetails.shippingAddress}
             </div>
             <div>
-              <span className="font-semibold">Phone:</span> {orderDetails.phone}
+              <span className="font-semibold">Số điện thoại:</span> {orderDetails.phone}
             </div>
           </div>
         </div>
       ) : (
-        <div className="text-center mt-4">Loading order details...</div>
+        <div className="text-center mt-4">Không có thông tin đơn hàng.</div>
       )}
 
       <div className="flex justify-between">
@@ -68,13 +80,13 @@ function OrderReceived() {
           to="/"
           className="text-white bg-primary hover:bg-primary-dark px-4 py-2 rounded-md"
         >
-          Go to Homepage
+          Về trang chủ
         </Link>
         <Link
           to="/myaccount/orders"
           className="text-primary border border-primary hover:bg-primary hover:text-white px-4 py-2 rounded-md"
         >
-          View My Orders
+          Xem đơn hàng của tôi
         </Link>
       </div>
     </div>

@@ -9,7 +9,7 @@ import Countdown from "../../countdown/Countdown";
 import { SummaryApi } from "../../../common";
 import axios from "axios";
 
-function Flashsales() {
+function SectionProducts({type, title, subtitle}) {
   const [viewAll, setViewAll] = useState(false);
   const [products, setProducts] = useState([]);
   
@@ -22,7 +22,7 @@ function Flashsales() {
         credentials: "include",
       });
       const dataApi = await dataResponse.data;
-      setProducts(dataApi.products.filter((product) => product.tags.includes('flashsale')));
+      setProducts(dataApi.products.filter((product) => product.tags.includes(type)));
     } catch (error) {
       console.log(error);
     }
@@ -36,13 +36,12 @@ function Flashsales() {
     <div className="mt-12 lg:mt-24">
       <div className="flex items-center gap-4">
         <span className="inline-block w-5 h-11 rounded-md border bg-primary"></span>
-        <span className="text-primary font-bold text-lg">Hôm nay</span>
+        <span className="text-primary font-bold text-lg">{subtitle}</span>
       </div>
       <div className="flex items-center gap-6 lg:gap-32 mt-5 mb-8">
-        <span className="capitalize font-bold text-xl lg:text-4xl">
-          Flash Sales
+        <span className="capitalize font-semibold text-gray-800 text-xl lg:text-4xl">
+          {title}
         </span>
-        <Countdown />
       </div>
       
       {/* Nếu số lượng sản phẩm <= 4, hiển thị dưới dạng grid */}
@@ -120,4 +119,4 @@ function Flashsales() {
   );
 }
 
-export default Flashsales;
+export default SectionProducts;

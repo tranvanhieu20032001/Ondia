@@ -16,22 +16,41 @@ const Cardproduct = ({ item }) => {
   const { setCart, userData } = useContext(Context); // Lấy setCart từ context
 
   const addToCart = async () => {
+    const cartKey = "cart";
+
     if (!userData) {
-      toast.error("Bạn phải đăng nhập để mua hàng");
+      const cartFromStorage = JSON.parse(localStorage.getItem(cartKey)) || [];
+      const existingProductIndex = cartFromStorage.findIndex(
+        (product) => product.productId === item._id
+      );
+  
+      if (existingProductIndex !== -1) {
+        cartFromStorage[existingProductIndex].quantity += 1;
+      } else {
+        cartFromStorage.push({
+          productId: item._id,
+          quantity: 1,
+          price: item.saleprice !== 0 ? item.saleprice : item.price,
+        });
+      }
+  
+      localStorage.setItem(cartKey, JSON.stringify(cartFromStorage));
+      toast.success("Sản phẩm đã được thêm vào giỏ hàng");
+      setCart({ products: cartFromStorage });
       return;
     }
-    if (item.inventory === 0) {
+      if (item.inventory === 0) {
       toast.error("Sản phẩm đã hết hàng");
       return;
     }
-
+  
     const data = {
       productId: item._id,
       quantity: 1,
       price: item.saleprice !== 0 ? item.saleprice : item.price,
       variantId: null,
     };
-
+  
     try {
       const response = await axios({
         url: SummaryApi.addToCart.url,
@@ -40,12 +59,13 @@ const Cardproduct = ({ item }) => {
         withCredentials: true,
       });
       toast.success("Sản phẩm đã được thêm vào giỏ hàng");
-
+  
       setCart(response.data.cart);
     } catch (error) {
       console.error("Failed to add to cart:", error);
     }
   };
+  
 
   return (
     <div className="relative flex w-full max-w-[12rem] lg:max-w-[16rem] h-full flex-col overflow-hidden rounded-md border border-gray-100 bg-white shadow-md group/cart">

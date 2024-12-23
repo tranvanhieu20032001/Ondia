@@ -137,6 +137,10 @@ const SummaryApi = {
     url: `${backendDomain}/api/v1/orders`,
     method: "POST",
   },
+  createOrderGuest: {
+    url: `${backendDomain}/api/v1/orders/guest`,
+    method: "POST",
+  },
   getOrdersByUser: {
     url: `${backendDomain}/api/v1/orders/my_orders`,
     method: "GET",

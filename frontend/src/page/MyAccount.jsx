@@ -20,7 +20,7 @@ function MyAccount() {
           / <span>My Account</span>
         </p>
         <p>
-          Welcome, <span className="text-primary">{user.name}</span>
+          Welcome, <span className="text-primary">{user?.name}</span>
         </p>
       </div>
 

@@ -1,14 +1,67 @@
-import React from "react";
-import { backendDomain } from "../../common";
+import React, { useContext, useState, useEffect } from "react";
+import { backendDomain, SummaryApi } from "../../common";
+import Context from "../../context";
+import axios from "axios";
 
 function YourOrder({ orders, coupon }) {
-  const subtotal = orders.reduce(
-    (total, order) =>
-      total +
-      (order.product.saleprice !== 0 ? order.product.saleprice : order.product.price) *
-        order.quantity,
-    0
-  );
+  const { userData } = useContext(Context);
+  const [products, setProducts] = useState({});
+
+  const showProduct = async (productId) => {
+    try {
+      const url = SummaryApi.getProductById.url.replace(":id", productId);
+
+      const dataResponse = await axios({
+        url: url,
+        method: SummaryApi.getProductById.method,
+        withCredentials: true,
+      });
+      const dataApi = dataResponse.data;
+      setProducts((prev) => ({
+        ...prev,
+        [productId]: dataApi.product, // Lưu thông tin sản phẩm theo productId
+      }));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (!userData) {
+      orders.forEach((order) => {
+        if (!products[order.productId]) {
+          showProduct(order.productId); // Gọi API nếu chưa có sản phẩm trong state
+        }
+      });
+    }
+  }, [orders, userData, products]);
+
+  let subtotal = 0;
+  if (userData) {
+    subtotal = orders.reduce(
+      (total, order) =>
+        total +
+        (order?.product?.saleprice !== 0
+          ? order?.product?.saleprice
+          : order?.product.price) *
+          order?.quantity,
+      0
+    );
+  } else {
+    subtotal = orders.reduce((total, order) => {
+      if (order?.product) {
+        return (
+          total +
+          (order.product.saleprice !== 0
+            ? order.product.saleprice
+            : order.product.price) *
+            order.quantity
+        );
+      } else {
+        return total + order.price * order.quantity;
+      }
+    }, 0);
+  }
 
   const discount = coupon
     ? coupon.discountType === "percentage"
@@ -17,44 +70,54 @@ function YourOrder({ orders, coupon }) {
     : 0;
 
   const totalPrice = subtotal - discount;
+  const getProductPrice = (product) => {
+    return product?.saleprice !== 0 ? product?.saleprice : product?.price;
+  };
 
   return (
     <div className="space-y-8 shadow-md bg-slate-100 px-4 py-2">
-      <h1 className="text-xl lg:text-4xl my-4">Your Order</h1>
+      <h1 className="text-xl lg:text-4xl my-4"> Đơn hàng của bạn</h1>
       <hr />
       {orders.map((order) => {
-        const product = order.product;
-        const productImage = product?.images?.[0];
-        const productName = product?.name;
+        const productId = order?.productId;
+        const product = userData ? order?.product : products[productId]; // Nếu không có userData, lấy từ state `products`
+
+        const productImage =
+          product?.images?.[0] || order?.product?.images?.[0];
+        const productName = product?.name || order?.product?.name;
         const productPrice =
-          product?.saleprice !== 0 ? product?.saleprice : product?.price; // Kiểm tra và chọn saleprice hoặc price
-        const quantity = order.quantity;
+          getProductPrice(product) || getProductPrice(order?.product);
+        console.log("price", order?.product?.saleprice);
+
+        const quantity = order?.quantity;
 
         const totalProductPrice = productPrice * quantity;
 
         return (
           <div
-            key={productName}
+            key={productId}
             className="grid grid-cols-5 items-center gap-2 mb-4"
           >
             <div className="flex justify-end">
-              <img
-                src={`${backendDomain}/${productImage}`}
-                alt={productName}
-                className="w-14 h-14"
-              />
+              {productImage && (
+                <img
+                  src={`${backendDomain}/${productImage}`}
+                  alt={productName}
+                  className="w-14 h-14"
+                />
+              )}
             </div>
             <div className="col-span-2 lg:col-span-3 flex flex-col justify-center">
               <h1 className="font-medium text-[12px] lg:text-[15px] line-clamp-2 lg:line-clamp-1">
                 {productName}
               </h1>
               <p className="flex gap-3 text-[11px] lg:text-sm text-gray-500">
-                <span>{productPrice.toLocaleString()} đ</span> x{" "}
+                <span>{productPrice?.toLocaleString()} đ</span> x{" "}
                 <span>{quantity}</span>
               </p>
             </div>
             <div className="col-span-2 lg:col-span-1 justify-end flex items-center font-medium text-[12px] lg:text-[15px]">
-              {totalProductPrice.toLocaleString()} đ
+              {totalProductPrice?.toLocaleString()} đ
             </div>
           </div>
         );
@@ -64,7 +127,7 @@ function YourOrder({ orders, coupon }) {
         <p className="text-sm lg:text-base flex justify-between pl-10">
           Subtotal
           <span className="font-medium text-sm lg:text-[16px]">
-            {subtotal.toLocaleString()} đ
+            {subtotal?.toLocaleString()} đ
           </span>
         </p>
 
@@ -73,9 +136,9 @@ function YourOrder({ orders, coupon }) {
           <p className="text-sm lg:text-base flex justify-between pl-10">
             Discount
             <span className="font-medium text-sm lg:text-[16px]">
-              {coupon.discountType === "percentage"
-                ? `- ${discount.toLocaleString()} đ (${coupon.value}% off)`
-                : `- ${discount.toLocaleString()} đ`}
+              {coupon?.discountType === "percentage"
+                ? `- ${discount?.toLocaleString()} đ (${coupon?.value}% off)`
+                : `- ${discount?.toLocaleString()} đ`}
             </span>
           </p>
         )}
@@ -88,7 +151,7 @@ function YourOrder({ orders, coupon }) {
         <p className="text-sm lg:text-base flex justify-between pl-10">
           Totals
           <span className="font-medium text-sm lg:text-[16px]">
-            {totalPrice.toLocaleString()} đ
+            {totalPrice?.toLocaleString()} đ
           </span>
         </p>
       </div>

@@ -12,9 +12,10 @@ import { SummaryApi } from "../common";
 
 function Checkout() {
   const { userData } = useContext(Context);
-  const { setCart } = useContext(Context);
+  const { setCart, cart } = useContext(Context);
   const { state } = useLocation();
   const navigate = useNavigate();
+  const [selectedOption, setSelectedOption] = useState("bank");
 
   const [errors, setErrors] = useState({});
   const [user, setUser] = useState({});
@@ -40,9 +41,17 @@ function Checkout() {
       toast.error("Không thể tải thông tin người dùng.");
     }
   };
-
+  const cartKey = "cart";
   // Fetch cart products
   const fetchCartProducts = async () => {
+    if (!userData) {
+      const localCart = JSON.parse(localStorage.getItem(cartKey)) || [];
+      setCart({ products: localCart });
+      setOrders(localCart);
+      console.log("cart", cart);
+
+      return;
+    }
     try {
       const { data } = await axios({
         url: SummaryApi.getCart.url,
@@ -97,10 +106,6 @@ function Checkout() {
 
   // Handle checkout
   const handleCheckout = async () => {
-    if (!userData) {
-      toast.error("Bạn phải đăng nhập để mua hàng");
-      return;
-    }
     setLoading(true);
 
     const newErrors = validateInputs();
@@ -110,22 +115,47 @@ function Checkout() {
       return;
     }
 
-    setErrors({}); // Clear previous errors
+    setErrors({});
 
-    const formattedProducts = orders.map((order) => {
-      const price =
-        order.product.saleprice !== 0
-          ? order.product.saleprice
-          : order.product.price;
+    let formattedProducts = [];
 
-      return {
-        product: order.product._id,
-        quantity: order.quantity,
-        price: price,
-        variant: order.variant?._id,
-      };
-    });
-
+    if (!userData) {
+      formattedProducts = orders.map((order) => {
+        if (order?.product) {
+          const price =
+            order.product.saleprice !== 0
+              ? order.product.saleprice
+              : order.product.price;
+          return {
+            product: order.product._id,
+            quantity: order.quantity,
+            price: price,
+            variant: order.variant?._id,
+          };
+        } else {
+          const price = order.price;
+          return {
+            product: order.productId,
+            quantity: order.quantity,
+            price: price,
+            variant: order.variant?._id,
+          };
+        }
+      });
+    } else {
+      formattedProducts = orders.map((order) => {
+        const price =
+          order.product.saleprice !== 0
+            ? order.product.saleprice
+            : order.product.price;
+        return {
+          product: order.product._id,
+          quantity: order.quantity,
+          price: price,
+          variant: order.variant?._id,
+        };
+      });
+    }
 
     const checkoutData = {
       products: formattedProducts,
@@ -133,12 +163,16 @@ function Checkout() {
       phone: billingData?.phone,
       email: billingData?.email,
       discount: coupon?.value || 0,
-      paymentMethod: "Cash on delivery",
+      paymentMethod: selectedOption,
     };
 
     try {
+      const apiUrl = userData
+        ? SummaryApi.createOrder.url
+        : SummaryApi.createOrderGuest.url; // Chọn đúng URL tùy vào việc người dùng đã đăng nhập hay chưa
+
       const response = await axios({
-        url: SummaryApi.createOrder.url,
+        url: apiUrl, // Sử dụng URL đã chọn
         method: SummaryApi.createOrder.method,
         data: checkoutData,
         withCredentials: true,
@@ -146,12 +180,17 @@ function Checkout() {
 
       toast.success("Đặt hàng thành công!");
 
-      if (!state?.id) {
-        await axios({
-          url: SummaryApi.clearCart.url,
-          method: SummaryApi.clearCart.method,
-          withCredentials: true,
-        });
+      if (userData) {
+        if (!state?.id) {
+          await axios({
+            url: SummaryApi.clearCart.url,
+            method: SummaryApi.clearCart.method,
+            withCredentials: true,
+          });
+          setCart([]);
+        }
+      } else {
+        localStorage.removeItem("cart");
         setCart([]);
       }
 
@@ -169,8 +208,6 @@ function Checkout() {
   useEffect(() => {
     if (userDetails?.userId) {
       fetchUser(userDetails.userId);
-    } else {
-      console.error("User details are missing.");
     }
   }, [userDetails?.userId]);
 
@@ -226,28 +263,73 @@ function Checkout() {
         <div>
           <YourOrder orders={orders} coupon={coupon} />
           <div className="space-y-8 py-4 shadow-md bg-slate-100 px-4">
-            <div className="flex items-center">
-              <label
-                className="relative flex items-center cursor-pointer"
-                htmlFor="cash"
-              >
-                <input
-                  name="checkout"
-                  type="radio"
-                  className="peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-slate-300 checked:border-slate-400 transition-all"
-                  id="cash"
-                  checked={true}
-                  readOnly
-                />
-                <span className="absolute bg-slate-800 w-3 h-3 rounded-full opacity-0 peer-checked:opacity-100 transition-opacity duration-200 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></span>
-              </label>
-              <label
-                className="ml-2 text-slate-600 cursor-pointer text-sm"
-                htmlFor="cash"
-              >
-                Cash on delivery
-              </label>
+            <div>
+              <div className="">
+                <div className="flex items-center">
+                  <label
+                    className="relative flex items-center cursor-pointer"
+                    htmlFor="bank"
+                  >
+                    <input
+                      name="checkout"
+                      type="radio"
+                      className="peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-slate-300 checked:border-slate-400 transition-all"
+                      id="bank"
+                      checked={selectedOption === "bank"}
+                      onChange={() => setSelectedOption("bank")}
+                    />
+                    <span className="absolute bg-slate-800 w-3 h-3 rounded-full opacity-0 peer-checked:opacity-100 transition-opacity duration-200 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></span>
+                  </label>
+                  <label
+                    className="ml-2 text-slate-600 cursor-pointer text-sm"
+                    htmlFor="bank"
+                  >
+                    Chuyển khoản ngân hàng
+                  </label>
+                </div>
+
+                {/* Chỉ hiển thị khi chọn bank */}
+                {selectedOption === "bank" && (
+                  <div className="mt-4 p-4 border border-slate-300 rounded-md bg-slate-50">
+                    <p className="text-sm leading-6">
+                      Thực hiện thanh toán vào tài khoản ngân hàng của chúng
+                      tôi.
+                      <br />
+                      <strong>Đơn vị thụ hưởng:</strong> SMART HOME VIET NAM CO
+                      LTD
+                      <br />
+                      <strong>Ngân hàng:</strong> VP Bank chi nhánh Bắc Giang
+                      <br />
+                      <strong>Số tài khoản:</strong> 678898988
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center mt-6">
+                <label
+                  className="relative flex items-center cursor-pointer"
+                  htmlFor="cod"
+                >
+                  <input
+                    name="checkout"
+                    type="radio"
+                    className="peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-slate-300 checked:border-slate-400 transition-all"
+                    id="cod"
+                    checked={selectedOption === "cod"}
+                    onChange={() => setSelectedOption("cod")}
+                  />
+                  <span className="absolute bg-slate-800 w-3 h-3 rounded-full opacity-0 peer-checked:opacity-100 transition-opacity duration-200 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></span>
+                </label>
+                <label
+                  className="ml-2 text-slate-600 cursor-pointer text-sm"
+                  htmlFor="cod"
+                >
+                  Thanh toán khi nhận hàng
+                </label>
+              </div>
             </div>
+
             <button
               type="button"
               className={`text-sm px-4 py-2.5 w-full font-semibold tracking-wide border rounded-md transition 
