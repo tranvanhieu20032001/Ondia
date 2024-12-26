@@ -1,22 +1,20 @@
 import { useState } from "react";
-import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import axios from 'axios';
 import { SummaryApi } from './../common/index'
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/loading/Loading";
+import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 
 function Register() {
   const [isShowPassword, setShowPassword] = useState(false);
+  const [isShowConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorName, setErrorName] = useState("");
   const [errorEmail, setErrorEmail] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
   const [errorConfirmPassword, setErrorConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const showPassword = () => {
-    setShowPassword(!isShowPassword);
-  };
   const navigate = useNavigate();
   const [data, setData] = useState({
     name: "",
@@ -30,16 +28,25 @@ function Register() {
     setData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const showPassword = () => {
+    setShowPassword(!isShowPassword);
+  };
+
+  const showConfirmPassword = () => {
+    setShowConfirmPassword(!isShowConfirmPassword);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorName("");
     setErrorEmail("");
     setErrorPassword("");
     setErrorConfirmPassword("");
-    setLoading(true)
+    setLoading(true);
 
     let hasError = false;
 
+    // Validation checks
     if (data.name.trim() === "") {
       setErrorName("Name is required");
       hasError = true;
@@ -62,9 +69,11 @@ function Register() {
       hasError = true;
     }
 
-    if (hasError) return;
+    if (hasError) {
+      setLoading(false);
+      return;
+    }
 
-    // console.log("Form submitted:", data);
     try {
       await axios({
         url: SummaryApi.register.url,
@@ -83,7 +92,7 @@ function Register() {
     } catch (error) {
       setTimeout(() => {
         setLoading(false);
-        toast.error(error.response.data.msg);
+        toast.error(error.response?.data?.msg || "Đăng ký thất bại. Vui lòng thử lại.");
       }, 1000); 
     }
   };
@@ -177,7 +186,7 @@ function Register() {
                   autoComplete="off"
                   id="confirmPassword"
                   name="confirmPassword"
-                  type={isShowPassword ? "text" : "password"}
+                  type={isShowConfirmPassword ? "text" : "password"}
                   value={data.confirmPassword}
                   onChange={handleOnChange}
                   required
@@ -192,17 +201,20 @@ function Register() {
                 </label>
                 <span
                   className="absolute right-3 top-2 cursor-pointer"
-                  onClick={showPassword}
+                  onClick={showConfirmPassword}
                 >
-                  {isShowPassword ? <IoEyeOutline className="text-primary" /> : <IoEyeOffOutline />}
+                  {isShowConfirmPassword ? <IoEyeOutline className="text-primary" /> : <IoEyeOffOutline />}
                 </span>
                 {errorConfirmPassword && <span className="text-xs text-red-500">{errorConfirmPassword}</span>}
               </div>
               <button
                 type="submit"
-                className="px-4 py-3 w-full flex items-center justify-center gap-2 rounded-md text-center text-white font-bold bg-primary shadow-md hover:bg-[#f9851fda]"
+                disabled={loading}
+                className={`px-4 py-3 w-full flex items-center justify-center gap-2 rounded-md text-center text-white font-bold bg-primary shadow-md ${
+                  loading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#f9851fda]"
+                }`}
               >
-                Sign up {loading && <Loading/>}
+                Sign up {loading && <Loading />}
               </button>
             </div>
           </form>

@@ -109,7 +109,7 @@ function SectionProducts({type, title, subtitle}) {
       {/* Hiển thị nút Xem tất cả nếu số lượng sản phẩm > 4 */}
       {products.length > 4 && (
         <button
-          className="mx-auto text-[12px] lg:text-[16px] my-4 lg:my-8 px-6 py-2 bg-primary text-white flex justify-center items-center rounded-sm"
+          className="mx-auto text-[12px] lg:text-[16px] my-4 lg:my-8 px-6 py-1 bg-primary text-white flex justify-center items-center rounded-sm"
           onClick={() => setViewAll(!viewAll)}
         >
           {viewAll ? "Xem ít hơn" : "Xem tất cả"}

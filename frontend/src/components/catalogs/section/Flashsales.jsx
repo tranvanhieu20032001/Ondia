@@ -39,7 +39,7 @@ function Flashsales() {
         <span className="text-primary font-bold text-lg">Hôm nay</span>
       </div>
       <div className="flex items-center gap-6 lg:gap-32 mt-5 mb-8">
-        <span className="capitalize font-bold text-xl lg:text-4xl">
+        <span className="capitalize font-semibold text-gray-700 text-xl lg:text-4xl">
           Flash Sales
         </span>
         <Countdown />

@@ -45,14 +45,14 @@ function About() {
       </p>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
         <div className="space-y-8">
-          <h2 className="capitalize text-2xl font-semibold lg:text-5xl">
+          <h2 className="capitalize text-2xl font-semibold lg:text-4xl">
             Câu chuyện của chúng tôi
           </h2>
           <p className="font-normal text-[14px] lg:text-base text-justify">
-            Được ra mắt vào năm 2015, Exclusive là một trong những nền tảng mua sắm trực tuyến hàng đầu tại Nam Á, với sự hiện diện mạnh mẽ tại Bangladesh. Với sự hỗ trợ của nhiều giải pháp marketing, dữ liệu và dịch vụ, Exclusive có 10.500 người bán và 300 thương hiệu, phục vụ 3 triệu khách hàng trong khu vực.
+            Được ra mắt vào năm 2022, Ondia là một trong những nền tảng mua sắm trực tuyến hàng đầu tại Việt Nam. Với sự hỗ trợ của nhiều giải pháp marketing, dữ liệu và dịch vụ.
           </p>
           <p className="font-normal text-[14px] lg:text-base text-justify">
-            Exclusive có hơn 1 triệu sản phẩm để cung cấp và đang phát triển rất nhanh. Exclusive cung cấp một loạt sản phẩm đa dạng trong nhiều ngành nghề, từ tiêu dùng đến các mặt hàng khác.
+            Ondia có hơn 100  sản phẩm để cung cấp và đang phát triển rất nhanh. Ondia cung cấp một loạt sản phẩm đa dạng trong thiết bị gia đình và gia dụng, từ tiêu dùng đến các mặt hàng khác.
           </p>
         </div>
         <img

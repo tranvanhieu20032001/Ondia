@@ -38,7 +38,7 @@ const ProductManagementTable = ({ products, categories, onRemoveProduct }) => {
               <th className="px-4 py-2 border-b font-semibold border-gray-500 text-left text-sm leading-4 text-primary tracking-wider">
                 Kho
               </th>
-              <th className="px-4 py-2 border-b font-semibold border-gray-500 text-left text-sm leading-4 text-primary tracking-wider">
+              <th className="px-4 py-2 border-b font-semibold border-gray-500 text-center text-sm leading-4 text-primary tracking-wider">
                 Tags
               </th>
               <th className="px-4 py-2 border-b font-semibold border-gray-500 text-center text-sm leading-4 text-primary tracking-wider">
@@ -96,14 +96,20 @@ const ProductManagementTable = ({ products, categories, onRemoveProduct }) => {
                   {product?.inventory || 0}
                 </td>
                 <td className="px-6 py-2 border-b text-blue-900 border-gray-500 text-sm leading-5 text-center">
-                  <div className="grid grid-cols-2 gap-1">{product?.tags?.map((tag) => (
+                  <div className="mr-2">{product?.tags?.map((tag) => (
                     <span
                       key={tag}
                       className={`col-span-1 rounded-lg text-[10px] ${
                         tagColors[tag] || "bg-gray-300"
                       }`}
                     >
-                      {tag}
+                      {tag === "flashsale"
+                    ? "Khuyến mãi nhanh, "
+                    : tag === "outstanding"
+                    ? "Nổi bật, "
+                    : tag === "promotion"
+                    ? "Khuyến mãi, "
+                    : "Mới, "}
                     </span>
                   ))}</div>
                 </td>

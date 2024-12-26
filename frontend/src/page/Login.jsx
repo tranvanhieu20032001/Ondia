@@ -77,7 +77,7 @@ function Login() {
         toast.success("Login successful!");
         setLoading(false);
         if(dataApi.user.role === 'admin'){
-          navigate('/admin/dashboard');
+          navigate('/admin/users');
         }else{
           navigate('/');
           window.location.reload();

@@ -298,7 +298,8 @@ const ProductPage = () => {
           </div>
         </div>
         <h2 className="text-xl lg:text-xl font-semibold mb-1">Mô tả</h2>
-        <p>{product?.description}</p>
+        <hr />
+        <div className="ql-editor" dangerouslySetInnerHTML={{ __html: product?.description }} />
       </div>
       <div className="">
         <h2 className="text-xl lg:text-xl font-semibold mb-1">Bình Luận</h2>

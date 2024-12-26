@@ -7,6 +7,7 @@ import LoadingPage from "../../../components/loading/LoadingPage";
 import { RiDeleteBack2Line } from "react-icons/ri";
 import { IoIosSend } from "react-icons/io";
 import { AiTwotoneDelete } from "react-icons/ai";
+import HtmlEditor from "../../../components/TextEditor/HtmlEditor";
 
 const EditProduct = () => {
   const [product, setProduct] = useState({
@@ -22,6 +23,13 @@ const EditProduct = () => {
     images: [], // Mảng ảnh của sản phẩm
     specifications: [], // Mảng thông số kỹ thuật
   });
+
+  const handleDescriptionChange = (value) => {
+    setProduct((prev) => ({
+      ...prev,
+      description: value,
+    }));
+  };
 
   const [categories, setCategories] = useState([]);
   const [warranties, setWarrenties] = useState([]);
@@ -100,10 +108,56 @@ const EditProduct = () => {
       console.error("Lỗi khi lấy danh mục:", error);
     }
   };
-
   const saveProduct = async () => {
     try {
       const { featured, ...updatedProduct } = product;
+      
+      // Parse description để tìm thẻ <img>
+      let updatedDescription = product.description;
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(updatedDescription, "text/html");
+      const imgTags = doc.querySelectorAll("img");
+  
+      // Lưu trữ ảnh base64
+      const formData = new FormData();
+      let base64Images = [];
+  
+      imgTags.forEach((img, index) => {
+        const src = img.getAttribute("src");
+  
+        // Kiểm tra nếu ảnh là base64
+        if (src.startsWith("data:image")) {
+          const file = dataURLtoFile(src, `uploaded-image-${index}.png`);
+          formData.append("images", file); // Thêm ảnh vào FormData để upload
+          base64Images.push({ img, index }); // Lưu lại thẻ img để update src sau khi upload
+        }
+      });
+  
+      // Nếu có ảnh base64 thì upload lên server
+      if (base64Images.length > 0) {
+        const uploadResponse = await axios({
+          url: SummaryApi.uploadImage.url,
+          method: SummaryApi.uploadImage.method,
+          data: formData,
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+        });
+  
+        const uploadedImages = uploadResponse.data.images; // Nhận mảng link ảnh từ server
+  
+        base64Images.forEach(({ img, index }) => {
+          // Cập nhật lại src của ảnh với đường dẫn mới từ server
+          img.setAttribute("src", `${backendDomain}${uploadedImages[index]}`);
+        });
+  
+        // Cập nhật lại mô tả sản phẩm với src mới của ảnh
+        updatedDescription = doc.body.innerHTML;
+      }
+  
+      // Cập nhật mô tả mới vào updatedProduct
+      updatedProduct.description = updatedDescription;
+  
+      // Cập nhật sản phẩm vào server
       const url = SummaryApi.updateProductById.url.replace(":id", id);
       await axios({
         url: url,
@@ -111,30 +165,44 @@ const EditProduct = () => {
         data: updatedProduct,
         withCredentials: true,
       });
-
+  
+      // Upload thêm ảnh nếu có từ file input
       const fileInputs = document.getElementById("file-upload").files;
       if (fileInputs.length > 0) {
-        const formData = new FormData();
-
+        const fileFormData = new FormData();
         Array.from(fileInputs).forEach((file) => {
-          formData.append("images", file);
+          fileFormData.append("images", file);
         });
-
+  
         await axios({
           url: SummaryApi.uploadImage.url,
           method: SummaryApi.uploadImage.method,
-          data: formData,
+          data: fileFormData,
           headers: { "Content-Type": "multipart/form-data" },
           withCredentials: true,
         });
       }
-
+  
       alert("Cập nhật sản phẩm thành công!");
     } catch (error) {
       console.error("Lỗi khi cập nhật sản phẩm:", error);
       alert("Có lỗi xảy ra khi cập nhật sản phẩm.");
     }
   };
+  
+
+  function dataURLtoFile(dataUrl, filename) {
+    let arr = dataUrl.split(","),
+      mime = arr[0].match(/:(.*?);/)[1],
+      bstr = atob(arr[1]),
+      n = bstr.length,
+      u8arr = new Uint8Array(n);
+
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -233,7 +301,23 @@ const EditProduct = () => {
 
   return (
     <div>
-      <h1 className="text-xl font-medium my-4">Cập nhật sản phẩm</h1>
+      <div className="mb-8">
+        <h1 className="text-xl font-medium my-4">Cập nhật sản phẩm</h1>
+        <div className="flex gap-4 justify-end">
+          <button
+            className="px-4 py-2 bg-gray-200 rounded"
+            onClick={() => navigate(-1)}
+          >
+            Quay lại
+          </button>
+          <button
+            onClick={saveProduct}
+            className="w-36 bg-primary text-white py-1 rounded-md"
+          >
+            Lưu sản phẩm
+          </button>
+        </div>
+      </div>
       <div className="grid grid-cols-7 gap-4">
         <div className="col-span-2 flex flex-col items-center text-sm">
           {/* Hiển thị nhiều ảnh thumbnail */}
@@ -396,9 +480,11 @@ const EditProduct = () => {
               </select>
             </div>
             <div className="border relative rounded p-1">
-              <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs"><label className="bg-white text-gray-600 px-1">
-                Thương hiệu
-              </label></div>
+              <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
+                <label className="bg-white text-gray-600 px-1">
+                  Thương hiệu
+                </label>
+              </div>
               <select
                 id="company"
                 name="company"
@@ -455,33 +541,17 @@ const EditProduct = () => {
                       }}
                     />
                     <label htmlFor={tag} className="ml-2">
-                      {tag}
+                      {tag === "flashsale"
+                        ? "Khuyến mãi nhanh"
+                        : tag === "outstanding"
+                        ? "Nổi bật"
+                        : tag === "promotion"
+                        ? "Khuyến mãi"
+                        : "Mới"}
                     </label>
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
-
-          {/* Mô tả sản phẩm */}
-          <div className="flex gap-4">
-            <div className="border w-full relative rounded p-1">
-              <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
-                <label
-                  htmlFor="description"
-                  className="bg-white text-gray-600 px-1"
-                >
-                  Mô tả sản phẩm
-                </label>
-              </div>
-              <textarea
-                id="description"
-                name="description"
-                value={product?.description || ""}
-                onChange={handleInputChange}
-                className="py-1 px-1 text-gray-900 outline-none block h-full w-full"
-                rows="4"
-              />
             </div>
           </div>
           <div className="mb-4">
@@ -571,20 +641,24 @@ const EditProduct = () => {
               </tbody>
             </table>
           </div>
-
-          <div className="flex gap-4 justify-end">
-            <button
-              className="px-4 py-2 bg-gray-200 rounded"
-              onClick={() => navigate(-1)}
-            >
-              Quay lại
-            </button>
-            <button
-              onClick={saveProduct}
-              className="w-36 bg-primary text-white py-1 rounded-md"
-            >
-              Lưu sản phẩm
-            </button>
+          {/* Mô tả sản phẩm */}
+          <div className="flex gap-4">
+            <div className="w-full relative rounded p-1">
+              <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
+                <label
+                  htmlFor="description"
+                  className="bg-white text-gray-600 px-1"
+                >
+                  Mô tả sản phẩm
+                </label>
+              </div>
+              <div className="gap-6 w-full">
+                <HtmlEditor
+                  value={product.description}
+                  onChange={handleDescriptionChange}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>

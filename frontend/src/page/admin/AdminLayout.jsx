@@ -20,7 +20,7 @@ function AdminLayout() {
   }
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h">
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <div className="flex-1 p-8">
         <div className="bg-white p-6 rounded-lg shadow-md">

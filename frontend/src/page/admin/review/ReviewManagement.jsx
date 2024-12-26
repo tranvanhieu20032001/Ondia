@@ -47,7 +47,7 @@ function ReviewManagement() {
           method: SummaryApi.deleteReview.method,
           withCredentials: true,
         });
-        setReviews((prev) => prev.filter((reviews) => reviews._id !== id));
+        setReviews((prev) => prev.filter((reviews) => reviews?._id !== id));
         toast.success("reviews deleted successfully!");
       } catch (error) {
         console.error("Error deleting reviews:", error);
@@ -101,7 +101,7 @@ function ReviewManagement() {
                       {item?.username}
                     </td>
                     <td className="px-6 py-2 border-b border-gray-300">
-                      {item?.product.name || "N/A"}
+                      {item?.product?.name || "N/A"}
                     </td>
                     <td className="px-6 py-2 border-b border-gray-300">
                       {item?.comment}

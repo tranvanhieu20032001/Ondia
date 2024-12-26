@@ -110,10 +110,9 @@ function Footer() {
         <div>
           <h2 className="font-semibold text-lg mb-4">Liên Kết</h2>
           <ul className="list-disc pl-6 list-inside space-y-4">
-            <li className="hover:text-primary">Tin Hot</li>
-            <li className="hover:text-primary">Mẹo vặt</li>
-            <li className="hover:text-primary">Giải trí</li>
-            <li className="hover:text-primary">Khuyến mại</li>
+          <li className="hover:text-primary"><a href="https://ondia.vn/tin-hot/">Tin hot</a></li>
+            <li className="hover:text-primary"><a href="https://ondia.vn/meo-vat/">Mẹo vặt</a></li>
+            <li className="hover:text-primary"><a href="https://ondia.vn/giai-tri/">Giải trí</a></li>
           </ul>
         </div>
         <div>

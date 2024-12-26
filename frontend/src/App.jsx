@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import LoadingPage from "./components/loading/LoadingPage";
 import { useFetchCurrentUser } from "./utils/useFetchCurrentUser";
 import "react-toastify/dist/ReactToastify.css";
+import 'react-quill/dist/quill.snow.css';
 import Context from "./context";
 import { useEffect, useState } from "react";
 import axios from "axios";

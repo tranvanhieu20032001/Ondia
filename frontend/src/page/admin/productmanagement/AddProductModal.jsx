@@ -1,10 +1,11 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { RiDeleteBack2Line } from "react-icons/ri";
-import { SummaryApi } from "../../../common";
+import { backendDomain, SummaryApi } from "../../../common";
 import { Navigate } from "react-router-dom";
 import { IoIosSend } from "react-icons/io";
 import { AiTwotoneDelete } from "react-icons/ai";
+import HtmlEditor from "../../../components/TextEditor/HtmlEditor";
 
 const AddProductModal = ({ categories, warranties, onClose }) => {
   const [specKey, setSpecKey] = useState("");
@@ -59,16 +60,30 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
         product.mainCategory &&
         product.warranties
       ) {
-        // Tải ảnh lên trước
-        const fileInputs = document.getElementById("file-upload").files;
-        let uploadedImages = [];
+        let updatedDescription = product.description;
 
-        if (fileInputs && fileInputs.length > 0) {
-          const formData = new FormData();
-          Array.from(fileInputs).forEach((file) => {
+        // Parse description để tìm thẻ <img>
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(product.description, "text/html");
+        const imgTags = doc.querySelectorAll("img");
+
+        // Lưu trữ ảnh base64
+        const formData = new FormData();
+        let base64Images = [];
+
+        imgTags.forEach((img, index) => {
+          const src = img.getAttribute("src");
+
+          // Kiểm tra nếu ảnh là base64
+          if (src.startsWith("data:image")) {
+            const file = dataURLtoFile(src, `uploaded-image-${index}.png`);
             formData.append("images", file);
-          });
+            base64Images.push({ img, index }); // Lưu lại thẻ img để update src
+          }
+        });
 
+        // Nếu có ảnh base64 thì upload lên server
+        if (base64Images.length > 0) {
           const uploadResponse = await axios({
             url: SummaryApi.uploadImage.url,
             method: SummaryApi.uploadImage.method,
@@ -77,12 +92,18 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
             withCredentials: true,
           });
 
-          uploadedImages = uploadResponse.data.images;
+          const uploadedImages = uploadResponse.data.images; // Nhận mảng link ảnh từ server
+
+          base64Images.forEach(({ img, index }) => {
+            img.setAttribute("src", `${backendDomain}${uploadedImages[index]}`);
+          });
+
+          updatedDescription = doc.body.innerHTML;
         }
 
         const updatedProduct = {
           ...product,
-          images: uploadedImages,
+          description: updatedDescription,
         };
 
         const productResponse = await axios({
@@ -92,7 +113,6 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
           withCredentials: true,
           credentials: "include",
         });
-        console.log("product11", product);
 
         alert("Thêm sản phẩm thành công!");
         if (typeof onClose === "function") {
@@ -103,13 +123,34 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
         }
       } else {
         alert("Vui lòng điền đầy đủ thông tin!");
-        console.log("product", product);
       }
     } catch (error) {
       console.error("Lỗi trong quá trình thêm sản phẩm:", error);
       alert(error.request.responseText);
     }
   };
+
+  // Hàm chuyển đổi base64 sang File
+  function dataURLtoFile(dataUrl, filename) {
+    let arr = dataUrl.split(","),
+      mime = arr[0].match(/:(.*?);/)[1],
+      bstr = atob(arr[1]),
+      n = bstr.length,
+      u8arr = new Uint8Array(n);
+
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  }
+
+
+  const handleDescritionsChange = (value)=>{
+    setProduct((prevProduct) => ({
+      ...prevProduct,
+      description: value,
+    }));
+  }
 
   const handleCategory = (value) => {
     const item = categories.find((cat) => cat._id === value);
@@ -153,7 +194,25 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-70 z-50">
       <div className="bg-white p-6 rounded-lg h-full overflow-y-auto">
-        <h2 className="text-2xl font-semibold mb-4">Thêm sản phẩm</h2>
+        <div>
+          <h2 className="text-2xl font-semibold mb-4">Thêm sản phẩm</h2>
+          <div className="flex justify-end space-x-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-500 text-white rounded"
+            >
+              Hủy
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              className="px-4 py-2 bg-blue-500 text-white rounded"
+            >
+              Lưu
+            </button>
+          </div>
+        </div>
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
@@ -163,7 +222,7 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
             {imagePreview.map((url, index) => (
               <div key={index}>
                 <div className="relative w-28">
-                  <img src={url} className="w-24 h-24 object-cover" />
+                  <img src={url} className="w-24 h-24 object-cover text-sm" />
                   <button
                     onClick={() => handleRemoveImage(index)}
                     className="absolute top-0 right-2 text-white rounded-full p-1"
@@ -192,7 +251,7 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
               type="text"
               value={product.name}
               onChange={(e) => setProduct({ ...product, name: e.target.value })}
-              className="mt-1 px-3 py-2 w-full border rounded outline-none"
+              className="mt-1 px-3 py-1 text-sm w-full border rounded outline-none"
             />
           </div>
           <div className="mb-4 col-span-2">
@@ -206,7 +265,7 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
                 setProduct({ ...product, price: Number(e.target.value) })
               }
               min="0"
-              className="mt-1 px-3 py-2 w-full border rounded outline-none"
+              className="mt-1 px-3 py-1 text-sm w-full border rounded outline-none"
             />
           </div>
           <div className="mb-4 col-span-2">
@@ -220,7 +279,7 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
                 setProduct({ ...product, saleprice: Number(e.target.value) })
               }
               min="0"
-              className="mt-1 px-3 py-2 w-full border rounded outline-none"
+              className="mt-1 px-3 py-1 text-sm w-full border rounded outline-none"
             />
           </div>
         </div>
@@ -235,7 +294,7 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
               name="mainCategory"
               value={product.subCategory || product.mainCategory}
               onChange={(e) => handleCategory(e.target.value)}
-              className="mt-1 px-3 py-2 w-full border rounded outline-none outline-none"
+              className="mt-1 px-3 py-1 text-sm w-full border rounded outline-none outline-none"
             >
               <option value="">-- Chọn danh mục --</option>
               {categories.map((category) => (
@@ -263,7 +322,7 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
               onChange={(e) =>
                 setProduct({ ...product, warranties: e.target.value })
               }
-              className="mt-1 px-3 py-2 w-full border rounded outline-none outline-none"
+              className="mt-1 px-3 py-1 text-sm w-full border rounded outline-none outline-none"
             >
               <option value="">-- Chọn gói bảo hành --</option>
               {warranties?.map((warranty) => (
@@ -285,7 +344,7 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
               onChange={(e) =>
                 setProduct({ ...product, company: e.target.value })
               }
-              className="mt-1 px-3 py-2 w-full border rounded outline-none"
+              className="mt-1 px-3 py-1 text-sm w-full border rounded outline-none"
             >
               <option value="">-- Chọn thương hiệu --</option>
               {[
@@ -306,9 +365,9 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
           </div>
         </div>
         <div className="">
-            <label className="block mb-2 text-sm font-medium text-gray-700">
-              Chọn Tags
-            </label>
+          <label className="block mb-2 text-sm font-medium text-gray-700">
+            Chọn Tags
+          </label>
           <div className="grid grid-cols-4 gap-4 items-end mb-4">
             {["flashsale", "outstanding", "promotion", "new"].map((tag) => (
               <div key={tag} className="flex items-center">
@@ -328,31 +387,24 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
                     }
                   }}
                 />
-                <label htmlFor={tag} className="ml-2">
-                  {tag}
+                <label htmlFor={tag} className="ml-2 text-sm">
+                  {tag === "flashsale"
+                    ? "Khuyến mãi nhanh"
+                    : tag === "outstanding"
+                    ? "Nổi bật"
+                    : tag === "promotion"
+                    ? "Khuyến mãi"
+                    : "Mới"}
                 </label>
               </div>
             ))}
           </div>
         </div>
-
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">
-            Mô tả
-          </label>
-          <textarea
-            value={product.description}
-            onChange={(e) =>
-              setProduct({ ...product, description: e.target.value })
-            }
-            className="mt-1 px-3 py-2 w-full border rounded outline-none"
-          />
-        </div>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
             Thông số kỹ thuật
           </label>
-          <table className="mt-2 w-full border">
+          <table className="mt-2 w-full border text-sm">
             <thead>
               <tr>
                 <th className="border px-2 py-1 font-medium">Tên thông số</th>
@@ -409,21 +461,13 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
           </table>
         </div>
 
-        <div className="flex justify-end space-x-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-500 text-white rounded"
-          >
-            Hủy
-          </button>
-          <button
-            type="button"
-            onClick={handleSave}
-            className="px-4 py-2 bg-blue-500 text-white rounded"
-          >
-            Lưu
-          </button>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Mô tả
+          </label>
+
+          <HtmlEditor value={product.description} onChange={handleDescritionsChange}/>
+
         </div>
       </div>
     </div>

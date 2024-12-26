@@ -24,3 +24,55 @@ input[type="number"]::-webkit-outer-spin-button {
   opacity: 1;
   background-color: transparent;
 }
+
+.ql-container.ql-snow{
+  min-height: 500px;
+}
+
+/* CSS cho các kích thước chữ tùy chỉnh */
+.ql-size-10px {
+  font-size: 10px !important;
+}
+.ql-size-12px {
+  font-size: 12px !important;
+}
+.ql-size-14px {
+  font-size: 14px !important;
+}
+.ql-size-16px {
+  font-size: 16px !important;
+}
+.ql-size-18px {
+  font-size: 18px !important;
+}
+.ql-size-24px {
+  font-size: 24px !important;
+}
+.ql-size-36px {
+  font-size: 36px !important;
+}
+.ql-size-48px {
+  font-size: 48px !important;
+}
+
+/* Đảm bảo bạn có các font này trong CSS của bạn */
+.ql-font-arial {
+  font-family: Arial, sans-serif !important;
+}
+
+.ql-font-times-new-roman {
+  font-family: 'Times New Roman', serif !important;
+}
+
+.ql-font-courier-new {
+  font-family: 'Courier New', monospace !important;
+}
+
+/* Thêm các font tùy chỉnh (nếu cần) */
+.ql-font-roboto {
+  font-family: 'Roboto', sans-serif !important;
+}
+
+.ql-font-open-sans {
+  font-family: 'Open Sans', sans-serif !important;
+}
