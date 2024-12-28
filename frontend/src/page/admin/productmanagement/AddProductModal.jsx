@@ -6,6 +6,12 @@ import { Navigate } from "react-router-dom";
 import { IoIosSend } from "react-icons/io";
 import { AiTwotoneDelete } from "react-icons/ai";
 import HtmlEditor from "../../../components/TextEditor/HtmlEditor";
+import EditorToolbar, {
+  modules,
+  formats,
+} from "./texteditor/EditorToolbar.jsx";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const AddProductModal = ({ categories, warranties, onClose }) => {
   const [specKey, setSpecKey] = useState("");
@@ -144,13 +150,12 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
     return new File([u8arr], filename, { type: mime });
   }
 
-
-  const handleDescritionsChange = (value)=>{
+  const handleDescritionsChange = (value) => {
     setProduct((prevProduct) => ({
       ...prevProduct,
       description: value,
     }));
-  }
+  };
 
   const handleCategory = (value) => {
     const item = categories.find((cat) => cat._id === value);
@@ -465,9 +470,17 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
           <label className="block text-sm font-medium text-gray-700">
             Mô tả
           </label>
+          <EditorToolbar toolbarId={"t2"} />
+          <ReactQuill
+            theme="snow"
+            value={product.description}
+            onChange={handleDescritionsChange}
+            placeholder={"Write something awesome..."}
+            modules={modules("t2")}
+            formats={formats}
+          />
 
-          <HtmlEditor value={product.description} onChange={handleDescritionsChange}/>
-
+          {/* <HtmlEditor value={product.description} onChange={handleDescritionsChange}/> */}
         </div>
       </div>
     </div>

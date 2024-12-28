@@ -7,6 +7,12 @@ import LoadingPage from "../../../components/loading/LoadingPage";
 import { RiDeleteBack2Line } from "react-icons/ri";
 import { IoIosSend } from "react-icons/io";
 import { AiTwotoneDelete } from "react-icons/ai";
+import EditorToolbar, {
+  modules,
+  formats,
+} from "./texteditor/EditorToolbar.jsx";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import HtmlEditor from "../../../components/TextEditor/HtmlEditor";
 
 const EditProduct = () => {
@@ -108,23 +114,24 @@ const EditProduct = () => {
       console.error("Lỗi khi lấy danh mục:", error);
     }
   };
+
   const saveProduct = async () => {
     try {
       const { featured, ...updatedProduct } = product;
-      
+
       // Parse description để tìm thẻ <img>
       let updatedDescription = product.description;
       const parser = new DOMParser();
       const doc = parser.parseFromString(updatedDescription, "text/html");
       const imgTags = doc.querySelectorAll("img");
-  
+
       // Lưu trữ ảnh base64
       const formData = new FormData();
       let base64Images = [];
-  
+
       imgTags.forEach((img, index) => {
         const src = img.getAttribute("src");
-  
+
         // Kiểm tra nếu ảnh là base64
         if (src.startsWith("data:image")) {
           const file = dataURLtoFile(src, `uploaded-image-${index}.png`);
@@ -132,8 +139,9 @@ const EditProduct = () => {
           base64Images.push({ img, index }); // Lưu lại thẻ img để update src sau khi upload
         }
       });
-  
+
       // Nếu có ảnh base64 thì upload lên server
+      let uploadedImages = [];
       if (base64Images.length > 0) {
         const uploadResponse = await axios({
           url: SummaryApi.uploadImage.url,
@@ -142,21 +150,59 @@ const EditProduct = () => {
           headers: { "Content-Type": "multipart/form-data" },
           withCredentials: true,
         });
-  
-        const uploadedImages = uploadResponse.data.images; // Nhận mảng link ảnh từ server
-  
+
+        uploadedImages = uploadResponse.data.images; // Nhận mảng link ảnh từ server
+
+        // Cập nhật tất cả các ảnh base64 với link mới
         base64Images.forEach(({ img, index }) => {
-          // Cập nhật lại src của ảnh với đường dẫn mới từ server
-          img.setAttribute("src", `${backendDomain}${uploadedImages[index]}`);
+          if (uploadedImages[index]) {
+            img.setAttribute("src", `${backendDomain}${uploadedImages[index]}`);
+          }
         });
-  
+
         // Cập nhật lại mô tả sản phẩm với src mới của ảnh
         updatedDescription = doc.body.innerHTML;
       }
-  
+
       // Cập nhật mô tả mới vào updatedProduct
       updatedProduct.description = updatedDescription;
-  
+
+      // Upload thêm ảnh từ file input
+      const fileInputs = document.getElementById("file-upload").files;
+      if (fileInputs.length > 0) {
+        const fileFormData = new FormData();
+        Array.from(fileInputs).forEach((file) => {
+          fileFormData.append("images", file);
+        });
+
+        const fileUploadResponse = await axios({
+          url: SummaryApi.uploadImage.url,
+          method: SummaryApi.uploadImage.method,
+          data: fileFormData,
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+        });
+
+        // Nhận mảng link ảnh từ server
+        const fileUploadedImages = fileUploadResponse.data.images;
+
+        // Nếu có ảnh từ file input, cập nhật lại src của chúng trong mô tả
+        if (fileUploadedImages.length > 0) {
+          const imgElements = doc.querySelectorAll("img");
+
+          // Thay thế src của tất cả ảnh
+          fileUploadedImages.forEach((imageSrc, index) => {
+            if (imgElements[index]) {
+              const newImageSrc = `${backendDomain}${imageSrc}`;
+              imgElements[index].setAttribute("src", newImageSrc);
+            }
+          });
+
+          // Cập nhật lại mô tả sản phẩm với src mới của ảnh từ file
+          updatedDescription = doc.body.innerHTML;
+        }
+      }
+
       // Cập nhật sản phẩm vào server
       const url = SummaryApi.updateProductById.url.replace(":id", id);
       await axios({
@@ -165,31 +211,13 @@ const EditProduct = () => {
         data: updatedProduct,
         withCredentials: true,
       });
-  
-      // Upload thêm ảnh nếu có từ file input
-      const fileInputs = document.getElementById("file-upload").files;
-      if (fileInputs.length > 0) {
-        const fileFormData = new FormData();
-        Array.from(fileInputs).forEach((file) => {
-          fileFormData.append("images", file);
-        });
-  
-        await axios({
-          url: SummaryApi.uploadImage.url,
-          method: SummaryApi.uploadImage.method,
-          data: fileFormData,
-          headers: { "Content-Type": "multipart/form-data" },
-          withCredentials: true,
-        });
-      }
-  
+
       alert("Cập nhật sản phẩm thành công!");
     } catch (error) {
       console.error("Lỗi khi cập nhật sản phẩm:", error);
       alert("Có lỗi xảy ra khi cập nhật sản phẩm.");
     }
   };
-  
 
   function dataURLtoFile(dataUrl, filename) {
     let arr = dataUrl.split(","),
@@ -653,9 +681,18 @@ const EditProduct = () => {
                 </label>
               </div>
               <div className="gap-6 w-full">
-                <HtmlEditor
+                {/* <HtmlEditor
                   value={product.description}
                   onChange={handleDescriptionChange}
+                /> */}
+                <EditorToolbar toolbarId={"t2"} />
+                <ReactQuill
+                  theme="snow"
+                  value={product.description}
+                  onChange={handleDescriptionChange}
+                  placeholder={"Write something awesome..."}
+                  modules={modules("t2")}
+                  formats={formats}
                 />
               </div>
             </div>
