@@ -40,9 +40,11 @@ function Catalog() {
       <Flashsales />
       <hr className="my-16" />
       {categories.map((category)=> <ProductsByCategory key={category._id} category={category} />)}
-      <ExploreOurProducts type={"Robot Hút Bụi"}/>
+      {/* <ExploreOurProducts type={"Robot Hút Bụi"}/>
       <hr className="my-16" />
-      <ExploreOurProducts type={"Máy lọc không khí"}/>
+      <ExploreOurProducts type={"Máy lọc không khí"}/> */}
+      {/* <hr className="my-16" /> */}
+      <SpecialEvent/>
       <hr className="my-16" />
       <SectionProducts type={"new"} title={"Sản phẩm mới nhất"} subtitle={"New Arrivals!"}/>
       <hr className="my-16" />
@@ -50,7 +52,6 @@ function Catalog() {
       <hr className="my-16" />
       <SectionProducts type={"outstanding"} title={"Dành cho bạn"} subtitle={"Trending Now!"}/>
       {/* <BestSelling /> */}
-      <SpecialEvent/>
       {/* <ExploreOurProducts/> */}
       <NewArrival/>
       <Service/>

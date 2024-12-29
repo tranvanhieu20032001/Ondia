@@ -23,6 +23,7 @@ const EditProduct = () => {
     mainCategory: "",
     subCategory: null, // Danh mục phụ
     warranties: "",
+    inventory:"",
     company: "", // Công ty
     description: "", // Mô tả sản phẩm
     flashsale: false, // Trạng thái flash sale
@@ -447,6 +448,25 @@ const EditProduct = () => {
                 name="saleprice"
                 type="text"
                 value={product?.saleprice || 0}
+                onChange={handleInputChange}
+                className="py-1 px-1 text-gray-900 outline-none block h-full w-full"
+              />
+            </div>
+
+            <div className="border w-1/4 relative rounded p-1">
+              <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
+                <label
+                  htmlFor="inventory"
+                  className="bg-white text-gray-600 px-1"
+                >
+                  Kho
+                </label>
+              </div>
+              <input
+                id="inventory"
+                name="inventory"
+                type="text"
+                value={product?.inventory || 0}
                 onChange={handleInputChange}
                 className="py-1 px-1 text-gray-900 outline-none block h-full w-full"
               />

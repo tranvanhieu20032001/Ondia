@@ -112,7 +112,7 @@ function Footer() {
           <ul className="list-disc pl-6 list-inside space-y-4">
           <li className="hover:text-primary"><a href="https://ondia.vn/tin-hot/">Tin hot</a></li>
             <li className="hover:text-primary"><a href="https://ondia.vn/meo-vat/">Mẹo vặt</a></li>
-            <li className="hover:text-primary"><a href="https://ondia.vn/giai-tri/">Giải trí</a></li>
+            <li className="hover:text-primary"><a href="https://ondia.vn/khuyen-mai/">Khuyến mãi</a></li>
           </ul>
         </div>
         <div>

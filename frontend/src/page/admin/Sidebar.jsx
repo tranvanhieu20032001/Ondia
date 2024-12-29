@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import { BiSolidCoupon } from "react-icons/bi";
 import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
 import { VscFeedback } from "react-icons/vsc";
-import { TfiCommentAlt } from "react-icons/tfi";
+import { TfiCommentAlt, TfiWrite } from "react-icons/tfi";
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const menuItems = [
@@ -61,6 +61,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
       label: "Đánh giá",
       icon: <TfiCommentAlt size={25} />,
       link: "/admin/reviews",
+    },
+    {
+      label: "Bài viết",
+      icon: <TfiWrite size={25} />,
+      link: "https://ondia.vn/wp-login.php",
     },
   ];
 

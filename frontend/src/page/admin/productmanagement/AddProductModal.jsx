@@ -23,6 +23,7 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
     description: "",
     images: [],
     mainCategory: "",
+    inventory:"",
     warranties: "",
     subCategory: null,
     tags: [], // <-- Thêm mảng tags vào state
@@ -248,7 +249,7 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
           />
         </div>
         <div className="grid grid-cols-6 gap-4">
-          <div className="mb-4 col-span-2">
+          <div className="mb-4 col-span-3">
             <label className="block text-sm font-medium text-gray-700">
               Tên sản phẩm
             </label>
@@ -259,7 +260,7 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
               className="mt-1 px-3 py-1 text-sm w-full border rounded outline-none"
             />
           </div>
-          <div className="mb-4 col-span-2">
+          <div className="mb-4 col-span-1">
             <label className="block text-sm font-medium text-gray-700">
               Giá
             </label>
@@ -273,7 +274,7 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
               className="mt-1 px-3 py-1 text-sm w-full border rounded outline-none"
             />
           </div>
-          <div className="mb-4 col-span-2">
+          <div className="mb-4 col-span-1">
             <label className="block text-sm font-medium text-gray-700">
               Giá khuyến mãi
             </label>
@@ -282,6 +283,20 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
               value={product.saleprice}
               onChange={(e) =>
                 setProduct({ ...product, saleprice: Number(e.target.value) })
+              }
+              min="0"
+              className="mt-1 px-3 py-1 text-sm w-full border rounded outline-none"
+            />
+          </div>
+          <div className="mb-4 col-span-1">
+            <label className="block text-sm font-medium text-gray-700">
+              Kho
+            </label>
+            <input
+              type="number"
+              value={product.inventory}
+              onChange={(e) =>
+                setProduct({ ...product, inventory: Number(e.target.value) })
               }
               min="0"
               className="mt-1 px-3 py-1 text-sm w-full border rounded outline-none"
@@ -327,7 +342,7 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
               onChange={(e) =>
                 setProduct({ ...product, warranties: e.target.value })
               }
-              className="mt-1 px-3 py-1 text-sm w-full border rounded outline-none outline-none"
+              className="mt-1 px-3 py-1 text-sm w-full border rounded outline-none"
             >
               <option value="">-- Chọn gói bảo hành --</option>
               {warranties?.map((warranty) => (

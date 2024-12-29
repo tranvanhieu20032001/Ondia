@@ -68,11 +68,11 @@ function ProductsByCategory({ category }) {
       <div className="mt-12 lg:mt-24">
         <div className="flex items-center gap-4">
         <span className="inline-block w-5 h-11 rounded-md border bg-primary"></span>
-        <span className="text-primary font-bold text-lg">Sản phẩm</span>
+        <span className="text-primary font-bold text-xl">Sản phẩm</span>
       </div>
 
         <div className="flex items-center gap-6 lg:gap-32 mt-5 mb-8">
-          <span className="capitalize font-semibold text-gray-700 text-xl lg:text-4xl">
+          <span className="capitalize font-bold text-gray-700 text-xl lg:text-4xl">
             {category.name}
           </span>
         </div>
