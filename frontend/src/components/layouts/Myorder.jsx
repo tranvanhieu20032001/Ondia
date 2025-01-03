@@ -95,7 +95,7 @@ function Myorder() {
           id="statusFilter"
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="mt-1 px-3 py-1 w-40 border rounded outline-none outline-none"
+          className="mt-1 px-3 py-1 w-40 border rounded outline-none"
         >
           <option value="All">All</option>
           <option value="Pending">Pending</option>

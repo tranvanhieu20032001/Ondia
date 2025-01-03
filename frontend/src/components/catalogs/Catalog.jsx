@@ -10,6 +10,7 @@ import SectionProducts from "./section/SectionProducts";
 import { SummaryApi } from "../../common";
 import axios from "axios";
 import ProductsByCategory from "./section/ProductsByCategory";
+import Brands from "../../assets/images/Brands";
 
 function Catalog() {
    const [categories, setCategories] = useState([]); // Danh mục sản phẩm
@@ -55,6 +56,7 @@ function Catalog() {
       {/* <ExploreOurProducts/> */}
       <NewArrival/>
       <Service/>
+      <Brands/>
     </div>
   );
 }

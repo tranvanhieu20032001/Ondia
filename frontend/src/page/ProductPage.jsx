@@ -26,8 +26,8 @@ const ProductPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const { setCart ,userData } = useContext(Context);
-  
+  const { setCart, userData } = useContext(Context);
+
   const showProduct = async (productId) => {
     setLoading(true);
     try {
@@ -37,11 +37,11 @@ const ProductPage = () => {
         method: SummaryApi.getProductById.method,
         withCredentials: true,
       });
-  
+
       setProduct(data.product);
       setReviews(data.product.reviews || []);
       if (data.product.images?.length > 0) {
-        setMainImage(`${backendDomain}/${data.product.images[0]}`);
+        setMainImage(`${backendDomain}/${data.product.avatar}`);
       }
       console.log("Product:", data.product);
     } catch (error) {
@@ -51,14 +51,14 @@ const ProductPage = () => {
       setLoading(false);
     }
   };
-  
+
   const handleAddToLocalCart = (product) => {
     const cartKey = "cart";
     const cartFromStorage = JSON.parse(localStorage.getItem(cartKey)) || [];
     const existingProductIndex = cartFromStorage.findIndex(
       (pro) => pro.productId === product._id
     );
-  
+
     if (existingProductIndex !== -1) {
       cartFromStorage[existingProductIndex].quantity += 1;
     } else {
@@ -68,30 +68,30 @@ const ProductPage = () => {
         price: product.saleprice !== 0 ? product.saleprice : product.price,
       });
     }
-  
+
     localStorage.setItem(cartKey, JSON.stringify(cartFromStorage));
     toast.success("Sản phẩm đã được thêm vào giỏ hàng");
     setCart({ products: cartFromStorage });
   };
-  
+
   const addToCart = async () => {
     if (product.inventory === 0) {
       toast.error("Sản phẩm đã hết hàng");
       return;
     }
-  
+
     if (!userData) {
       handleAddToLocalCart(product);
       return;
     }
-  
+
     const data = {
       productId: product._id,
       quantity: quantity || 1,
       price: product.saleprice !== 0 ? product.saleprice : product.price,
       variantId: null,
     };
-  
+
     try {
       const response = await axios({
         url: SummaryApi.addToCart.url,
@@ -106,7 +106,6 @@ const ProductPage = () => {
       toast.error("Có lỗi xảy ra khi thêm vào giỏ hàng.");
     }
   };
-  
 
   const handleAddComment = async (rating, comment, username) => {
     setLoading(true);
@@ -159,6 +158,14 @@ const ProductPage = () => {
               id="mainImage"
             />
             <div className="flex gap-4 py-4 justify-center overflow-x-auto">
+              <img
+                src={`${backendDomain}/${product.avatar}`}
+                alt={`Thumbnail ${product.avatar}`}
+                className="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
+                onClick={() =>
+                  changeImage(`${backendDomain}/${product.avatar}`)
+                }
+              />
               {product?.images?.map((thumb, index) => (
                 <img
                   src={`${backendDomain}/${thumb}`}
@@ -170,7 +177,11 @@ const ProductPage = () => {
               ))}
             </div>
           </div>
-          <div className={`w-full md:w-1/2 px-4 ${product?.specifications?.length === 0 ? 'space-y-8' : ''}`}>
+          <div
+            className={`w-full md:w-1/2 px-4 ${
+              product?.specifications?.length === 0 ? "space-y-8" : ""
+            }`}
+          >
             <h2 className="text-xl lg:text-2xl font-semibold mb-1">
               {product?.name}
             </h2>
@@ -218,7 +229,6 @@ const ProductPage = () => {
                 </>
               )}
             </div>
-            
 
             <div className="mb-4 flex gap-6 items-center">
               <h3 className="text-sm lg:text-base mb-1 font-semibold">
@@ -230,7 +240,7 @@ const ProductPage = () => {
                 name="quantity"
                 min="1"
                 max="999"
-                value={quantity}  // Sử dụng giá trị quantity từ state
+                value={quantity} // Sử dụng giá trị quantity từ state
                 onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
                 className="h-8 w-24 text-center rounded-md border shadow-sm outline-none focus:border-primary focus:ring focus:ring-orange-200 focus:ring-opacity-50"
               />
@@ -246,37 +256,44 @@ const ProductPage = () => {
                 type="button"
                 className="text-sm w-full lg:text-base px-5 py-2 font-semibold tracking-wide bg-white text-primary border border-primary hover:bg-primary hover:text-white rounded-md"
               >
-                <Link to={"checkout"} state={{ id: state?.id, quantity:quantity }}>
+                <Link
+                  to={"checkout"}
+                  state={{ id: state?.id, quantity: quantity }}
+                >
                   Buy Now
                 </Link>
               </button>
             </div>
-            {product?.specifications?.length > 0 ? (<div className="mb-2">
-              <h3 className="text-sm lg:text-base mb-1 font-semibold">
-                Thông số kỹ thuật:
-              </h3>
-              <table className="w-full border text-xs">
-                <thead>
-                  <tr>
-                    <th className="px-4 py-2 border font-medium whitespace-nowrap">
-                      Thông số
-                    </th>
-                    <th className="px-4 py-2 border font-medium">Giá trị</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {product?.specifications?.map((spec, index) => (
-                    <tr
-                      key={index}
-                      className="even:bg-gray-50 hover:bg-gray-100"
-                    >
-                      <td className="px-4 py-2 border">{spec?.name}</td>
-                      <td className="px-4 py-2 border">{spec?.value}</td>
+            {product?.specifications?.length > 0 ? (
+              <div className="mb-2">
+                <h3 className="text-sm lg:text-base mb-1 font-semibold">
+                  Thông số kỹ thuật:
+                </h3>
+                <table className="w-full border text-xs">
+                  <thead>
+                    <tr>
+                      <th className="px-4 py-2 border font-medium whitespace-nowrap">
+                        Thông số
+                      </th>
+                      <th className="px-4 py-2 border font-medium">Giá trị</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>):""}
+                  </thead>
+                  <tbody>
+                    {product?.specifications?.map((spec, index) => (
+                      <tr
+                        key={index}
+                        className="even:bg-gray-50 hover:bg-gray-100"
+                      >
+                        <td className="px-4 py-2 border">{spec?.name}</td>
+                        <td className="px-4 py-2 border">{spec?.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              ""
+            )}
             <div className="flex items-center gap-8 px-4 py-3 border">
               <img src={freedelivery} alt="" />
               <div>
@@ -299,7 +316,10 @@ const ProductPage = () => {
         </div>
         <h2 className="text-xl lg:text-xl font-semibold mb-1">Mô tả</h2>
         <hr />
-        <div className="ql-editor" dangerouslySetInnerHTML={{ __html: product?.description }} />
+        <div
+          className="ql-editor"
+          dangerouslySetInnerHTML={{ __html: product?.description }}
+        />
       </div>
       <div className="">
         <h2 className="text-xl lg:text-xl font-semibold mb-1">Bình Luận</h2>
@@ -342,7 +362,7 @@ const ProductPage = () => {
             <span className="text-primary font-bold text-lg">Related Item</span>
           </div>
         </div>
-          <RelatedItem id={product?.mainCategory}/>
+        <RelatedItem id={product?.mainCategory} />
       </div>
     </div>
   );

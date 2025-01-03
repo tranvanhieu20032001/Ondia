@@ -14,6 +14,7 @@ import { BiSolidCoupon } from "react-icons/bi";
 import { HiOutlineWrenchScrewdriver } from "react-icons/hi2";
 import { VscFeedback } from "react-icons/vsc";
 import { TfiCommentAlt, TfiWrite } from "react-icons/tfi";
+import { IoMdImages } from "react-icons/io";
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const menuItems = [
@@ -67,6 +68,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
       icon: <TfiWrite size={25} />,
       link: "https://ondia.vn/wp-login.php",
     },
+    {
+      label: "Banner",
+      icon: <IoMdImages size={25} />,
+      link: "/admin/banner",
+    }
   ];
 
   return (

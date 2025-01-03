@@ -95,7 +95,7 @@ export const Cardshopping = ({ item, onQuantityChange, onRemoveItem }) => {
       {/* Product details */}
       <div className="product flex items-center col-span-3 lg:col-span-2 gap-2">
         <img
-          src={`${backendDomain}/${product.images?.[0]}`}
+          src={`${backendDomain}/${product.avatar}`}
           alt={product?._id}
           className="w-10 h-10 lg:w-16 lg:h-16 object-cover"
         />

@@ -83,7 +83,7 @@ function YourOrder({ orders, coupon }) {
         const product = userData ? order?.product : products[productId]; // Nếu không có userData, lấy từ state `products`
 
         const productImage =
-          product?.images?.[0] || order?.product?.images?.[0];
+          product?.avatar || order?.product?.avatar;
         const productName = product?.name || order?.product?.name;
         const productPrice =
           getProductPrice(product) || getProductPrice(order?.product);

@@ -66,8 +66,8 @@ function Search() {
   }, [searchTerm]);
 
   return (
-    <div ref={searchRef} className="relative">
-      <div className="hidden lg:flex items-center bg-gray-300 rounded relative">
+    <div ref={searchRef} className="">
+      <div className="flex items-center bg-gray-300 rounded relative">
         <input
           type="search"
           value={searchTerm}
@@ -83,7 +83,7 @@ function Search() {
       </div>
       {isOpen && products.length > 0 && (
         <ul
-          className="absolute z-50 bg-white shadow-lg w-full mt-2 rounded max-h-96 overflow-y-auto [&::-webkit-scrollbar]:w-2
+          className="absolute z-50 bg-white shadow-lg mt-2 rounded w-[250px] max-h-96 overflow-y-auto [&::-webkit-scrollbar]:w-2
   [&::-webkit-scrollbar-track]:bg-gray-100
   [&::-webkit-scrollbar-thumb]:bg-primary"
         >
@@ -98,7 +98,7 @@ function Search() {
                 className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
               >
                 <img
-                  src={`${backendDomain}/${product?.images?.[0]}`}
+                  src={`${backendDomain}/${product?.avatar}`}
                   alt={product.name}
                   className="w-10 h-10 object-cover rounded mr-4"
                 />

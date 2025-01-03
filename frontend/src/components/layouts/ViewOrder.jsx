@@ -176,7 +176,7 @@ function ViewOrder({ order, onClose }) {
                     <td className="px-2 py-3 text-xs text-gray-700 border">
                       {product?.images?.length > 0 && (
                         <img
-                          src={`${backendDomain}/${product.images[0]}`}
+                          src={`${backendDomain}/${product.avatar}`}
                           alt={product?.name}
                           className="w-14 h-14"
                         />

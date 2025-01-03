@@ -40,6 +40,7 @@ import ShippingPolicy from "./page/Policy/ShippingPolicy.jsx";
 import Guide from "./page/Policy/Guide.jsx";
 import PaymentMethods from "./page/Policy/PaymentMethods.jsx";
 import ShippingAndDelivery from "./page/Policy/ShippingAndDelivery.jsx";
+import BannerManagement from "./page/admin/banner/BannerManagement.jsx";
 
 
 const router = createBrowserRouter([
@@ -99,6 +100,7 @@ const router = createBrowserRouter([
       { path: "warranty", element: <WarrantyManagement />},
       { path: "feedbacks", element: <FeedBackManagement />},
       { path: "reviews", element: <ReviewManagement />},
+      { path: "banner", element: <BannerManagement />},
     ],
   },
   {

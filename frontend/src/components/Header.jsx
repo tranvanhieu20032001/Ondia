@@ -104,12 +104,9 @@ function Header() {
     <div>
       <div className="sub-header bg-black text-white text-center text-[12px] py-3">
         <span>
-        Mua ngay và tiết kiệm lớn - Miễn phí giao hàng cho tất cả các đơn hàng
+          Mua ngay và tiết kiệm lớn - Miễn phí giao hàng cho tất cả các đơn hàng
         </span>
-        <Link
-          to={'/shop'}
-          className="font-semibold mx-3 underline"
-        >
+        <Link to={"/shop"} className="font-semibold mx-3 underline">
           Shop now
         </Link>
       </div>
@@ -127,8 +124,8 @@ function Header() {
 
           {/* Desktop Menu */}
           <ul className="hidden lg:flex items-center justify-start gap-10 w-1/2">
-            {["/","/shop","/contact", "/about"].map((path, index) => {
-              const labels = ["Trang chủ","Cửa hàng" ,"Liên hệ", "Chúng tôi"];
+            {["/", "/shop", "/contact", "/about"].map((path, index) => {
+              const labels = ["Trang chủ", "Cửa hàng", "Liên hệ", "Chúng tôi"];
               return (
                 <li key={index}>
                   <NavLink to={path} className={getNavLinkClass}>
@@ -152,7 +149,12 @@ function Header() {
             </div>
             <ul className="flex flex-col items-center gap-4 mt-6">
               {["/", "/contact", "/about", "/signup"].map((path, index) => {
-                const labels = ["Trang chủ", "Liên hệ", "Chúng tôi", "Đăng xuất"];
+                const labels = [
+                  "Trang chủ",
+                  "Liên hệ",
+                  "Chúng tôi",
+                  "Đăng xuất",
+                ];
                 return (
                   <li key={index}>
                     <NavLink
@@ -176,20 +178,13 @@ function Header() {
                 isSearchOpen ? "flex" : "hidden"
               } absolute lg:hidden top-12 left-0 w-full bg-gray-300 rounded items-center z-50`}
             >
-              <input
-                type="search"
-                className="text-black block w-full rounded bg-transparent py-2 px-3 font-normal placeholder:text-gray-600 leading-[1.6] text-surface outline-none transition duration-200 ease-in-out focus:z-[3] focus:border-primary focus:shadow-inset focus:outline-none motion-reduce:transition-none text-[13px]"
-                placeholder="Bạn đang tìm kiếm ...?"
-                aria-label="Search"
-                aria-describedby="button-addon2"
-              />
-              <div className="flex items-center p-2 cursor-pointer">
-                <CiSearch className="text-black size-5" />
-              </div>
+              <Search/>
             </div>
 
             {/* Search Bar for large screens */}
-            <Search/>
+            <div className="hidden lg:flex">
+              <Search />
+            </div>
 
             <AiOutlineMenuUnfold
               className="block lg:hidden cursor-pointer"
@@ -226,7 +221,9 @@ function Header() {
                 onClick={toggleDropdown}
               >
                 <BsPersonCircle size={25} />
-                <span className="hidden lg:inline-block">{user?.name ? `Hello, ${user.name}` : ""}</span>
+                <span className="hidden lg:inline-block">
+                  {user?.name ? `Hello, ${user.name}` : ""}
+                </span>
               </span>
 
               {isDropdownOpen && (

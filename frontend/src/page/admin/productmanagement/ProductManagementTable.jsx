@@ -53,7 +53,7 @@ const ProductManagementTable = ({ products, categories, onRemoveProduct }) => {
                   <img
                     src={
                       product.images
-                        ? `${backendDomain}/${product.images[0]}`
+                        ? `${backendDomain}${product.avatar}`
                         : noimages
                     }
                     alt={product?.name}

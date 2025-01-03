@@ -55,10 +55,10 @@ function Leftbar() {
       <button
         className={`${
           isOpen ? "text-primary" : ""
-        } absolute z-30 lg:hidden flex items-center text-[14px] top-1`}
+        } absolute z-30 lg:hidden flex items-center font-semibold text-base top-1 border-b`}
         onClick={toggleSidebar}
       >
-        <IoMdArrowDropdown />
+        <IoMdArrowDropdown size={20} />
         Danh mục
       </button>
       <div

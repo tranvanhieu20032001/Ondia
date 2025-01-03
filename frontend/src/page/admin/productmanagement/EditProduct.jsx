@@ -13,17 +13,17 @@ import EditorToolbar, {
 } from "./texteditor/EditorToolbar.jsx";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import HtmlEditor from "../../../components/TextEditor/HtmlEditor";
 
 const EditProduct = () => {
   const [product, setProduct] = useState({
+    avatar: "",
     name: "", // Tên sản phẩm
     price: "", // Giá sản phẩm
     saleprice: "", // Giá khuyến mãi
     mainCategory: "",
     subCategory: null, // Danh mục phụ
     warranties: "",
-    inventory:"",
+    inventory: "",
     company: "", // Công ty
     description: "", // Mô tả sản phẩm
     flashsale: false, // Trạng thái flash sale
@@ -116,6 +116,33 @@ const EditProduct = () => {
     }
   };
 
+  const [avatar, setAvatar] = useState(null);
+  const [avatarFile, setAvatarFile] = useState(null);
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const avatarUrl = URL.createObjectURL(file);
+      console.log("acv", avatarUrl);
+
+      setAvatar(avatarUrl);
+      setAvatarFile(file); // Lưu file vào state
+      setProduct((prev) => ({
+        ...prev,
+        avatar: `uploads/${file.name}`, // Hiển thị trước đường dẫn tạm thời
+      }));
+    }
+  };
+
+  const handleRemoveAvatar = () => {
+    setAvatar(null);
+    setAvatarFile(null); // Xóa file trong state
+    setProduct((prev) => ({
+      ...prev,
+      avatar: "",
+    }));
+  };
+
   const saveProduct = async () => {
     try {
       const { featured, ...updatedProduct } = product;
@@ -161,12 +188,28 @@ const EditProduct = () => {
           }
         });
 
-        // Cập nhật lại mô tả sản phẩm với src mới của ảnh
         updatedDescription = doc.body.innerHTML;
       }
 
       // Cập nhật mô tả mới vào updatedProduct
       updatedProduct.description = updatedDescription;
+
+      // Upload avatar
+      if (avatarFile) {
+        const avatarFormData = new FormData();
+        avatarFormData.append("images", avatarFile); // Upload file từ state
+
+        const avatarUploadResponse = await axios({
+          url: SummaryApi.uploadImage.url,
+          method: SummaryApi.uploadImage.method,
+          data: avatarFormData,
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+        });
+
+        const avatarPath = avatarUploadResponse.data.images[0];
+        updatedProduct.avatar = `${avatarPath}`; // Cập nhật URL avatar thực tế
+      }
 
       // Upload thêm ảnh từ file input
       const fileInputs = document.getElementById("file-upload").files;
@@ -349,44 +392,97 @@ const EditProduct = () => {
       </div>
       <div className="grid grid-cols-7 gap-4">
         <div className="col-span-2 flex flex-col items-center text-sm">
-          {/* Hiển thị nhiều ảnh thumbnail */}
-          <div className="grid grid-cols-3 gap-4">
-            {imagePreview.length > 0
-              ? imagePreview.map((url, idx) => (
-                  <div key={idx} className="relative">
-                    <img
-                      src={url}
-                      alt={`Preview ${idx}`}
-                      className="w-24 h-24 object-cover"
-                    />
-                    <button
-                      onClick={() => handleRemoveImage(idx)}
-                      className="absolute top-0 right-0 text-white rounded-full flex items-center justify-center"
-                    >
-                      <RiDeleteBack2Line size={20} color="red" />
-                    </button>
-                  </div>
-                ))
-              : product?.images.map((image, idx) => (
-                  <div key={idx} className="relative">
-                    <img
-                      src={`${backendDomain}/${image}`}
-                      alt={`Product ${idx}`}
-                      className="w-24 h-24 object-cover"
-                    />
-                    <button
-                      onClick={() => handleRemoveImage(idx)}
-                      className="absolute top-0 right-0 text-white rounded-full flex items-center justify-center"
-                    >
-                      <RiDeleteBack2Line size={20} color="red" />
-                    </button>
-                  </div>
-                ))}
+          <div className="mb-8 border-b">
+            <label className="block text-sm font-medium text-gray-700 mb-6">
+              Ảnh đại diện
+            </label>
+            {avatar ? ( // Nếu có URL ảnh tạm thời
+              <div className="relative w-32 h-32 mt-2">
+                <img
+                  src={avatar} // Hiển thị ảnh đã thay đổi (ảnh tạm thời đã tạo URL)
+                  className="w-full h-full object-cover rounded-lg"
+                  alt="Avatar"
+                />
+                <button
+                  onClick={handleRemoveAvatar}
+                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                >
+                  <RiDeleteBack2Line size={20} />
+                </button>
+              </div>
+            ) : product?.avatar ? ( // Nếu không có ảnh tạm thời, hiển thị ảnh từ backend
+              <div className="relative w-32 h-32 mt-2">
+                <img
+                  src={`${backendDomain}${product?.avatar}`} // Sử dụng backendDomain để lấy đường dẫn đầy đủ
+                  className="w-full h-full object-cover rounded-lg"
+                  alt="Avatar"
+                />
+                <button
+                  onClick={handleRemoveAvatar}
+                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                >
+                  <RiDeleteBack2Line size={20} />
+                </button>
+              </div>
+            ) : (
+              // Nếu không có ảnh nào
+              <div className="relative w-32 h-32 mt-2">
+                <input
+                  type="file"
+                  id="avatarproduct"
+                  accept="image/*"
+                  onChange={handleAvatarChange} // Gọi hàm khi chọn file
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                />
+                <div className="flex justify-center items-center w-full h-full border-2 border-dashed border-gray-300 rounded-lg">
+                  <span className="text-gray-500">Chọn ảnh</span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div>
+            <h1 className="block text-sm font-medium text-gray-700 mb-6">
+              Album sản phẩm
+            </h1>
+            <div className="grid grid-cols-3 gap-4">
+              {imagePreview.length > 0
+                ? imagePreview.map((url, idx) => (
+                    <div key={idx} className="relative">
+                      <img
+                        src={url}
+                        alt={`Preview ${idx}`}
+                        className="w-24 h-24 object-cover"
+                      />
+                      <button
+                        onClick={() => handleRemoveImage(idx)} // Xóa ảnh thumbnail
+                        className="absolute top-0 right-0 text-white rounded-full flex items-center justify-center"
+                      >
+                        <RiDeleteBack2Line size={20} color="red" />
+                      </button>
+                    </div>
+                  ))
+                : product?.images.map((image, idx) => (
+                    <div key={idx} className="relative">
+                      <img
+                        src={`${backendDomain}/${image}`} // Hiển thị ảnh đã upload từ server
+                        alt={`Product ${idx}`}
+                        className="w-24 h-24 object-cover"
+                      />
+                      <button
+                        onClick={() => handleRemoveImage(idx)} // Xóa ảnh thumbnail
+                        className="absolute top-0 right-0 text-white rounded-full flex items-center justify-center"
+                      >
+                        <RiDeleteBack2Line size={20} color="red" />
+                      </button>
+                    </div>
+                  ))}
+            </div>
           </div>
 
           <button
             type="button"
-            onClick={() => document.getElementById("file-upload").click()}
+            onClick={() => document.getElementById("file-upload").click()} // Mở cửa sổ chọn file
             className="mt-2 px-4 py-1 bg-primary text-white rounded"
           >
             Tải ảnh lên
@@ -395,7 +491,7 @@ const EditProduct = () => {
             id="file-upload"
             type="file"
             accept="image/*"
-            onChange={handleImageChange}
+            onChange={handleImageChange} // Hàm chọn ảnh album
             className="hidden"
             multiple
           />

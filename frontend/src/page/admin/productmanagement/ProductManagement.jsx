@@ -190,7 +190,7 @@ const ProductManagement = () => {
   }, [fetchProducts, fetchCategories, fetchWarranties, searchTerm]);
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Product Management</h1>
+      <h1 className="text-2xl font-bold mb-4 text-gray-700">Product Management</h1>
       <div className="flex items-center justify-between">
         <button
           className="px-6 py-1 my-4 bg-primary text-xs text-white flex justify-center items-center rounded-sm"

@@ -93,6 +93,7 @@ function Service() {
           viewBox="0 0 80 80"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
+          className="w-[60px] h-[60px] lg:w-[80px] lg:h-[80px]"
         >
           <path
             opacity="0.3"
@@ -156,6 +157,7 @@ function Service() {
           viewBox="0 0 80 80"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
+          className="w-[60px] h-[60px] lg:w-[80px] lg:h-[80px]"
         >
           <path
             opacity="0.3"

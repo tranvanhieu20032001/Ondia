@@ -81,7 +81,7 @@ const Cardproduct = ({ item }) => {
             className="object-cover w-full hover:scale-105 transition-all duration-500 ease-in-out"
             src={
               item.images?.length > 0
-                ? `${backendDomain}/${item.images[0]}`
+                ? `${backendDomain}${item.avatar}`
                 : noimages
             }
             alt={item.name || "Product Image"}

@@ -237,6 +237,32 @@ const SummaryApi = {
     method: "GET",
   },
 
+
+
+  createBanner:{
+    url: `${backendDomain}/api/v1/banner`,
+    method: "POST",
+  },
+
+  uploadBanner:{
+    url: `${backendDomain}/api/v1/banner/uploadImageBanner`,
+    method: "POST",
+  },
+
+  getBanner:{
+    url: `${backendDomain}/api/v1/banner`,
+    method: "GET",
+  },
+  getBannerByCode:{
+    url: `${backendDomain}/api/v1/banner/getByCodes/:code`,
+    method: "GET",
+  },
+
+  deleteBanner:{
+    url: `${backendDomain}/api/v1/banner/:id`,
+    method: "DELETE",
+  },
+
   
 
   createFeedback:{
