@@ -63,21 +63,21 @@ function SpecialEvent() {
         </div>
       )}
 
-      <div className="w-full md:w-3/5 relative flex justify-center items-center">
+      <div className="w-full md:w-3/5 h-full relative flex justify-center items-center">
         {newBanner.length > 0 ? (
           newBanner.map((banner, index) => (
             <img
               key={index}
               src={`${backendDomain}/${banner.imageUrl}`}
               alt={banner.title}
-              className="object-cover h-auto w-4/5 relative z-10"
+              className="object-cover h-5/6 relative z-10"
             />
           ))
         ) : (
           <img
             src={robothutbui}
             alt="Robot Hút Bụi Lau Nhà"
-            className="object-cover h-auto w-4/5 relative z-10"
+            className="object-cover h-5/6 relative z-10"
           />
         )}
 

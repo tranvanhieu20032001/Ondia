@@ -111,7 +111,7 @@ function Header() {
         </Link>
       </div>
       <div className="w-full border">
-        <div className="main-header flex justify-between max-w-screen-xl mx-4 lg:mx-auto mt-3 lg:pt-5 pb-2 gap-3">
+        <div className="main-header flex justify-between max-w-screen-xl mx-4 lg:mx-auto p-2 gap-3">
           <div className="logo w-1/4 flex items-center">
             <NavLink to="/">
               <img
@@ -170,7 +170,7 @@ function Header() {
             </ul>
           </div>
 
-          <div className="navbar w-3/4 lg:w-1/2 flex items-center justify-end gap-10 relative">
+          <div className="navbar w-3/4 lg:w-1/2 flex items-center justify-end gap-8 relative">
             {/* Search Bar for small screens */}
             <div
               ref={searchRef}
@@ -221,7 +221,7 @@ function Header() {
                 onClick={toggleDropdown}
               >
                 <BsPersonCircle size={25} />
-                <span className="hidden lg:inline-block">
+                <span className="hidden lg:inline-block text-sm">
                   {user?.name ? `Hello, ${user.name}` : ""}
                 </span>
               </span>
