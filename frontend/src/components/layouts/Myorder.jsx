@@ -82,14 +82,14 @@ function Myorder() {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-3">
-      <h2 className="text-xl font-semibold mb-6">My Orders</h2>
+      <h2 className="text-xl font-semibold mb-6">Đơn hàng của bạn</h2>
       <CheckWarrantyCode />
       <hr className="my-8" />
       {/* Filter Dropdown */}
       <h1 className="mb-2 font-medium text-sm">Tất cả đơn hàng của bạn</h1>
       <div className="mb-4 text-right">
         <label htmlFor="statusFilter" className="mr-2 text-sm font-medium">
-          Filter by Status:
+          Lọc theo trạng thái:
         </label>
         <select
           id="statusFilter"
@@ -111,13 +111,13 @@ function Myorder() {
           <thead className="bg-gray-100">
             <tr>
               <th className="px-2 py-3 text-left text-xs font-medium text-gray-500">
-                Order ID
+                Id đơn hàng
               </th>
               <th className="px-2 py-3 text-left text-xs font-medium text-gray-500">
-                Date
+                Ngày
               </th>
               <th className="px-2 py-3 text-left text-xs font-medium text-gray-500">
-                Ship To
+                Gửi đến
               </th>
               <th className="px-2 py-3 text-left text-xs font-medium text-gray-500">
                 Điện thoại

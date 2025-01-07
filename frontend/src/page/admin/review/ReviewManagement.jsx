@@ -80,10 +80,10 @@ function ReviewManagement() {
                   Số sao
                 </th>
                 <th className="px-4 py-2 border-b font-semibold border-gray-300 text-left text-sm leading-4 text-primary tracking-wider">
-                  Date
+                  Ngày
                 </th>
                 <th className="px-4 py-2 border-b font-semibold border-gray-300 text-left text-sm leading-4 text-primary tracking-wider whitespace-nowrap">
-                  Actions
+                  Hành động
                 </th>
               </tr>
             </thead>
@@ -118,13 +118,13 @@ function ReviewManagement() {
                           className="text-blue-500 hover:underline"
                           onClick={() => handleViewreviews(item)}
                         >
-                          View
+                          Xem
                         </button>
                         <button
                           className="text-red-500 hover:underline"
                           onClick={() => handleDeletereviews(item?._id)}
                         >
-                          Delete
+                          Xóa
                         </button>
                       </span>
                     </td>

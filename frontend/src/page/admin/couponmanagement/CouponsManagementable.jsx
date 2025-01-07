@@ -12,28 +12,28 @@ function CouponsManagementable({ coupons, onDelete }) {
           <thead>
             <tr>
               <td className="px-4 py-2 border-b font-medium border-gray-500 text-left text-sm leading-4 text-primary tracking-wider">
-                Code
+                Mã
               </td>
               <th className="px-4 py-2 border-b font-medium border-gray-500 text-left text-sm leading-4 text-primary tracking-wider">
-                Type
+                Thể loại
               </th>
               <th className="px-4 py-2 border-b font-medium border-gray-500 text-left text-sm leading-4 text-primary tracking-wider">
-                Discount
+                Giảm giá
               </th>
               <th className="px-4 py-2 border-b font-medium border-gray-500 text-left text-sm leading-4 text-primary tracking-wider">
-                Date from
+                Từ ngày
               </th>
               <th className="px-4 py-2 border-b font-medium border-gray-500 text-left text-sm leading-4 text-primary tracking-wider">
-                Date to
+                Đến ngày
               </th>
               <th className="px-4 py-2 border-b font-medium border-gray-500 text-left text-sm leading-4 text-primary tracking-wider">
-                Status
+                Trạng thái
               </th>
               <th className="px-4 py-2 border-b font-medium border-gray-500 text-left text-sm leading-4 text-primary tracking-wider">
-                Descriptions
+                Mô tả
               </th>
               <th className="px-4 py-2 border-b font-medium border-gray-500 text-center text-sm leading-4 text-primary tracking-wider">
-                Actions
+                Hành động
               </th>
             </tr>
           </thead>

@@ -69,19 +69,19 @@ function AddWarranty({ formData, warrantyTypes, durationUnits, onChange, onSubmi
       onSubmit={onSubmit}
       className="p-4 border rounded grid grid-cols-10 gap-3"
     >
-      {renderInput("Name", "name", "text", true)}
-      {renderSelect("Warranty Type", "warrantyType", warrantyTypes)}
-      {renderInput("Duration", "duration", "number", true)}
-      {renderSelect("Duration Unit", "durationUnit", durationUnits)}
-      {renderInput("Coverage", "coverage", "text", true)}
-      {renderTextarea("Description", "description")}
-      {renderTextarea("Terms", "terms")}
+      {renderInput("Tên", "name", "text", true)}
+      {renderSelect("Loại bảo hành", "warrantyType", warrantyTypes)}
+      {renderInput("Thời gian", "duration", "number", true)}
+      {renderSelect("Đơn vị", "durationUnit", durationUnits)}
+      {renderInput("Phạm vi", "coverage", "text", true)}
+      {renderTextarea("Mô tả", "description")}
+      {renderTextarea("Điều khoản", "terms")}
 
       <button
         type="submit"
         className="px-2 py-1 col-span-2 bg-white text-primary border border-primary rounded hover:bg-primary hover:text-white focus:ring-2 focus:ring-primary-light transition"
       >
-        Submit
+        Lưu mã
       </button>
     </form>
   );

@@ -92,7 +92,7 @@ function AddCoupons({ onSave }) {
         <div className="border relative rounded p-1">
           <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
             <label htmlFor="name" className="bg-white text-gray-600 px-1">
-              Code
+              Mã
             </label>
           </div>
           <input
@@ -109,7 +109,7 @@ function AddCoupons({ onSave }) {
         <div className="border relative rounded p-1">
           <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
             <label htmlFor="discountType" className="bg-white text-gray-600 px-1">
-              Type
+              Thể loại
             </label>
           </div>
           <select
@@ -120,7 +120,7 @@ function AddCoupons({ onSave }) {
             className="py-1 text-xs px-1 text-gray-900 outline-none block h-full w-full bg-white"
           >
             <option value="" disabled>
-              Select type
+              -- Chọn --
             </option>
             <option value="percentage">Percentage</option>
             <option value="fixed">Fixed</option>
@@ -131,7 +131,7 @@ function AddCoupons({ onSave }) {
         <div className="border relative rounded p-1">
           <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
             <label htmlFor="value" className="bg-white text-gray-600 px-1">
-              Discount
+              Giảm giá
             </label>
           </div>
           <input
@@ -153,7 +153,7 @@ function AddCoupons({ onSave }) {
         <div className="border relative rounded p-1">
           <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
             <label htmlFor="validFrom" className="bg-white text-gray-600 px-1">
-              Date from
+              Từ ngày
             </label>
           </div>
           <input
@@ -170,7 +170,7 @@ function AddCoupons({ onSave }) {
         <div className="border relative rounded p-1">
           <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
             <label htmlFor="validUntil" className="bg-white text-gray-600 px-1">
-              Date to
+              Đến ngày
             </label>
           </div>
           <input
@@ -187,7 +187,7 @@ function AddCoupons({ onSave }) {
         <div className="border relative rounded p-1">
           <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
             <label htmlFor="isActive" className="bg-white text-gray-600 px-1">
-              Status
+              Trạng thái
             </label>
           </div>
           <select
@@ -198,10 +198,10 @@ function AddCoupons({ onSave }) {
             className="py-1 text-xs px-1 text-gray-900 outline-none block h-full w-full bg-white"
           >
             <option value="" disabled>
-              Select status
+             -- Chọn --
             </option>
             <option value="true">Active</option>
-            <option value="false">DeActive</option>
+            <option value="false">Deactive</option>
           </select>
         </div>
         <div className="border relative rounded p-1 col-span-6">
@@ -229,14 +229,14 @@ function AddCoupons({ onSave }) {
           type="button"
           className="px-2 py-1 bg-white text-primary border border-primary rounded hover:bg-primary-dark focus:ring-2 focus:ring-primary-light transition"
         >
-          Reset
+          Cài lại
         </button>
         <button
           onClick={handleSave}
           type="button"
           className="px-2 py-1 bg-primary text-white rounded hover:bg-primary-dark focus:ring-2 focus:ring-primary-light transition"
         >
-          Add Coupon
+          Lưu mã
         </button>
       </div>
     </div>

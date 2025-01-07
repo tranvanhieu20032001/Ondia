@@ -69,19 +69,19 @@ function FeedBackManagement() {
                   Email
                 </th>
                 <th className="px-4 py-2 border-b font-semibold border-gray-300 text-left text-sm leading-4 text-primary tracking-wider">
-                  Phone
+                  Số điện thoại
                 </th>
                 <th className="px-4 py-2 border-b font-semibold border-gray-300 text-left text-sm leading-4 text-primary tracking-wider">
-                  Name
+                  Tên
                 </th>
                 <th className="px-4 py-2 border-b font-semibold border-gray-300 text-left text-sm leading-4 text-primary tracking-wider">
-                  Message
+                  Lời nhắn
                 </th>
                 <th className="px-4 py-2 border-b font-semibold border-gray-300 text-left text-sm leading-4 text-primary tracking-wider">
-                  Date
+                  Ngày
                 </th>
                 <th className="px-4 py-2 border-b font-semibold border-gray-300 text-left text-sm leading-4 text-primary tracking-wider whitespace-nowrap">
-                  Actions
+                  Hành động
                 </th>
               </tr>
             </thead>
@@ -116,13 +116,13 @@ function FeedBackManagement() {
                           className="text-blue-500 hover:underline"
                           onClick={() => handleViewFeedback(item)}
                         >
-                          View
+                          Xem
                         </button>
                         <button
                           className="text-red-500 hover:underline"
                           onClick={() => handleDeleteFeedback(item?._id)}
                         >
-                          Delete
+                          Xóa
                         </button>
                       </span>
                     </td>

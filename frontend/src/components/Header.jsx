@@ -52,12 +52,12 @@ function Header() {
 
   const items = [
     {
-      name: "Manage my Acount",
+      name: "Quản lí tài khoản",
       icon: <AiOutlineUser size={23} />,
       url: "/myaccount/" + user?.userId,
     },
     {
-      name: "My orders",
+      name: "Đơn hàng",
       icon: <AiOutlineShopping size={23} />,
       url: "/myaccount/orders",
     },
@@ -107,7 +107,7 @@ function Header() {
           Mua ngay và tiết kiệm lớn - Miễn phí giao hàng cho tất cả các đơn hàng
         </span>
         <Link to={"/shop"} className="font-semibold mx-3 underline">
-          Shop now
+          Cửa hàng
         </Link>
       </div>
       <div className="w-full border">
@@ -249,7 +249,7 @@ function Header() {
                       ))}
                       <li className="py-1 px-3 capitalize hover:text-primary cursor-pointer flex items-center gap-3">
                         <CiLogout size={23} />
-                        <NavLink onClick={handleLogout}>Logout</NavLink>
+                        <NavLink onClick={handleLogout}>Đăng xuất</NavLink>
                       </li>
                     </ul>
                   ) : (
@@ -263,7 +263,7 @@ function Header() {
                             isActive ? "text-primary" : "text-white"
                           }
                         >
-                          Login
+                          Đăng nhập
                         </NavLink>
                       </li>
                       <li className="py-1 px-3 hover:text-primary cursor-pointer flex items-center gap-3">
@@ -275,7 +275,7 @@ function Header() {
                             isActive ? "text-primary" : "text-white"
                           }
                         >
-                          Register
+                          Đăng kí
                         </NavLink>
                       </li>
                     </ul>

@@ -157,7 +157,7 @@ const EditProfile = () => {
 
   return (
     <div className="shadow-md h-full w-full p-4 lg:p-10 space-y-8 mb-8">
-      <h1 className="text-xl text-primary">Edit Your Profile</h1>
+      <h1 className="text-xl text-primary">Chỉnh sửa hồ sơ của bạn</h1>
       <form className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {["name", "phone", "email", "address"].map((field, index) => (
           <div
@@ -166,10 +166,10 @@ const EditProfile = () => {
           >
             <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
               <label htmlFor={field} className="bg-white text-gray-600 px-1">
-                {field === "name" && "Your Name *"}
-                {field === "phone" && "Phone Number *"}
+                {field === "name" && "Tên *"}
+                {field === "phone" && "Số điện thoại *"}
                 {field === "email" && "Email *"}
-                {field === "address" && "Address *"}
+                {field === "address" && "Địa chỉ *"}
               </label>
             </div>
             <input
@@ -191,14 +191,14 @@ const EditProfile = () => {
             onClick={handleSave}
             disabled={loading}
           >
-            Save Changes {loading && <Loading />}
+            Lưu thay đổi {loading && <Loading />}
           </button>
         </div>
       </form>
 
       <hr />
 
-      <h1 className="text-xl text-primary">Change Password</h1>
+      <h1 className="text-xl text-primary">Thay đổi mật khẩu</h1>
       <form className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {["currentPassword", "newPassword", "confirmPassword"].map((field, index) => (
           <div
@@ -207,9 +207,9 @@ const EditProfile = () => {
           >
             <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
               <label htmlFor={field} className="bg-white text-gray-600 px-1">
-                {field === "currentPassword" && "Current Password *"}
-                {field === "newPassword" && "New Password *"}
-                {field === "confirmPassword" && "Confirm Password *"}
+                {field === "currentPassword" && "Mật khẩu hiện tại *"}
+                {field === "newPassword" && "Mật khẩu mới *"}
+                {field === "confirmPassword" && "Xác nhận mật khẩu *"}
               </label>
             </div>
             <input
@@ -238,7 +238,7 @@ const EditProfile = () => {
             onClick={handleChangePassword}
             disabled={loading}
           >
-            Save Changes {loadingPW && <Loading />}
+            Lưu thay đổi {loadingPW && <Loading />}
           </button>
         </div>
       </form>

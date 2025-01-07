@@ -39,10 +39,10 @@ const ProductManagementTable = ({ products, categories, onRemoveProduct }) => {
                 Kho
               </th>
               <th className="px-4 py-2 border-b font-semibold border-gray-500 text-center text-sm leading-4 text-primary tracking-wider">
-                Tags
+                Thẻ
               </th>
               <th className="px-4 py-2 border-b font-semibold border-gray-500 text-center text-sm leading-4 text-primary tracking-wider">
-                Actions
+                Hành động
               </th>
             </tr>
           </thead>

@@ -169,12 +169,12 @@ const OrdersManagement = () => {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-3">
-      <h2 className="text-xl font-semibold mb-6">My Orders</h2>
+      <h2 className="text-xl font-semibold mb-6">Đơn hàng</h2>
 
       <div className="mb-4 flex gap-4">
         <div>
           <label htmlFor="statusFilter" className="mr-2 text-sm text-gray-700">
-            Filter by Status:
+            Lọc theo:
           </label>
           <select
             id="statusFilter"
@@ -199,7 +199,7 @@ const OrdersManagement = () => {
 
         <div>
           <label htmlFor="search" className="mr-2 text-sm text-gray-700">
-            Search by Phone:
+           Tìm kiếm số điện thoại:
           </label>
           <input
             type="text"

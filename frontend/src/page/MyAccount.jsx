@@ -40,7 +40,7 @@ function MyAccount() {
                 }
               >
                 <BsPersonCircle size={25} />
-                <span className="hidden lg:inline-block">My Profile</span>
+                <span className="hidden lg:inline-block">Hồ sơ</span>
               </NavLink>
             </li>
             <li>
@@ -53,7 +53,7 @@ function MyAccount() {
                 }
               >
                 <CiViewList size={25} />
-                <span className="hidden lg:inline-block">My Orders</span>
+                <span className="hidden lg:inline-block">Đơn hàng</span>
               </NavLink>
             </li>
             {/* <li>
@@ -80,7 +80,7 @@ function MyAccount() {
                 }
               >
                 <MdManageAccounts size={25} />
-                <span className="hidden lg:inline-block">Admin management</span>
+                <span className="hidden lg:inline-block">Quản lý admin</span>
               </NavLink>
             </li>)
            }
@@ -92,7 +92,7 @@ function MyAccount() {
               }}
             >
               <CiLogout size={23} />
-              <span className="hidden lg:inline-block">Logout</span>
+              <span className="hidden lg:inline-block">Đăng xuất</span>
             </li>
           </ul>
         </nav>

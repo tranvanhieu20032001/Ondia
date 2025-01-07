@@ -43,7 +43,7 @@ function SpecialEvent() {
               onClick={() => navigate("/shop")}
               className="capitalize mt-4 bg-[#00FF66] text-white p-2 text-[12px] lg:text-[16px] rounded-md w-20 md:w-44"
             >
-              Buy now
+              Mua ngay
             </button>
           </div>
         ))
@@ -58,7 +58,7 @@ function SpecialEvent() {
             onClick={() => navigate("/shop")}
             className="capitalize mt-4 bg-[#00FF66] text-white p-2 text-[12px] lg:text-[16px] rounded-md w-20 md:w-44"
           >
-            Buy now
+            Mua ngay
           </button>
         </div>
       )}

@@ -66,7 +66,7 @@ function CouponsManagement() {
 
   return (
     <div className="p-6 min-h-screen">
-      <h1 className="text-2xl font-bold mb-4 text-gray-700">Coupons Management</h1>
+      <h1 className="text-2xl font-bold mb-4 text-gray-700">Quản lí mã giảm giá</h1>
       <AddCoupons onSave={addNewCoupon} />
       <CouponsManagementable coupons={coupons} onDelete={handleRemoveCoupon} />
     </div>

@@ -39,7 +39,7 @@ function EditWarrantyModal({ isOpen, onClose, warranty, onSave }) {
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50">
       <div className="bg-white p-6 rounded-lg w-1/3">
-        <h2 className="text-lg font-bold mb-4">Edit Warranty</h2>
+        <h2 className="text-lg font-bold mb-4">Sửa mã bảo hành</h2>
         <form>
           {/* Name Field */}
           <div className="relative mb-4">
@@ -47,7 +47,7 @@ function EditWarrantyModal({ isOpen, onClose, warranty, onSave }) {
               htmlFor="name"
               className="absolute -top-2 left-2 text-xs bg-white px-1 text-gray-600"
             >
-              Name
+              Tên
             </label>
             <input
               type="text"
@@ -65,7 +65,7 @@ function EditWarrantyModal({ isOpen, onClose, warranty, onSave }) {
               htmlFor="description"
               className="absolute -top-2 left-2 text-xs bg-white px-1 text-gray-600"
             >
-              Description
+              Mô tả
             </label>
             <textarea
               id="description"
@@ -82,7 +82,7 @@ function EditWarrantyModal({ isOpen, onClose, warranty, onSave }) {
               htmlFor="warrantyType"
               className="absolute -top-2 left-2 text-xs bg-white px-1 text-gray-600"
             >
-              Warranty Type
+              Thể loại
             </label>
             <select
               id="warrantyType"
@@ -105,7 +105,7 @@ function EditWarrantyModal({ isOpen, onClose, warranty, onSave }) {
               htmlFor="duration"
               className="absolute -top-2 left-2 text-xs bg-white px-1 text-gray-600"
             >
-              Duration
+              Thời gian
             </label>
             <input
               type="number"
@@ -123,7 +123,7 @@ function EditWarrantyModal({ isOpen, onClose, warranty, onSave }) {
               htmlFor="durationUnit"
               className="absolute -top-2 left-2 text-xs bg-white px-1 text-gray-600"
             >
-              Duration Unit
+              Đơn vị
             </label>
             <select
               id="durationUnit"
@@ -132,10 +132,10 @@ function EditWarrantyModal({ isOpen, onClose, warranty, onSave }) {
               onChange={handleChange}
               className="w-full border rounded px-2 py-2 text-sm outline-none text-gray-700"
             >
-              <option value="months">Months</option>
-              <option value="years">Years</option>
-              <option value="days">Days</option>
-              <option value="hours">Hours</option>
+              <option value="months">Tháng</option>
+              <option value="years">Năm</option>
+              <option value="days">Ngày</option>
+              <option value="hours">Giờ</option>
             </select>
           </div>
 
@@ -145,7 +145,7 @@ function EditWarrantyModal({ isOpen, onClose, warranty, onSave }) {
               htmlFor="coverage"
               className="absolute -top-2 left-2 text-xs bg-white px-1 text-gray-600"
             >
-              Coverage
+              Phạm vi
             </label>
             <select
               id="coverage"

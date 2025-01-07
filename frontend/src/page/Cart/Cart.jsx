@@ -200,7 +200,7 @@ function Cart() {
             className="text-center text-xs lg:text-sm flex items-center gap-3 px-3 py-1 lg:px-4 lg:py-2 font-semibold bg-transparent text-primary border border-primary hover:bg-primary hover:text-white rounded-md"
           >
             <IoReturnUpBack size={20} />
-            Return to Shop
+            Quay lại cửa hàng
           </Link>
         </div>
       ) : (

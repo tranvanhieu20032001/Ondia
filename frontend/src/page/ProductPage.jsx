@@ -232,7 +232,7 @@ const ProductPage = () => {
 
             <div className="mb-4 flex gap-6 items-center">
               <h3 className="text-sm lg:text-base mb-1 font-semibold">
-                Quantity:
+                Số lượng:
               </h3>
               <input
                 type="number"
@@ -260,7 +260,7 @@ const ProductPage = () => {
                   to={"checkout"}
                   state={{ id: state?.id, quantity: quantity }}
                 >
-                  Buy Now
+                  Mua ngay
                 </Link>
               </button>
             </div>
@@ -297,18 +297,18 @@ const ProductPage = () => {
             <div className="flex items-center gap-8 px-4 py-3 border">
               <img src={freedelivery} alt="" />
               <div>
-                <h3 className="font-semibold">Free Delivery</h3>
+                <h3 className="font-semibold">Giao hàng miễn phí</h3>
                 <span className="text-[13px]">
-                  For orders worth over 1 million VND
+                  Với đơn hàng có giá trị trên 1 triệu đồng
                 </span>
               </div>
             </div>
             <div className="flex items-center gap-8 px-4 py-3 border">
               <img src={ReturnDelivery} alt="" />
               <div>
-                <h3 className="font-semibold">Return Delivery</h3>
+                <h3 className="font-semibold">Trả hàng</h3>
                 <span className="text-[13px]">
-                  Free 7 Days Delivery Returns
+                  Miễn phí trả hàng trong vòng 7 ngày
                 </span>
               </div>
             </div>
@@ -359,7 +359,7 @@ const ProductPage = () => {
         <div className="flex items-center justify-between mb-6 lg:mb-10">
           <div className="flex items-center gap-4">
             <span className="inline-block w-5 h-11 rounded-md border bg-primary"></span>
-            <span className="text-primary font-bold text-lg">Related Item</span>
+            <span className="text-primary font-bold text-lg">Mục liên quan</span>
           </div>
         </div>
         <RelatedItem id={product?.mainCategory} />

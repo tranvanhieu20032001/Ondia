@@ -1,4 +1,14 @@
 import React from "react";
+const translateDurationUnit = (unit) => {
+  const unitMap = {
+    months: 'tháng',
+    years: 'năm',
+    days: 'ngày',
+    hours: 'giờ',
+  };
+  return unitMap[unit] || unit;
+};
+
 
 function WarrantyManagementTable({ warranties, onEdit, onDelete }) {
   return (
@@ -9,13 +19,13 @@ function WarrantyManagementTable({ warranties, onEdit, onDelete }) {
         <table className="min-w-full border-collapse border border-gray-300 text-xs text-gray-700">
           <thead className="bg-gray-100">
             <tr>
-              <th className="border border-gray-300 px-2 py-1 text-left font-semibold">Name</th>
-              <th className="border border-gray-300 px-2 py-1 text-left font-semibold">Description</th>
-              <th className="border border-gray-300 px-2 py-1 text-left font-semibold">Type</th>
-              <th className="border border-gray-300 px-2 py-1 text-left font-semibold">Duration</th>
-              <th className="border border-gray-300 px-2 py-1 text-left font-semibold">Coverage</th>
-              <th className="border border-gray-300 px-2 py-1 text-left font-semibold">Terms</th>
-              <th className="border border-gray-300 px-2 py-1 text-left font-semibold">Actions</th>
+              <th className="border border-gray-300 px-2 py-1 text-left font-semibold">Tên</th>
+              <th className="border border-gray-300 px-2 py-1 text-left font-semibold">Mô tả</th>
+              <th className="border border-gray-300 px-2 py-1 text-left font-semibold">Thể loại</th>
+              <th className="border border-gray-300 px-2 py-1 text-left font-semibold">Thời gian</th>
+              <th className="border border-gray-300 px-2 py-1 text-left font-semibold">Phạm vi</th>
+              <th className="border border-gray-300 px-2 py-1 text-left font-semibold">Điều khoản</th>
+              <th className="border border-gray-300 px-2 py-1 text-left font-semibold">Hành động</th>
             </tr>
           </thead>
           <tbody>
@@ -25,7 +35,7 @@ function WarrantyManagementTable({ warranties, onEdit, onDelete }) {
                 <td className="border border-gray-300 px-2 py-1">{warranty.description}</td>
                 <td className="border border-gray-300 px-2 py-1">{warranty.warrantyType}</td>
                 <td className="border border-gray-300 px-2 py-1 whitespace-nowrap">
-                  {warranty.duration} {warranty.durationUnit}
+                {warranty.duration} {translateDurationUnit(warranty.durationUnit)}
                 </td>
                 <td className="border border-gray-300 px-2 py-1">{warranty.coverage}</td>
                 <td className="border border-gray-300 px-2 py-1">{warranty.terms}</td>

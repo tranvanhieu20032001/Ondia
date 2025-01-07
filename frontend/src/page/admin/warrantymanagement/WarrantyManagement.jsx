@@ -15,7 +15,7 @@ function WarrantyManagement() {
     warrantyType: "Standard",
     duration: "",
     durationUnit: "years",
-    coverage: "Repair",
+    coverage: "Sửa",
     terms: "",
   });
 
@@ -26,7 +26,7 @@ function WarrantyManagement() {
     "Comprehensive",
     "Partial",
   ];
-  const durationUnits = ["months", "years", "days", "hours"];
+  const durationUnits = ["tháng", "năm", "Ngày", "giờ"];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -133,7 +133,7 @@ function WarrantyManagement() {
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Warranty Management</h1>
+      <h1 className="text-xl font-bold mb-4">Quản lý bảo hành</h1>
       <AddWarranty
         formData={formData}
         warrantyTypes={warrantyTypes}

@@ -57,7 +57,7 @@ function NewArrival() {
                   {newBanner[0].title}
                 </h3>
                 <a href="/shop" className="border-b inline-block">
-                  Shop Now
+                  Cửa hàng
                 </a>
               </div>
             </div>
@@ -73,7 +73,7 @@ function NewArrival() {
                   {newBanner[1].title}
                   </h3>
                   <a href="/shop" className="border-b inline-block">
-                    Shop Now
+                    Cửa hàng
                   </a>
                 </div>
               </div>
@@ -89,7 +89,7 @@ function NewArrival() {
                     {newBanner[2].title}
                     </h3>
                     <a href="/shop" className="border-b inline-block">
-                      Shop Now
+                      Cửa hàng
                     </a>
                   </div>
                 </div>
@@ -104,7 +104,7 @@ function NewArrival() {
                       {newBanner[3].title}
                     </h3>
                     <a href="/shop" className="border-b inline-block">
-                      Shop Now
+                      Cửa hàng
                     </a>
                   </div>
                 </div>
@@ -137,7 +137,7 @@ function NewArrival() {
                 Máy lọc không khí Smartmi Air Purifier 2
                 </h3>
                 <a href="/shop" className="border-b inline-block">
-                  Shop Now
+                  Cửa hàng
                 </a>
               </div>
             </div>
@@ -153,7 +153,7 @@ function NewArrival() {
                     Tivi Xiaomi A43 43 inch Nội Địa Model 2025
                   </h3>
                   <a href="/shop" className="border-b inline-block">
-                    Shop Now
+                    Cửa hàng
                   </a>
                 </div>
               </div>
@@ -169,7 +169,7 @@ function NewArrival() {
                       Loa Bluetooth Xiaomi Mi Portable Speaker 16WQBH4197GL
                     </h3>
                     <a href="/shop" className="border-b inline-block">
-                      Shop Now
+                      Cửa hàng
                     </a>
                   </div>
                 </div>
@@ -184,7 +184,7 @@ function NewArrival() {
                       Đồng Hồ Đeo Tay Thông Minh Mibro Watch T2 XPA W012
                     </h3>
                     <a href="/shop" className="border-b inline-block">
-                      Shop Now
+                      Cửa hàng
                     </a>
                   </div>
                 </div>

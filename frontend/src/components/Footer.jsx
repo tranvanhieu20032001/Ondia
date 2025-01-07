@@ -77,13 +77,15 @@ function Footer() {
             <MdOutlineMailOutline size={20} />
             Email: smarthomevn2022@gmail.com
           </p>
-          <img
-            alt="Đã thông báo Bộ Công Thương"
-            className="mb-4"
-            height="50"
-            src={bocongthuong}
-            width="150"
-          />
+          <a href="http://online.gov.vn/(X(1)S(c00f5rff5upbplg4d1rvdfaw))/Home/WebDetails/105598?AspxAutoDetectCookieSupport=1">
+            <img
+              alt="Đã thông báo Bộ Công Thương"
+              className="mb-4"
+              height="50"
+              src={bocongthuong}
+              width="150"
+            />
+          </a>
         </div>
         <div>
           <h2 className="font-semibold text-lg mb-4">Chính sách</h2>
@@ -92,7 +94,9 @@ function Footer() {
               <Link to={"/chinh-sach-giao-hang"}>Chính sách giao hàng</Link>
             </li>
             <li className="hover:text-primary">
-              <Link to={"/huong-dan-mua-hang-online"}>Hướng dẫn mua hàng Online</Link>
+              <Link to={"/huong-dan-mua-hang-online"}>
+                Hướng dẫn mua hàng Online
+              </Link>
             </li>
             <li className="hover:text-primary">
               <Link to={"/policy"}>Thông tin về điều kiện giao dịch chung</Link>
@@ -103,16 +107,24 @@ function Footer() {
               </Link>
             </li>
             <li className="hover:text-primary">
-              <Link to={"/van-chuyen-va-giao-nhan"}>Thông tin về vận chuyển và giao nhận</Link>
+              <Link to={"/van-chuyen-va-giao-nhan"}>
+                Thông tin về vận chuyển và giao nhận
+              </Link>
             </li>
           </ul>
         </div>
         <div>
           <h2 className="font-semibold text-lg mb-4">Liên Kết</h2>
           <ul className="list-disc pl-6 list-inside space-y-4">
-          <li className="hover:text-primary"><a href="https://ondia.vn/tin-hot/">Tin hot</a></li>
-            <li className="hover:text-primary"><a href="https://ondia.vn/meo-vat/">Mẹo vặt</a></li>
-            <li className="hover:text-primary"><a href="https://ondia.vn/khuyen-mai/">Khuyến mãi</a></li>
+            <li className="hover:text-primary">
+              <a href="https://ondia.vn/tin-hot/">Tin hot</a>
+            </li>
+            <li className="hover:text-primary">
+              <a href="https://ondia.vn/meo-vat/">Mẹo vặt</a>
+            </li>
+            <li className="hover:text-primary">
+              <a href="https://ondia.vn/khuyen-mai/">Khuyến mãi</a>
+            </li>
           </ul>
         </div>
         <div>

@@ -146,7 +146,7 @@ const UserManagement = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4 text-gray-700">User Management</h1>
+      <h1 className="text-2xl font-bold mb-4 text-gray-700">Quản lí người dùng</h1>
       <UserManagementTable
         users={users}
         onEdit={handleEdit}
