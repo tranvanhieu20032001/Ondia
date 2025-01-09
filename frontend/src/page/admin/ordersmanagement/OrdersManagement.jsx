@@ -14,6 +14,22 @@ const OrdersManagement = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isEditing, setIsEditing] = useState(null); // Track edit mode for each order
   const [editedStatus, setEditedStatus] = useState("");
+  const getPaymentMethodText = (paymentMethod) => {
+    switch (paymentMethod) {
+      case 'cod':
+        return 'Thanh toán khi nhận hàng';
+      case 'bank':
+        return 'Chuyển khoản ngân hàng';
+      case 'gop6':
+        return 'Trả góp 6 tháng';
+      case 'gop9':
+        return 'Trả góp 9 tháng';
+      case 'gop12':
+        return 'Trả góp 12 tháng';
+      default:
+        return 'Phương thức thanh toán không xác định';
+    }
+  };
 
   const fetchOrders = async () => {
     try {
@@ -252,7 +268,7 @@ const OrdersManagement = () => {
                     {order.phone}
                   </td>
                   <td className="px-2 py-3 text-sm text-gray-700">
-                    {order.paymentMethod}
+                    {getPaymentMethodText(order.paymentMethod)}
                   </td>
                   <td className="px-2 py-3 text-sm text-gray-700">
                     {order.totalPrice?.toLocaleString()} VND

@@ -262,9 +262,10 @@ function Checkout() {
         </div>
         <div>
           <YourOrder orders={orders} coupon={coupon} />
-          <div className="space-y-8 py-4 shadow-md bg-slate-100 px-4">
+          <div className="space-y-6 py-4 shadow-md bg-slate-100 px-4">
             <div>
-              <div className="">
+            <h2 className="font-bold">Chọn phương thức thanh toán</h2>
+              <div className="mt-6">
                 <div className="flex items-center">
                   <label
                     className="relative flex items-center cursor-pointer"
@@ -328,6 +329,73 @@ function Checkout() {
                   Thanh toán khi nhận hàng
                 </label>
               </div>
+            </div>
+            <h2 className="font-bold">Trả góp</h2>
+            <div className="flex items-center mt-2 px-4">
+              <label
+                className="relative flex items-center cursor-pointer"
+                htmlFor="gop6"
+              >
+                <input
+                  name="checkout"
+                  type="radio"
+                  className="peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-slate-300 checked:border-slate-400 transition-all"
+                  id="gop6"
+                  checked={selectedOption === "gop6"}
+                  onChange={() => setSelectedOption("gop6")}
+                />
+                <span className="absolute bg-slate-800 w-3 h-3 rounded-full opacity-0 peer-checked:opacity-100 transition-opacity duration-200 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></span>
+              </label>
+              <label
+                className="ml-2 text-slate-600 cursor-pointer text-sm"
+                htmlFor="gop6"
+              >
+                Trả góp 6 tháng (Mỗi tháng sẽ trả 20%)
+              </label>
+            </div>
+            <div className="flex items-center mt-6 px-4">
+              <label
+                className="relative flex items-center cursor-pointer"
+                htmlFor="gop9"
+              >
+                <input
+                  name="checkout"
+                  type="radio"
+                  className="peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-slate-300 checked:border-slate-400 transition-all"
+                  id="gop9"
+                  checked={selectedOption === "gop9"}
+                  onChange={() => setSelectedOption("gop9")}
+                />
+                <span className="absolute bg-slate-800 w-3 h-3 rounded-full opacity-0 peer-checked:opacity-100 transition-opacity duration-200 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></span>
+              </label>
+              <label
+                className="ml-2 text-slate-600 cursor-pointer text-sm"
+                htmlFor="gop9"
+              >
+                Trả góp 9 tháng (Mỗi tháng sẽ trả 14%)
+              </label>
+            </div>
+            <div className="flex items-center mt-6 px-4">
+              <label
+                className="relative flex items-center cursor-pointer"
+                htmlFor="gop12"
+              >
+                <input
+                  name="checkout"
+                  type="radio"
+                  className="peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-slate-300 checked:border-slate-400 transition-all"
+                  id="gop12"
+                  checked={selectedOption === "gop12"}
+                  onChange={() => setSelectedOption("gop12")}
+                />
+                <span className="absolute bg-slate-800 w-3 h-3 rounded-full opacity-0 peer-checked:opacity-100 transition-opacity duration-200 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></span>
+              </label>
+              <label
+                className="ml-2 text-slate-600 cursor-pointer text-sm"
+                htmlFor="gop12"
+              >
+                Trả góp 12 tháng (Mỗi tháng sẽ trả 11,2%)
+              </label>
             </div>
 
             <button

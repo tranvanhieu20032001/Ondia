@@ -6,10 +6,9 @@ function Filter({ onFilterChange }) {
     "Ecovacs",
     "Tineco",
     "Xiaomi-Redmi",
-    "Xiaomi - Lumias",
-    "NWT-Lumias",
-    "Xiaomi- Lumias",
-    "Xiaomi-KingSmith",
+    "Lumias",
+    "KingSmith",
+    "Khác",
   ];
 
   const priceRanges = [
@@ -20,14 +19,12 @@ function Filter({ onFilterChange }) {
     { label: "Trên 10 triệu", value: [10000000, Infinity] },
   ];
 
-  const [selectedBrands, setSelectedBrands] = useState([]);  // Brands selected by the user
-  const [selectedPriceRange, setSelectedPriceRange] = useState(null);  // Selected price range
+  const [selectedBrands, setSelectedBrands] = useState([]); // Brands selected by the user
+  const [selectedPriceRange, setSelectedPriceRange] = useState(null); // Selected price range
 
   const handleBrandChange = (brand) => {
     setSelectedBrands((prev) =>
-      prev.includes(brand)
-        ? prev.filter((b) => b !== brand)
-        : [...prev, brand]
+      prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand]
     );
   };
 
@@ -36,7 +33,10 @@ function Filter({ onFilterChange }) {
   };
 
   const handleApplyFilters = () => {
-    onFilterChange({ company: selectedBrands, priceRange: selectedPriceRange ? selectedPriceRange : [] });
+    onFilterChange({
+      company: selectedBrands,
+      priceRange: selectedPriceRange ? selectedPriceRange : [],
+    });
   };
 
   const handleResetFilters = () => {
@@ -56,7 +56,7 @@ function Filter({ onFilterChange }) {
               <input
                 type="checkbox"
                 value={brand}
-                checked={selectedBrands.includes(brand)}  // Check if the brand is selected
+                checked={selectedBrands.includes(brand)} // Check if the brand is selected
                 onChange={() => handleBrandChange(brand)}
                 className="accent-blue-500"
               />
@@ -76,7 +76,11 @@ function Filter({ onFilterChange }) {
                 type="radio"
                 name="priceRange"
                 value={JSON.stringify(range.value)}
-                checked={selectedPriceRange && JSON.stringify(selectedPriceRange) === JSON.stringify(range.value)}
+                checked={
+                  selectedPriceRange &&
+                  JSON.stringify(selectedPriceRange) ===
+                    JSON.stringify(range.value)
+                }
                 onChange={() => handlePriceRangeChange(range.value)}
                 className="accent-blue-500"
               />
@@ -88,10 +92,16 @@ function Filter({ onFilterChange }) {
 
       {/* Apply and Reset Filters */}
       <div className="flex gap-2">
-        <button onClick={handleApplyFilters} className="border bg-primary text-white py-1 px-2 text-xs rounded">
+        <button
+          onClick={handleApplyFilters}
+          className="border bg-primary text-white py-1 px-2 text-xs rounded"
+        >
           Áp dụng
         </button>
-        <button onClick={handleResetFilters} className="border border-primary text-primary py-1 px-2 text-xs rounded">
+        <button
+          onClick={handleResetFilters}
+          className="border border-primary text-primary py-1 px-2 text-xs rounded"
+        >
           Đặt lại
         </button>
       </div>

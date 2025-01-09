@@ -16,6 +16,7 @@ import Context from "../context";
 import ShowComment from "../components/layouts/ShowComment";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import RelatedItem from "../components/catalogs/section/RelatedItem";
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 const ProductPage = () => {
   const { state } = useLocation();
@@ -27,6 +28,10 @@ const ProductPage = () => {
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const { setCart, userData } = useContext(Context);
+  const [showMore, setShowMore] = useState(false);
+
+  // Kiểm tra chiều cao của bảng
+  const isMobile = window.innerWidth < 640; // Điều chỉnh theo breakpoint của bạn
 
   const showProduct = async (productId) => {
     setLoading(true);
@@ -161,7 +166,7 @@ const ProductPage = () => {
               <img
                 src={`${backendDomain}/${product.avatar}`}
                 alt={`Thumbnail ${product.avatar}`}
-                className="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
+                className="size-16 sm:size-20 object-cover shadow-md rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
                 onClick={() =>
                   changeImage(`${backendDomain}/${product.avatar}`)
                 }
@@ -171,7 +176,7 @@ const ProductPage = () => {
                   src={`${backendDomain}/${thumb}`}
                   key={index}
                   alt={`Thumbnail ${index + 1}`}
-                  className="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
+                  className="size-16 sm:size-20 shadow-md object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
                   onClick={() => changeImage(`${backendDomain}/${thumb}`)}
                 />
               ))}
@@ -212,12 +217,12 @@ const ProductPage = () => {
             </div>
             <div className="mb-4 text-sm">
               {product?.saleprice === 0 ? (
-                <span className="text-lg lg:text-xl mr-2">
+                <span className="text-lg lg:text-xl mr-2 text-primary">
                   {product?.price ? product?.price.toLocaleString() : "0"} đ
                 </span>
               ) : (
                 <>
-                  <span className="text-lg lg:text-lg mr-2">
+                  <span className="text-lg lg:text-lg mr-2 text-primary">
                     {product?.saleprice
                       ? product?.saleprice.toLocaleString()
                       : ""}
@@ -265,31 +270,50 @@ const ProductPage = () => {
               </button>
             </div>
             {product?.specifications?.length > 0 ? (
-              <div className="mb-2">
+              <div className="mb-16">
                 <h3 className="text-sm lg:text-base mb-1 font-semibold">
                   Thông số kỹ thuật:
                 </h3>
-                <table className="w-full border text-xs">
-                  <thead>
-                    <tr>
-                      <th className="px-4 py-2 border font-medium whitespace-nowrap">
-                        Thông số
-                      </th>
-                      <th className="px-4 py-2 border font-medium">Giá trị</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {product?.specifications?.map((spec, index) => (
-                      <tr
-                        key={index}
-                        className="even:bg-gray-50 hover:bg-gray-100"
-                      >
-                        <td className="px-4 py-2 border">{spec?.name}</td>
-                        <td className="px-4 py-2 border">{spec?.value}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <div className="relative">
+                  <div
+                    className={`overflow-hidden ${
+                      isMobile && !showMore ? "max-h-[256px]" : "max-h-full"
+                    } transition-all`}
+                  >
+                    <table className="w-full border text-xs">
+                      <thead>
+                        <tr>
+                          <th className="px-4 py-2 border font-medium whitespace-nowrap">
+                            Thông số
+                          </th>
+                          <th className="px-4 py-2 border font-medium">
+                            Giá trị
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {product?.specifications?.map((spec, index) => (
+                          <tr
+                            key={index}
+                            className="even:bg-gray-50 hover:bg-gray-100"
+                          >
+                            <td className="px-4 py-2 border">{spec?.name}</td>
+                            <td className="px-4 py-2 border">{spec?.value}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {isMobile && product?.specifications?.length > 0 && (
+                  <div className="mt-2 text-primary absolute flex justify-center items-center w-full">
+                      <button
+                      onClick={() => setShowMore(!showMore)}
+                    >
+                      {showMore ? <span className="flex items-center gap-2">Ẩn bớt <MdKeyboardArrowUp /></span> :<span className="flex items-center gap-2">Xem thêm <MdKeyboardArrowDown /></span>}
+                    </button>
+                  </div>
+                  )}
+                </div>
               </div>
             ) : (
               ""
@@ -314,7 +338,7 @@ const ProductPage = () => {
             </div>
           </div>
         </div>
-        <h2 className="text-xl lg:text-xl font-semibold mb-1">Mô tả</h2>
+        <h2 className="text-xl lg:text-xl font-semibold mt-10 mb-1">Mô tả</h2>
         <hr />
         <div
           className="ql-editor"
@@ -359,7 +383,9 @@ const ProductPage = () => {
         <div className="flex items-center justify-between mb-6 lg:mb-10">
           <div className="flex items-center gap-4">
             <span className="inline-block w-5 h-11 rounded-md border bg-primary"></span>
-            <span className="text-primary font-bold text-lg">Mục liên quan</span>
+            <span className="text-primary font-bold text-lg">
+              Mục liên quan
+            </span>
           </div>
         </div>
         <RelatedItem id={product?.mainCategory} />

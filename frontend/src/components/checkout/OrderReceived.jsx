@@ -28,6 +28,22 @@ function OrderReceived() {
       setLoading(false);
     }
   };
+  const getPaymentMethodText = (paymentMethod) => {
+    switch (paymentMethod) {
+      case 'cod':
+        return 'Thanh toán khi nhận hàng';
+      case 'bank':
+        return 'Chuyển khoản ngân hàng';
+      case 'gop6':
+        return 'Trả góp 6 tháng';
+      case 'gop9':
+        return 'Trả góp 9 tháng';
+      case 'gop12':
+        return 'Trả góp 12 tháng';
+      default:
+        return 'Phương thức thanh toán không xác định';
+    }
+  };
 
   useEffect(() => {
     if (id) {
@@ -60,7 +76,7 @@ function OrderReceived() {
             </div>
             <div>
               <span className="font-semibold">Phương thức thanh toán:</span>{" "}
-              {orderDetails.paymentMethod}
+              {getPaymentMethodText(orderDetails?.paymentMethod)}
             </div>
             <div>
               <span className="font-semibold">Địa chỉ giao hàng:</span>{" "}

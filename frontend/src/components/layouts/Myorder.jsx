@@ -39,15 +39,15 @@ function Myorder() {
     setLoading(true);
     try {
       await axios({
-        url: SummaryApi.cancelOrder.url.replace(":id", id),
-        method: SummaryApi.cancelOrder.method,
+        url: SummaryApi.cancelOrder?.url.replace(":id", id),
+        method: SummaryApi.cancelOrder?.method,
         data: { orderStatus: "Cancelled", paymentStatus: "Failed" },
         withCredentials: true,
       });
       // Update the UI after successful cancellation
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
-          order._id === id ? { ...order, orderStatus: "Cancelled" } : order
+          order?._id === id ? { ...order, orderStatus: "Cancelled" } : order
         )
       );
     } catch (error) {
@@ -67,7 +67,7 @@ function Myorder() {
       setFilteredOrders(orders);
     } else {
       setFilteredOrders(
-        orders.filter((order) => order.orderStatus === filterStatus)
+        orders.filter((order) => order?.orderStatus === filterStatus)
       );
     }
   }, [filterStatus, orders]);
@@ -78,6 +78,22 @@ function Myorder() {
 
   const closeModal = () => {
     setSelectedOrder(null); // Close the modal by clearing the selected order
+  };
+  const getPaymentMethodText = (paymentMethod) => {
+    switch (paymentMethod) {
+      case 'cod':
+        return 'Thanh toán khi nhận hàng';
+      case 'bank':
+        return 'Chuyển khoản ngân hàng';
+      case 'gop6':
+        return 'Trả góp 6 tháng';
+      case 'gop9':
+        return 'Trả góp 9 tháng';
+      case 'gop12':
+        return 'Trả góp 12 tháng';
+      default:
+        return 'Phương thức thanh toán không xác định';
+    }
   };
 
   return (
@@ -141,10 +157,10 @@ function Myorder() {
               filteredOrders.map((order, index) => (
                 <tr key={index}>
                   <td className="px-2 py-3 text-xs text-gray-700">
-                    {order._id}
+                    {order?._id}
                   </td>
                   <td className="px-2 py-3 text-xs text-gray-700 whitespace-nowrap">
-                    {new Date(order.updatedAt).toLocaleDateString("en-US", {
+                    {new Date(order?.updatedAt).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "short",
                       day: "numeric",
@@ -153,13 +169,13 @@ function Myorder() {
                     })}
                   </td>
                   <td className="px-2 py-3 text-xs text-gray-700">
-                    {order.shippingAddress}
+                    {order?.shippingAddress}
                   </td>
                   <td className="px-2 py-3 text-xs text-gray-700">
-                    {order.phone}
+                    {order?.phone}
                   </td>
                   <td className="px-2 py-3 text-xs text-gray-700">
-                    {order.paymentMethod}
+                  {getPaymentMethodText(order?.paymentMethod)}
                   </td>
                   <td className="px-2 py-3 text-xs text-gray-700">
                     {order?.totalPrice
@@ -170,20 +186,20 @@ function Myorder() {
                   <td className="px-2 py-3 text-xs">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        order.orderStatus === "Pending"
+                        order?.orderStatus === "Pending"
                           ? "bg-gray-100 text-gray-600"
-                          : order.orderStatus === "Processing"
+                          : order?.orderStatus === "Processing"
                           ? "bg-blue-100 text-blue-600"
-                          : order.orderStatus === "Shipped"
+                          : order?.orderStatus === "Shipped"
                           ? "bg-orange-100 text-orange-600"
-                          : order.orderStatus === "Delivered"
+                          : order?.orderStatus === "Delivered"
                           ? "bg-green-100 text-green-600"
-                          : order.orderStatus === "Cancelled"
+                          : order?.orderStatus === "Cancelled"
                           ? "bg-red-100 text-red-600"
                           : ""
                       }`}
                     >
-                      {order.orderStatus}
+                      {order?.orderStatus}
                     </span>
                   </td>
                   <td className="px-2 py-3 text-xs">
@@ -193,12 +209,12 @@ function Myorder() {
                     >
                       Xem
                     </span>
-                    {order.orderStatus === "Delivered" ||
-                    order.orderStatus === "Cancelled" ? (
+                    {order?.orderStatus === "Delivered" ||
+                    order?.orderStatus === "Cancelled" ? (
                       ""
                     ) : (
                       <span
-                        onClick={() => handleCancelOrder(order._id)}
+                        onClick={() => handleCancelOrder(order?._id)}
                         className="text-red-500 cursor-pointer"
                       >
                         Hủy

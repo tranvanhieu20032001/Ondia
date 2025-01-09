@@ -1,23 +1,37 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap'); */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Gilroy";
+  src: url("/fonts/Gilroy-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  src: url("/fonts/Gilroy-Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 html {
-    overflow-x: hidden;
+  overflow-x: hidden;
 }
 
 body {
-    font-family: "Poppins", system-ui;
-    line-height: 1.5;
-    font-weight: 400;
-    width: 100%;
+  font-family: "Gilroy", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  width: 100%;
 }
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
@@ -25,7 +39,7 @@ input[type="number"]::-webkit-outer-spin-button {
   background-color: transparent;
 }
 
-.ql-container.ql-snow{
+.ql-container.ql-snow {
   min-height: 500px;
 }
 
@@ -61,18 +75,18 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .ql-font-times-new-roman {
-  font-family: 'Times New Roman', serif !important;
+  font-family: "Times New Roman", serif !important;
 }
 
 .ql-font-courier-new {
-  font-family: 'Courier New', monospace !important;
+  font-family: "Courier New", monospace !important;
 }
 
 /* Thêm các font tùy chỉnh (nếu cần) */
 .ql-font-roboto {
-  font-family: 'Roboto', sans-serif !important;
+  font-family: "Roboto", sans-serif !important;
 }
 
 .ql-font-open-sans {
-  font-family: 'Open Sans', sans-serif !important;
+  font-family: "Open Sans", sans-serif !important;
 }

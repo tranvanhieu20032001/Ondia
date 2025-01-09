@@ -473,10 +473,9 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
                   "Ecovacs",
                   "Tineco",
                   "Xiaomi-Redmi",
-                  "Xiaomi - Lumias",
-                  "NWT-Lumias",
-                  "Xiaomi- Lumias",
-                  "Xiaomi-KingSmith",
+                  "Lumias",
+                  "KingSmith",
+                  "Khác"
                 ].map((company, index) => (
                   <option key={index} value={company}>
                     {company}

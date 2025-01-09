@@ -6,6 +6,22 @@ import LoadingPage from "../loading/LoadingPage";
 function ViewOrder({ order, onClose }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const getPaymentMethodText = (paymentMethod) => {
+    switch (paymentMethod) {
+      case 'cod':
+        return 'Thanh toán khi nhận hàng';
+      case 'bank':
+        return 'Chuyển khoản ngân hàng';
+      case 'gop6':
+        return 'Trả góp 6 tháng';
+      case 'gop9':
+        return 'Trả góp 9 tháng';
+      case 'gop12':
+        return 'Trả góp 12 tháng';
+      default:
+        return 'Phương thức thanh toán không xác định';
+    }
+  };
 
   const getProductById = async (productId) => {
     setLoading(true);
@@ -28,7 +44,7 @@ function ViewOrder({ order, onClose }) {
   useEffect(() => {
     const fetchProducts = async () => {
       const productData = await Promise.all(
-        order.products.map((product) => getProductById(product?.product))
+        order?.products.map((product) => getProductById(product?.product))
       );
       setProducts(productData);
     };
@@ -84,10 +100,10 @@ function ViewOrder({ order, onClose }) {
           <tbody className="divide-y divide-gray-200">
             <tr>
               <td className="px-2 py-3 text-xs text-gray-700 border-r">
-                {order._id}
+                {order?._id}
               </td>
               <td className="px-2 py-3 text-xs text-gray-700 border-r whitespace-nowrap">
-                {new Date(order.updatedAt).toLocaleDateString("en-US", {
+                {new Date(order?.updatedAt).toLocaleDateString("en-US", {
                   year: "numeric",
                   month: "short",
                   day: "numeric",
@@ -96,25 +112,25 @@ function ViewOrder({ order, onClose }) {
                 })}
               </td>
               <td className="px-2 py-3 text-xs text-gray-700 border-r">
-                {order.shippingAddress}
+                {order?.shippingAddress}
               </td>
               <td className="px-2 py-3 text-xs text-gray-700 border-r">
-                {order.phone}
+                {order?.phone}
               </td>
               <td className="px-2 py-3 text-xs text-gray-700 border-r">
-                {order.email}
+                {order?.email}
               </td>
               <td className="px-2 py-3 text-xs text-gray-700 border-r">
-                {order.paymentMethod}
+                {getPaymentMethodText(order?.paymentMethod)}
               </td>
               <td className="px-2 py-3 text-xs text-gray-700 border-r">
                 {" "}
                 {order?.subPrice ? order?.subPrice.toLocaleString() : "N/A"} VND
               </td>
               <td className="px-2 py-3 text-xs text-gray-700 border-r">
-                {order.discount <= 100
-                  ? `${order.discount}%`
-                  : `${order.discount}đ`}
+                {order?.discount <= 100
+                  ? `${order?.discount}%`
+                  : `${order?.discount}đ`}
               </td>
               <td className="px-2 py-3 text-xs text-gray-700 border-r">
                 {order?.totalPrice ? order?.totalPrice.toLocaleString() : "N/A"}{" "}
@@ -123,20 +139,20 @@ function ViewOrder({ order, onClose }) {
               <td className="px-2 py-3 text-xs">
                 <span
                   className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    order.orderStatus === "Pending"
+                    order?.orderStatus === "Pending"
                       ? "bg-gray-100 text-gray-600"
-                      : order.orderStatus === "Processing"
+                      : order?.orderStatus === "Processing"
                       ? "bg-blue-100 text-blue-600"
-                      : order.orderStatus === "Shipped"
+                      : order?.orderStatus === "Shipped"
                       ? "bg-orange-100 text-orange-600"
-                      : order.orderStatus === "Delivered"
+                      : order?.orderStatus === "Delivered"
                       ? "bg-green-100 text-green-600"
-                      : order.orderStatus === "Cancelled"
+                      : order?.orderStatus === "Cancelled"
                       ? "bg-red-100 text-red-600"
                       : ""
                   }`}
                 >
-                  {order.orderStatus}
+                  {order?.orderStatus}
                 </span>
               </td>
             </tr>
