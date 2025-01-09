@@ -6,18 +6,18 @@ import LoadingPage from "../loading/LoadingPage";
 function ViewOrder({ order, onClose }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const getPaymentMethodText = (paymentMethod) => {
+  const getPaymentMethodText = (paymentMethod,totalPrice) => {
     switch (paymentMethod) {
       case 'cod':
         return 'Thanh toán khi nhận hàng';
       case 'bank':
         return 'Chuyển khoản ngân hàng';
       case 'gop6':
-        return 'Trả góp 6 tháng';
+        return `Trả góp 6 tháng (mỗi tháng phải trả ${(totalPrice*0.2).toLocaleString()})`;
       case 'gop9':
-        return 'Trả góp 9 tháng';
+        return `Trả góp 9 tháng (mỗi tháng phải trả ${(totalPrice*0.14).toLocaleString()})`;
       case 'gop12':
-        return 'Trả góp 12 tháng';
+        return `Trả góp 12 tháng (mỗi tháng phải trả ${(totalPrice*0.112).toLocaleString()})`;
       default:
         return 'Phương thức thanh toán không xác định';
     }
@@ -121,7 +121,7 @@ function ViewOrder({ order, onClose }) {
                 {order?.email}
               </td>
               <td className="px-2 py-3 text-xs text-gray-700 border-r">
-                {getPaymentMethodText(order?.paymentMethod)}
+                {getPaymentMethodText(order?.paymentMethod,order?.totalPrice)}
               </td>
               <td className="px-2 py-3 text-xs text-gray-700 border-r">
                 {" "}

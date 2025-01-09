@@ -20,7 +20,7 @@ function Myorder() {
         withCredentials: true,
       });
       setOrders(response.data.orders);
-      console.log("Order",orders);
+      // console.log("Order",orders);
       
       setFilteredOrders(response.data.orders); // Initialize filtered orders
     } catch (error) {
@@ -79,18 +79,18 @@ function Myorder() {
   const closeModal = () => {
     setSelectedOrder(null); // Close the modal by clearing the selected order
   };
-  const getPaymentMethodText = (paymentMethod) => {
+  const getPaymentMethodText = (paymentMethod,totalPrice) => {
     switch (paymentMethod) {
       case 'cod':
         return 'Thanh toán khi nhận hàng';
       case 'bank':
         return 'Chuyển khoản ngân hàng';
       case 'gop6':
-        return 'Trả góp 6 tháng';
+        return `Trả góp 6 tháng (mỗi tháng phải trả ${(totalPrice*0.2).toLocaleString()})`;
       case 'gop9':
-        return 'Trả góp 9 tháng';
+        return `Trả góp 9 tháng (mỗi tháng phải trả ${(totalPrice*0.14).toLocaleString()})`;
       case 'gop12':
-        return 'Trả góp 12 tháng';
+        return `Trả góp 12 tháng (mỗi tháng phải trả ${(totalPrice*0.112).toLocaleString()})`;
       default:
         return 'Phương thức thanh toán không xác định';
     }
@@ -175,7 +175,7 @@ function Myorder() {
                     {order?.phone}
                   </td>
                   <td className="px-2 py-3 text-xs text-gray-700">
-                  {getPaymentMethodText(order?.paymentMethod)}
+                  {getPaymentMethodText(order?.paymentMethod,order?.totalPrice)}
                   </td>
                   <td className="px-2 py-3 text-xs text-gray-700">
                     {order?.totalPrice

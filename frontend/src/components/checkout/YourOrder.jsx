@@ -3,7 +3,7 @@ import { backendDomain, SummaryApi } from "../../common";
 import Context from "../../context";
 import axios from "axios";
 
-function YourOrder({ orders, coupon }) {
+function YourOrder({ orders, coupon, onTotalChange }) {
   const { userData } = useContext(Context);
   const [products, setProducts] = useState({});
 
@@ -19,7 +19,7 @@ function YourOrder({ orders, coupon }) {
       const dataApi = dataResponse.data;
       setProducts((prev) => ({
         ...prev,
-        [productId]: dataApi.product, // Lưu thông tin sản phẩm theo productId
+        [productId]: dataApi.product,
       }));
     } catch (error) {
       console.log(error);
@@ -30,7 +30,7 @@ function YourOrder({ orders, coupon }) {
     if (!userData) {
       orders.forEach((order) => {
         if (!products[order.productId]) {
-          showProduct(order.productId); // Gọi API nếu chưa có sản phẩm trong state
+          showProduct(order.productId);
         }
       });
     }
@@ -65,11 +65,19 @@ function YourOrder({ orders, coupon }) {
 
   const discount = coupon
     ? coupon.discountType === "percentage"
-      ? (subtotal * coupon.value) / 100 // Giảm giá theo phần trăm
-      : coupon.value // Giảm giá theo giá trị cố định
+      ? (subtotal * coupon.value) / 100
+      : coupon.value
     : 0;
 
   const totalPrice = subtotal - discount;
+
+  // Gọi callback để truyền totalPrice ngược lên component cha
+  useEffect(() => {
+    if (onTotalChange) {
+      onTotalChange(totalPrice);
+    }
+  }, [totalPrice, onTotalChange]);
+
   const getProductPrice = (product) => {
     return product?.saleprice !== 0 ? product?.saleprice : product?.price;
   };
@@ -80,17 +88,12 @@ function YourOrder({ orders, coupon }) {
       <hr />
       {orders.map((order) => {
         const productId = order?.productId;
-        const product = userData ? order?.product : products[productId]; // Nếu không có userData, lấy từ state `products`
-
-        const productImage =
-          product?.avatar || order?.product?.avatar;
+        const product = userData ? order?.product : products[productId];
+        const productImage = product?.avatar || order?.product?.avatar;
         const productName = product?.name || order?.product?.name;
         const productPrice =
           getProductPrice(product) || getProductPrice(order?.product);
-        console.log("price", order?.product?.saleprice);
-
         const quantity = order?.quantity;
-
         const totalProductPrice = productPrice * quantity;
 
         return (
@@ -130,8 +133,6 @@ function YourOrder({ orders, coupon }) {
             {subtotal?.toLocaleString()} đ
           </span>
         </p>
-
-        {/* Hiển thị giảm giá nếu có */}
         {coupon && discount > 0 && (
           <p className="text-sm lg:text-base flex justify-between pl-10">
             Discount
@@ -142,7 +143,6 @@ function YourOrder({ orders, coupon }) {
             </span>
           </p>
         )}
-
         <p className="text-sm lg:text-base flex justify-between pl-10">
           Shipping
           <span className="font-medium text-sm lg:text-[16px]">Free</span>

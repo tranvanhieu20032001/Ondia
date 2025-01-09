@@ -23,6 +23,11 @@ function Checkout() {
   const [loading, setLoading] = useState(false);
   const [billingData, setBillingData] = useState({});
   const [coupon, setCoupon] = useState(null);
+  const [totalPrice, setTotalPrice] = useState(0); // Lưu giá trị totalPrice từ component con
+
+  const handleTotalPriceChange = (newTotal) => {
+    setTotalPrice(newTotal);
+  };
 
   const userDetails = useSelector((state) => state?.user?.user?.user);
 
@@ -261,7 +266,7 @@ function Checkout() {
           <CouponForm getDiscountByName={getDiscountByName} />
         </div>
         <div>
-          <YourOrder orders={orders} coupon={coupon} />
+        <YourOrder orders={orders} coupon={coupon} onTotalChange={handleTotalPriceChange} />
           <div className="space-y-6 py-4 shadow-md bg-slate-100 px-4">
             <div>
             <h2 className="font-bold">Chọn phương thức thanh toán</h2>
@@ -350,7 +355,7 @@ function Checkout() {
                 className="ml-2 text-slate-600 cursor-pointer text-sm"
                 htmlFor="gop6"
               >
-                Trả góp 6 tháng (Mỗi tháng sẽ trả 20%)
+                Trả góp 6 tháng { totalPrice ?`(Mỗi tháng phải trả ${(totalPrice*0.2).toLocaleString()} đ)`:''}
               </label>
             </div>
             <div className="flex items-center mt-6 px-4">
@@ -372,7 +377,7 @@ function Checkout() {
                 className="ml-2 text-slate-600 cursor-pointer text-sm"
                 htmlFor="gop9"
               >
-                Trả góp 9 tháng (Mỗi tháng sẽ trả 14%)
+                Trả góp 9 tháng { totalPrice ?`(Mỗi tháng phải trả ${(totalPrice*0.14).toLocaleString()} đ)`:''}
               </label>
             </div>
             <div className="flex items-center mt-6 px-4">
@@ -394,7 +399,7 @@ function Checkout() {
                 className="ml-2 text-slate-600 cursor-pointer text-sm"
                 htmlFor="gop12"
               >
-                Trả góp 12 tháng (Mỗi tháng sẽ trả 11,2%)
+                Trả góp 12 tháng { totalPrice ?`(Mỗi tháng phải trả ${(totalPrice*0.112).toLocaleString()} đ)`:''}
               </label>
             </div>
 
