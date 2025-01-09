@@ -257,17 +257,17 @@ const ProductPage = () => {
                 className="text-primary cursor-pointer"
                 size={30}
               />
-              <button
-                type="button"
-                className="text-sm w-full lg:text-base px-5 py-2 font-semibold tracking-wide bg-white text-primary border border-primary hover:bg-primary hover:text-white rounded-md"
-              >
+             
                 <Link
                   to={"checkout"}
                   state={{ id: state?.id, quantity: quantity }}
+                  className="w-full"
                 >
-                  Mua ngay
+                   <button
+                type="button"
+                className="text-sm w-full lg:text-base px-5 py-2 font-semibold tracking-wide bg-white text-primary border border-primary hover:bg-primary hover:text-white rounded-md"
+              >Mua ngay</button>
                 </Link>
-              </button>
             </div>
             {product?.specifications?.length > 0 ? (
               <div className="mb-16">
