@@ -6,7 +6,7 @@ function EditWarrantyModal({ isOpen, onClose, warranty, onSave }) {
     description: "",
     warrantyType: "Standard",
     duration: "",
-    durationUnit: "years",
+    durationUnit: "năm",
     coverage: "Repair",
     terms: "",
   });
@@ -18,7 +18,7 @@ function EditWarrantyModal({ isOpen, onClose, warranty, onSave }) {
         description: warranty?.description || "",
         warrantyType: warranty?.warrantyType || "Standard",
         duration: warranty?.duration || "",
-        durationUnit: warranty?.durationUnit || "years",
+        durationUnit: warranty?.durationUnit || "năm",
         coverage: warranty?.coverage || "Repair",
         terms: warranty?.terms || "",
       });
@@ -132,10 +132,10 @@ function EditWarrantyModal({ isOpen, onClose, warranty, onSave }) {
               onChange={handleChange}
               className="w-full border rounded px-2 py-2 text-sm outline-none text-gray-700"
             >
-              <option value="months">Tháng</option>
-              <option value="years">Năm</option>
-              <option value="days">Ngày</option>
-              <option value="hours">Giờ</option>
+              <option value="tháng">Tháng</option>
+              <option value="năm">Năm</option>
+              <option value="ngày">Ngày</option>
+              <option value="giờ">Giờ</option>
             </select>
           </div>
 

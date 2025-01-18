@@ -1,6 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import axios from "axios";
 import BillingDetails from "../components/checkout/BillingDetails";
 import YourOrder from "../components/checkout/YourOrder";
@@ -13,6 +19,12 @@ import { SummaryApi } from "../common";
 function Checkout() {
   const { userData } = useContext(Context);
   const { setCart, cart } = useContext(Context);
+
+  const { slug } = useParams();
+  console.log("productDetails", slug);
+  // Lấy slug từ URL
+  const [searchParams] = useSearchParams();
+  const quantity = searchParams.get("quantity") || 1;
   const { state } = useLocation();
   const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState("bank");
@@ -71,22 +83,45 @@ function Checkout() {
   };
 
   // Fetch single product by ID
-  const fetchProductById = async (productId) => {
+  // const fetchProductById = async (productId) => {
+  //   try {
+  //     const url = SummaryApi.getProductById.url.replace(":id", productId);
+  //     const { data } = await axios({
+  //       url,
+  //       method: SummaryApi.getProductById.method,
+  //       withCredentials: true,
+  //     });
+  //     setOrders([
+  //       {
+  //         product: data.product,
+  //         quantity: state.quantity,
+  //       },
+  //     ]);
+  //   } catch (error) {
+  //     console.error("Error fetching product by ID:", error);
+  //     toast.error("Không thể tải thông tin sản phẩm.");
+  //   }
+  // };
+
+  // Fetch single product by slug
+  const fetchProductBySlug = async (slug) => {
     try {
-      const url = SummaryApi.getProductById.url.replace(":id", productId);
+      const url = SummaryApi.getProductsBySlug.url.replace(":slug", slug);
+      console.log("url", url);
+
       const { data } = await axios({
         url,
-        method: SummaryApi.getProductById.method,
+        method: SummaryApi.getProductsBySlug.method,
         withCredentials: true,
       });
       setOrders([
         {
           product: data.product,
-          quantity: state.quantity,
+          quantity: parseInt(quantity, 10),
         },
       ]);
     } catch (error) {
-      console.error("Error fetching product by ID:", error);
+      console.error("Error fetching product by slug:", error);
       toast.error("Không thể tải thông tin sản phẩm.");
     }
   };
@@ -123,41 +158,40 @@ function Checkout() {
     setErrors({});
 
     let formattedProducts = [];
+    const bhv = searchParams.get("bhv"); // Lấy tham số bhv từ URL
 
+    const additionalPrice = bhv === "true" ? 1000000 : 0; // Nếu bhv=true, thêm 1 triệu vào giá sản phẩm
+    const warrantyIds = searchParams.get("mbh");
     if (!userData) {
       formattedProducts = orders.map((order) => {
-        if (order?.product) {
-          const price =
-            order.product.saleprice !== 0
-              ? order.product.saleprice
-              : order.product.price;
-          return {
-            product: order.product._id,
-            quantity: order.quantity,
-            price: price,
-            variant: order.variant?._id,
-          };
-        } else {
-          const price = order.price;
-          return {
-            product: order.productId,
-            quantity: order.quantity,
-            price: price,
-            variant: order.variant?._id,
-          };
-        }
+        let price =
+          order?.product?.saleprice !== 0
+            ? order?.product?.saleprice
+            : order?.product?.price;
+        price += additionalPrice; // Thêm tiền vào giá nếu bhv=true
+
+        return {
+          product: order?.product?._id,
+          quantity: order?.quantity,
+          price: price,
+          variant: order?.variant?._id,
+          warrantyIds: warrantyIds || order.warrantyIds,
+        };
       });
     } else {
       formattedProducts = orders.map((order) => {
-        const price =
-          order.product.saleprice !== 0
-            ? order.product.saleprice
-            : order.product.price;
+        let price =
+          order?.product?.saleprice !== 0
+            ? order?.product?.saleprice
+            : order?.product?.price;
+        price += additionalPrice; // Thêm tiền vào giá nếu bhv=true
+
         return {
-          product: order.product._id,
-          quantity: order.quantity,
+          product: order?.product?._id,
+          quantity: order?.quantity,
           price: price,
-          variant: order.variant?._id,
+          variant: order?.variant?._id,
+           warrantyIds: warrantyIds || order.warrantyIds,
         };
       });
     }
@@ -174,10 +208,10 @@ function Checkout() {
     try {
       const apiUrl = userData
         ? SummaryApi.createOrder.url
-        : SummaryApi.createOrderGuest.url; // Chọn đúng URL tùy vào việc người dùng đã đăng nhập hay chưa
+        : SummaryApi.createOrderGuest.url;
 
       const response = await axios({
-        url: apiUrl, // Sử dụng URL đã chọn
+        url: apiUrl,
         method: SummaryApi.createOrder.method,
         data: checkoutData,
         withCredentials: true,
@@ -217,12 +251,12 @@ function Checkout() {
   }, [userDetails?.userId]);
 
   useEffect(() => {
-    if (state?.id) {
-      fetchProductById(state.id);
+    if (slug) {
+      fetchProductBySlug(slug);
     } else {
       fetchCartProducts();
     }
-  }, [state?.id]);
+  }, [slug]);
 
   const getDiscountByName = async (name) => {
     try {
@@ -266,10 +300,14 @@ function Checkout() {
           <CouponForm getDiscountByName={getDiscountByName} />
         </div>
         <div>
-        <YourOrder orders={orders} coupon={coupon} onTotalChange={handleTotalPriceChange} />
+          <YourOrder
+            orders={orders}
+            coupon={coupon}
+            onTotalChange={handleTotalPriceChange}
+          />
           <div className="space-y-6 py-4 shadow-md bg-slate-100 px-4">
             <div>
-            <h2 className="font-bold">Chọn phương thức thanh toán</h2>
+              <h2 className="font-bold">Chọn phương thức thanh toán</h2>
               <div className="mt-6">
                 <div className="flex items-center">
                   <label
@@ -355,7 +393,12 @@ function Checkout() {
                 className="ml-2 text-slate-600 cursor-pointer text-sm"
                 htmlFor="gop6"
               >
-                Trả góp 6 tháng { totalPrice ?`(Mỗi tháng phải trả ${(totalPrice*0.2).toLocaleString()} đ)`:''}
+                Trả góp 6 tháng{" "}
+                {totalPrice
+                  ? `(Mỗi tháng phải trả ${(
+                      totalPrice * 0.2
+                    ).toLocaleString()} đ)`
+                  : ""}
               </label>
             </div>
             <div className="flex items-center mt-6 px-4">
@@ -377,7 +420,12 @@ function Checkout() {
                 className="ml-2 text-slate-600 cursor-pointer text-sm"
                 htmlFor="gop9"
               >
-                Trả góp 9 tháng { totalPrice ?`(Mỗi tháng phải trả ${(totalPrice*0.14).toLocaleString()} đ)`:''}
+                Trả góp 9 tháng{" "}
+                {totalPrice
+                  ? `(Mỗi tháng phải trả ${(
+                      totalPrice * 0.14
+                    ).toLocaleString()} đ)`
+                  : ""}
               </label>
             </div>
             <div className="flex items-center mt-6 px-4">
@@ -399,7 +447,12 @@ function Checkout() {
                 className="ml-2 text-slate-600 cursor-pointer text-sm"
                 htmlFor="gop12"
               >
-                Trả góp 12 tháng { totalPrice ?`(Mỗi tháng phải trả ${(totalPrice*0.112).toLocaleString()} đ)`:''}
+                Trả góp 12 tháng{" "}
+                {totalPrice
+                  ? `(Mỗi tháng phải trả ${(
+                      totalPrice * 0.112
+                    ).toLocaleString()} đ)`
+                  : ""}
               </label>
             </div>
 

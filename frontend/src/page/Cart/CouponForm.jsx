@@ -25,7 +25,7 @@ const CouponForm = ({ getDiscountByName }) => {
       }}
     >
       <input
-        placeholder="Enter coupon code"
+        placeholder="Nhập mã giảm giá"
         className="text-xs lg:text-sm w-56 lg:w-72 border focus:outline-none rounded-md px-4 focus:border-primary"
         value={couponCode}
         onChange={(e) => setCouponCode(e.target.value)} // Update state on input change
@@ -34,7 +34,7 @@ const CouponForm = ({ getDiscountByName }) => {
         type="submit"
         className="text-xs lg:text-sm gap-3 px-3 py-2 lg:px-4 lg:py-2 tracking-wide bg-transparent flex items-center font-medium hover:bg-primary hover:text-white border-primary border rounded-md text-primary"
       >
-        Apply Coupon
+        Áp dụng
       </button>
       
     </form>

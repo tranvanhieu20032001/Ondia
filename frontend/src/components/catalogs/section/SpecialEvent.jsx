@@ -31,7 +31,7 @@ function SpecialEvent() {
   }, []);
 
   return (
-    <div className="w-full h-[500px] bg-black flex flex-col lg:flex-row items-center p-1 lg:p-10 mt-20">
+    <div className="w-full bg-black flex flex-col lg:flex-row items-center p-1 lg:p-10 mt-20">
       {newBanner.length > 0 ? (
         newBanner.map((banner, index) => (
           <div key={index} className="w-full lg:w-2/5 flex flex-col justify-center p-4 gap-y-4">
@@ -50,7 +50,7 @@ function SpecialEvent() {
       ) : (
         <div className="w-full lg:w-2/5 flex flex-col justify-center p-4 gap-y-4">
              <h3 className="text-[#00FF66] font-semibold">Cực hot</h3>
-          <p className="text-white text-[24px] lg:text-[48px] font-normal lg:font-semibold">
+          <p className="text-white text-[20px] lg:text-[48px] font-normal lg:font-semibold">
             Sản phẩm đặc biệt Deebot Y1 Pro Plus Mới – Robot Hút Bụi Lau Nhà
           </p>
           {/* <Countdown targetDate={'2024-10-18T00:00:00'} /> */}
@@ -63,21 +63,21 @@ function SpecialEvent() {
         </div>
       )}
 
-      <div className="w-full md:w-3/5 h-full relative flex justify-center items-center">
+      <div className="w-full md:w-3/5 relative flex justify-center items-center">
         {newBanner.length > 0 ? (
           newBanner.map((banner, index) => (
             <img
               key={index}
               src={`${backendDomain}/${banner.imageUrl}`}
               alt={banner.title}
-              className="object-cover h-5/6 relative z-10"
+              className="object-cover h-4/6 relative z-10"
             />
           ))
         ) : (
           <img
             src={robothutbui}
             alt="Robot Hút Bụi Lau Nhà"
-            className="object-cover h-5/6 relative z-10"
+            className="object-cover z-10"
           />
         )}
 

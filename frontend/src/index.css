@@ -90,3 +90,10 @@ input[type="number"]::-webkit-outer-spin-button {
 .ql-font-open-sans {
   font-family: "Open Sans", sans-serif !important;
 }
+
+.ql-clipboard {
+  position: fixed !important;
+  left: 50% !important;
+  top: 50% !important;
+  display: none;
+}

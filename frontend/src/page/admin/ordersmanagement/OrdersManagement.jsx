@@ -136,6 +136,7 @@ const OrdersManagement = () => {
   
       alert("Order status updated successfully!");
       setIsEditing(null)
+      window.location.reload()
     } catch (error) {
       console.error("Failed to update order status:", error);
       alert("Failed to update order status. Please try again.");
@@ -233,14 +234,14 @@ const OrdersManagement = () => {
           <thead className="bg-gray-100">
             <tr>
               {[
-                "Order ID",
-                "Date",
-                "Ship To",
-                "Phone Number",
-                "Payment Method",
-                "Order Total",
-                "Order Status",
-                "Actions",
+                "Mã đơn hàng",
+                "Ngày",
+                "Địa chỉ",
+                "Số điện thoại",
+                "Phương thức thanh toán",
+                "Tổng đơn hàng",
+                "Trạng thái",
+                "Hành động",
               ].map((header) => (
                 <th
                   key={header}
@@ -314,27 +315,27 @@ const OrdersManagement = () => {
                         className="text-green-500 hover:underline"
                         onClick={() => handleSave(order._id)}
                       >
-                        Save
+                        Lưu
                       </button>
                     ) : (
                       <button
                         className="text-yellow-500 hover:underline"
                         onClick={() => handleEdit(order)}
                       >
-                        Edit
+                        Sửa
                       </button>
                     )}
                     <button
                       className="ml-2 text-blue-500 hover:underline"
                       onClick={() => setSelectedOrder(order)}
                     >
-                      View
+                      Xem
                     </button>
                     <button
                       className="ml-2 text-red-500 hover:underline"
                       onClick={() => handleDelete(order._id)}
                     >
-                      Delete
+                      Xóa
                     </button>
                   </td>
                 </tr>

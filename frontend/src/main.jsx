@@ -54,7 +54,7 @@ const router = createBrowserRouter([
       { path: "/wishlist", element: <Wishlist /> },
       { path: "/cart", element: <Cart /> },
       { path: "/cart/checkout", element: <Checkout /> },
-      { path: "/products/:productDetails/checkout", element: <Checkout /> },
+      { path: "/products/checkout/:slug", element: <Checkout /> },
       { path: "/cart", element: <Cart /> },
       { path: "cart/checkout/order-received/:id", element: <OrderReceived /> },
       { path: "/about", element: <About /> },

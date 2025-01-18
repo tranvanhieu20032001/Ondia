@@ -19,7 +19,7 @@ const CardWishlist = ({ item }) => {
           href="/some/valid/uri"
           className="absolute bottom-0 right-0 left-0 hidden group-hover/cart:flex w-full items-center justify-center rounded-md bg-slate-900 px-2 py-2 text-center text-sm font-medium text-white hover:bg-primary focus:outline-none focus:ring-4 focus:ring-blue-300"
         >
-          Add to cart
+          Thêm vào giỏ hàng
         </a>
         <div className="absolute top-1 right-2 hidden group-hover/cart:block">
           <span className="flex justify-center items-center w-8 h-8 rounded-full my-1 bg-white cursor-pointer hover:text-primary">

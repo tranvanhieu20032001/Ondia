@@ -14,7 +14,7 @@ function WarrantyManagement() {
     description: "",
     warrantyType: "Standard",
     duration: "",
-    durationUnit: "years",
+    durationUnit: "năm",
     coverage: "Sửa",
     terms: "",
   });

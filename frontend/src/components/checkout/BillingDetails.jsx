@@ -36,7 +36,7 @@ function BillingDetails({ user, setBillingData, errors }) {
       <h1 className="text-xl lg:text-4xl my-10">Chi tiết thanh toán</h1>
       <div className="border focus-within:border-primary focus-within:text-primary transition-all duration-500 relative rounded p-1">
         <div className="-mt-4 absolute tracking-wider px-1 uppercase text-xs">
-          <label htmlFor="name" className="bg-white text-gray-600 px-1">
+          <label htmlFor="name" className="bg-white text-gray-600 px-1 capitalize">
             Tên *
           </label>
         </div>
@@ -59,8 +59,8 @@ function BillingDetails({ user, setBillingData, errors }) {
 
       <div className="border focus-within:border-primary focus-within:text-primary transition-all duration-500 relative rounded p-1">
         <div className="-mt-4 absolute tracking-wider px-1 uppercase text-xs">
-          <label htmlFor="address" className="bg-white text-gray-600 px-1">
-            Street Address*
+          <label htmlFor="address" className="bg-white text-gray-600 px-1 capitalize">
+            Địa chỉ*
           </label>
         </div>
         <p>
@@ -82,8 +82,8 @@ function BillingDetails({ user, setBillingData, errors }) {
 
       <div className="border focus-within:border-primary focus-within:text-primary transition-all duration-500 relative rounded p-1">
         <div className="-mt-4 absolute tracking-wider px-1 uppercase text-xs">
-          <label htmlFor="phone" className="bg-white text-gray-600 px-1">
-            Phone Number*
+          <label htmlFor="phone" className="bg-white text-gray-600 px-1 capitalize">
+            Số điện thoại*
           </label>
         </div>
         <p>
@@ -105,8 +105,8 @@ function BillingDetails({ user, setBillingData, errors }) {
 
       <div className="border focus-within:border-primary focus-within:text-primary transition-all duration-500 relative rounded p-1">
         <div className="-mt-4 absolute tracking-wider px-1 uppercase text-xs">
-          <label htmlFor="email" className="bg-white text-gray-600 px-1">
-            Email Address*
+          <label htmlFor="email" className="bg-white text-gray-600 px-1 capitalize">
+            Email*
           </label>
         </div>
         <p>

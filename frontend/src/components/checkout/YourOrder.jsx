@@ -2,8 +2,14 @@ import React, { useContext, useState, useEffect } from "react";
 import { backendDomain, SummaryApi } from "../../common";
 import Context from "../../context";
 import axios from "axios";
+import { useSearchParams } from "react-router-dom";
 
 function YourOrder({ orders, coupon, onTotalChange }) {
+
+  const [searchParams] = useSearchParams();
+const bhv = searchParams.get("bhv"); // Lấy giá trị bhv từ query params
+const additionalPrice = bhv === "true" ? 1000000 : 0;
+  
   const { userData } = useContext(Context);
   const [products, setProducts] = useState({});
 
@@ -41,10 +47,9 @@ function YourOrder({ orders, coupon, onTotalChange }) {
     subtotal = orders.reduce(
       (total, order) =>
         total +
-        (order?.product?.saleprice !== 0
+        ((order?.product?.saleprice !== 0
           ? order?.product?.saleprice
-          : order?.product.price) *
-          order?.quantity,
+          : order?.product.price) + additionalPrice) * order?.quantity,
       0
     );
   } else {
@@ -52,9 +57,9 @@ function YourOrder({ orders, coupon, onTotalChange }) {
       if (order?.product) {
         return (
           total +
-          (order.product.saleprice !== 0
+          ((order.product.saleprice !== 0
             ? order.product.saleprice
-            : order.product.price) *
+            : order.product.price) + additionalPrice) *
             order.quantity
         );
       } else {
@@ -79,8 +84,15 @@ function YourOrder({ orders, coupon, onTotalChange }) {
   }, [totalPrice, onTotalChange]);
 
   const getProductPrice = (product) => {
-    return product?.saleprice !== 0 ? product?.saleprice : product?.price;
+    // Kiểm tra nếu có giá trị bảo hành vàng
+    const bhv = searchParams.get("bhv");
+    const additionalPrice = bhv === "true" ? 1000000 : 0;
+  
+    return product?.saleprice !== 0
+      ? product?.saleprice + additionalPrice
+      : product?.price + additionalPrice;
   };
+  
 
   return (
     <div className="space-y-8 shadow-md bg-slate-100 px-4 py-2">
@@ -128,7 +140,7 @@ function YourOrder({ orders, coupon, onTotalChange }) {
       <hr />
       <div className="space-y-4 pb-4">
         <p className="text-sm lg:text-base flex justify-between pl-10">
-          Subtotal
+          Tạm tính
           <span className="font-medium text-sm lg:text-[16px]">
             {subtotal?.toLocaleString()} đ
           </span>
@@ -144,12 +156,12 @@ function YourOrder({ orders, coupon, onTotalChange }) {
           </p>
         )}
         <p className="text-sm lg:text-base flex justify-between pl-10">
-          Shipping
-          <span className="font-medium text-sm lg:text-[16px]">Free</span>
+          Vận chuyển
+          <span className="font-medium text-sm lg:text-[16px]">Miễn phí</span>
         </p>
         <hr />
         <p className="text-sm lg:text-base flex justify-between pl-10">
-          Totals
+          Tổng
           <span className="font-medium text-sm lg:text-[16px]">
             {totalPrice?.toLocaleString()} đ
           </span>
