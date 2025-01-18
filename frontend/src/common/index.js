@@ -82,6 +82,11 @@ const SummaryApi = {
     method: "GET",
   },
 
+  getProductsBySlug: {
+    url: `${backendDomain}/api/v1/products/slug/:slug`,
+    method: "GET",
+  },
+
   updateProductById: {
     url: `${backendDomain}/api/v1/products/:id`,
     method: "PATCH",
@@ -218,6 +223,11 @@ const SummaryApi = {
 
   getAllWarranty: {
     url: `${backendDomain}/api/v1/warranty/`,
+    method: "GET",
+  },
+
+  getWarrantyById:{
+    url: `${backendDomain}/api/v1/warranty/:id`,
     method: "GET",
   },
   addNewWarranty: {

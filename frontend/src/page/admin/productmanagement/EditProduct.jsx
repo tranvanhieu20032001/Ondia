@@ -22,13 +22,13 @@ const EditProduct = () => {
     saleprice: "", // Giá khuyến mãi
     mainCategory: "",
     subCategory: null, // Danh mục phụ
-    warranties: "",
+    warranties: [],
     inventory: "",
     company: "", // Công ty
     description: "", // Mô tả sản phẩm
     flashsale: false, // Trạng thái flash sale
     images: [], // Mảng ảnh của sản phẩm
-    specifications: [], // Mảng thông số kỹ thuật
+    specifications: "", // Mảng thông số kỹ thuật
   });
 
   const handleDescriptionChange = (value) => {
@@ -361,11 +361,78 @@ const EditProduct = () => {
     }));
   };
 
+  const handleTabKey = (e, value, setValue) => {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      const textarea = e.target;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+
+      // Chèn ký tự tab (\t)
+      const newValue = value.substring(0, start) + "\t" + value.substring(end);
+
+      // Cập nhật giá trị mới
+      setValue(newValue);
+
+      // Đặt lại vị trí con trỏ
+      setTimeout(() => {
+        textarea.selectionStart = textarea.selectionEnd = start + 1;
+      }, 0);
+    }
+  };
+
   useEffect(() => {
     showProduct(id);
     getAllCategories();
     fetchWarranties();
   }, [id]);
+
+    const [goldWarrantyId, setGoldWarrantyId] = useState(""); // Lưu ID của "Bảo hành vàng"
+  
+    useEffect(() => {
+      // Lấy ID của "Bảo hành vàng"
+      if (warranties?.length > 0) {
+        const goldWarranty = warranties.find(
+          (warranty) => warranty.name.toLowerCase() === "bảo hành vàng"
+        );
+        if (goldWarranty) {
+          setGoldWarrantyId(goldWarranty._id);
+        }
+      }
+    }, [warranties]);
+  
+    const handleSelectChange = (e) => {
+      const selectedId = e.target.value;
+  
+      setProduct((prev) => {
+        // Thay thế gói bảo hành thường đã chọn (nếu có) bằng gói mới
+        const updatedWarranties = prev.warranties.filter(
+          (id) => id === goldWarrantyId // Giữ lại "Bảo hành vàng" nếu đã chọn
+        );
+  
+        return {
+          ...prev,
+          warranties: selectedId
+            ? [...updatedWarranties, selectedId] // Thêm gói bảo hành mới
+            : updatedWarranties, // Không thêm nếu chọn "Trống"
+        };
+      });
+    };
+  
+    const handleCheckboxChange = (e) => {
+      const isChecked = e.target.checked;
+  
+      setProduct((prev) => ({
+        ...prev,
+        warranties: isChecked
+          ? [...prev.warranties, goldWarrantyId] // Thêm "Bảo hành vàng"
+          : prev.warranties.filter((id) => id !== goldWarrantyId), // Bỏ "Bảo hành vàng"
+      }));
+    };
+  
+    const hasSelectedWarranty = product.warranties.some(
+      (id) => id !== goldWarrantyId
+    );
 
   if (!product) {
     return <LoadingPage />;
@@ -570,7 +637,7 @@ const EditProduct = () => {
           </div>
 
           {/* Danh mục, Công ty */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-4 gap-4">
             <div className="border relative rounded p-1">
               <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
                 <label
@@ -597,28 +664,6 @@ const EditProduct = () => {
                     {category.parentCategory
                       ? `-- ${category.name}`
                       : category.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="border relative rounded p-1">
-              <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
-                <label className="bg-white text-gray-600 px-1">
-                  Gói bảo hành
-                </label>
-              </div>
-              <select
-                id="warranties"
-                name="warranties"
-                value={product?.warranties}
-                onChange={handleInputChange}
-                className="py-1 px-1 text-gray-900 outline-none block h-full w-full"
-              >
-                <option value="">-- Chọn gói bảo hành --</option>
-                {warranties?.map((warranty) => (
-                  <option key={warranty?._id} value={warranty?._id}>
-                    {warranty?.name}
                   </option>
                 ))}
               </select>
@@ -653,6 +698,50 @@ const EditProduct = () => {
                   </option>
                 ))}
               </select>
+            </div>
+
+            <div className="border relative rounded p-1">
+              <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
+                <label className="bg-white text-gray-600 px-1">
+                  Gói bảo hành
+                </label>
+              </div>
+              <select
+                id="warranties"
+                name="warranties"
+                value={
+                  product.warranties.find((id) => id !== goldWarrantyId) || "" // Lấy ID của gói bảo hành thường
+                }
+                onChange={handleSelectChange}
+                className="py-1 px-1 text-gray-900 outline-none block h-full w-full"
+              >
+                <option value="">-- Chọn gói bảo hành --</option>
+                {warranties
+                  ?.filter(
+                    (warranty) =>
+                      warranty.name.toLowerCase() !== "bảo hành vàng" // Loại bỏ "Bảo hành vàng"
+                  )
+                  .map((warranty) => (
+                    <option key={warranty._id} value={warranty._id}>
+                      {warranty.name}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            <div className="flex items-center">
+              <label className="inline-flex items-center">
+                <input
+                  type="checkbox"
+                  disabled={!hasSelectedWarranty} // Vô hiệu hóa nếu chưa chọn gói bảo hành thường
+                  checked={product.warranties.includes(goldWarrantyId)}
+                  onChange={handleCheckboxChange}
+                  className="rounded border-gray-300 text-primary focus:ring-primary"
+                />
+                <span className="ml-2 text-sm text-gray-700">
+                  Bảo hành vàng
+                </span>
+              </label>
             </div>
           </div>
 
@@ -701,88 +790,19 @@ const EditProduct = () => {
             <label className="block text-sm font-medium text-gray-700">
               Thông số kỹ thuật
             </label>
-            <table className="mt-2 w-full border">
-              <thead>
-                <tr>
-                  <th className="border px-2 py-1 font-medium">Tên thông số</th>
-                  <th className="border px-2 py-1 font-medium">Giá trị</th>
-                  <th className="border px-2 py-1 font-medium">Hành động</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {product?.specifications?.map((spec, index) => (
-                  <tr
-                    key={index}
-                    className="even:bg-gray-50 hover:bg-gray-100 transition"
-                  >
-                    <td className="border px-2 py-2">
-                      <textarea
-                        className="w-full h-10 px-2 py-1 outline-none border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-primary transition"
-                        value={spec.name}
-                        onChange={(e) =>
-                          handleSpecificationChange(
-                            index,
-                            "name",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </td>
-                    <td className="border px-2 py-2">
-                      <textarea
-                        className="w-full h-10 px-2 py-1 outline-none border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-primary transition"
-                        value={spec.value}
-                        onChange={(e) =>
-                          handleSpecificationChange(
-                            index,
-                            "value",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </td>
-                    <td className="border px-2 py-2 text-center">
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveSpecification(index)}
-                        className="text-red-500 hover:text-red-700 transition"
-                      >
-                        <AiTwotoneDelete size={20} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-                <tr className="bg-gray-50">
-                  <td className="border px-2 py-2">
-                    <input
-                      type="text"
-                      placeholder="Tên thông số"
-                      value={specKey}
-                      onChange={(e) => setSpecKey(e.target.value)}
-                      className="w-full px-2 py-1 outline-none border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-primary transition"
-                    />
-                  </td>
-                  <td className="border px-2 py-2">
-                    <input
-                      type="text"
-                      placeholder="Giá trị"
-                      value={specValue}
-                      onChange={(e) => setSpecValue(e.target.value)}
-                      className="w-full px-2 py-1 outline-none border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-primary transition"
-                    />
-                  </td>
-                  <td className="border px-2 py-2 text-center">
-                    <button
-                      type="button"
-                      onClick={handleAddSpecification}
-                      className="px-2 py-1 bg-primary text-white rounded hover:bg-primary-dark focus:ring-2 focus:ring-primary-light transition"
-                    >
-                      <IoIosSend size={20} />
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <textarea
+              type="text"
+              value={product.specifications}
+              onChange={(e) =>
+                setProduct({ ...product, specifications: e.target.value })
+              }
+              onKeyDown={(e) =>
+                handleTabKey(e, product.specifications, (newValue) =>
+                  setProduct({ ...product, specifications: newValue })
+                )
+              }
+              className="mt-1 px-3 py-1 text-sm w-full min-h-[30vh] border rounded outline-none"
+            />
           </div>
           {/* Mô tả sản phẩm */}
           <div className="flex gap-4">

@@ -34,7 +34,7 @@ function Category({ item, childCategories }) {
 
       {/* Danh mục con hiển thị khi hover */}
       {filteredChildren && filteredChildren.length > 0 && (
-        <ul className="absolute z-40 left-0 top-full w-full bg-white border rounded shadow-lg group-hover:block hidden">
+        <ul className="absolute z-40 left-full top-0 w-full bg-white border rounded shadow-lg group-hover:block hidden">
           {filteredChildren.map((child) => (
             <li
               key={child._id}

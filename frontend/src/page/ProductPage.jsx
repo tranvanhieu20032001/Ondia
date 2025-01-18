@@ -1,10 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
-import { CiHeart } from "react-icons/ci";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import "swiper/swiper-bundle.css";
 import "swiper/css/navigation";
-import { Rating } from "@material-tailwind/react";
 import Comment from "../components/layouts/Comment";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import freedelivery from "../assets/icons/FreeDelivery.svg";
 import ReturnDelivery from "../assets/icons/Return.svg";
 import axios from "axios";
@@ -17,9 +15,12 @@ import ShowComment from "../components/layouts/ShowComment";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import RelatedItem from "../components/catalogs/section/RelatedItem";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
+import Specifications from "../components/Specifications";
 
 const ProductPage = () => {
   const { state } = useLocation();
+  const { productDetails } = useParams();
+  console.log("slug", productDetails);
 
   const [product, setProduct] = useState([]);
   const [reviews, setReviews] = useState([]);
@@ -28,24 +29,36 @@ const ProductPage = () => {
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const { setCart, userData } = useContext(Context);
-  const [showMore, setShowMore] = useState(false);
 
-  // Kiểm tra chiều cao của bảng
-  const isMobile = window.innerWidth < 640; // Điều chỉnh theo breakpoint của bạn
+  const [showMoreDescription, setShowMoreDescription] = useState(false);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const contentRef = useRef(null);
 
-  const showProduct = async (productId) => {
+
+  useEffect(() => {
+    if (contentRef.current) {
+      // Kiểm tra nếu chiều cao nội dung lớn hơn 400px
+      setIsOverflowing(contentRef.current.scrollHeight > 400);
+    }
+  }, [product?.description]);
+
+  const showProduct = async (slug) => {
     setLoading(true);
     try {
-      const url = SummaryApi.getProductById.url.replace(":id", productId);
+      const url = SummaryApi.getProductsBySlug.url.replace(":slug", slug);
+      console.log("url", url);
+
       const { data } = await axios({
         url: url,
-        method: SummaryApi.getProductById.method,
+        method: SummaryApi.getProductsBySlug.method,
         withCredentials: true,
       });
 
       setProduct(data.product);
+      console.log("produv", product);
+
       setReviews(data.product.reviews || []);
-      if (data.product.images?.length > 0) {
+      if (data.product.avatar?.length > 0) {
         setMainImage(`${backendDomain}/${data.product.avatar}`);
       }
       console.log("Product:", data.product);
@@ -56,7 +69,57 @@ const ProductPage = () => {
       setLoading(false);
     }
   };
+  const [warrantiesData, setWarrantiesData] = useState([]);
+  const [selectedWarranty, setSelectedWarranty] = useState({
+    id: "",
+    warrantyName: ""
+  });
 
+  useEffect(() => {
+    const fetchWarranties = async () => {
+      try {
+        const warranties = await Promise.all(
+          product?.warranties.map(async (warrantyId) => {
+            const response = await axios({
+              url: SummaryApi.getWarrantyById.url.replace(":id", warrantyId),
+              method: SummaryApi.getWarrantyById.method,
+              withCredentials: true,
+            });
+            return response.data.warranty; // Trả về đối tượng bảo hành
+          })
+        );
+        setWarrantiesData(warranties); // Lưu dữ liệu vào state
+  
+        // Set giá trị mặc định nếu có
+        const defaultWarranty = warranties.find(w => w.name.toLowerCase() !== "bảo hành vàng");
+        if (defaultWarranty) {
+          setSelectedWarranty({
+            id: defaultWarranty._id, // Đặt id của bảo hành vàng
+            warrantyName: defaultWarranty.name, // Đặt tên của bảo hành vàng
+          });
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy thông tin bảo hành:", error);
+      }
+    };
+  
+    if (product?.warranties?.length) {
+      fetchWarranties(); // Gọi fetchWarranties khi warranties có giá trị
+    }
+  }, [product?.warranties]);
+  
+
+  const handleWarrantyChange = (event) => {
+    const { value } = event.target;
+    const warranty = warrantiesData.find(w => w._id === value);
+
+    setSelectedWarranty({
+      id: value, // Lưu _id của gói bảo hành đã chọn
+     warrantyName: warranty ? warranty.name : ""
+    });
+    console.log("Gói bảo hành đã chọn:", selectedWarranty); // In ra tên và _id của gói bảo hành đã chọn
+
+  };
   const handleAddToLocalCart = (product) => {
     const cartKey = "cart";
     const cartFromStorage = JSON.parse(localStorage.getItem(cartKey)) || [];
@@ -144,8 +207,12 @@ const ProductPage = () => {
   };
 
   useEffect(() => {
-    showProduct(state?.id);
-  }, [state?.id]);
+    showProduct(productDetails);
+  }, [productDetails]);
+
+  // useEffect(() => {
+  //   showProduct(state?.id);
+  // }, [state?.id]);
 
   const changeImage = (src) => {
     setMainImage(src);
@@ -180,6 +247,25 @@ const ProductPage = () => {
                   onClick={() => changeImage(`${backendDomain}/${thumb}`)}
                 />
               ))}
+            </div>
+
+            <div className="hidden lg:flex items-center gap-8 px-4 py-3 border mt-4 mb-2">
+              <img src={freedelivery} alt="" />
+              <div>
+                <h3 className="font-semibold">Giao hàng miễn phí</h3>
+                <span className="text-[13px]">
+                  Với đơn hàng có giá trị trên 1 triệu đồng
+                </span>
+              </div>
+            </div>
+            <div className="hidden lg:flex items-center gap-8 px-4 py-3 border">
+              <img src={ReturnDelivery} alt="" />
+              <div>
+                <h3 className="font-semibold">Trả hàng</h3>
+                <span className="text-[13px]">
+                  Miễn phí trả hàng trong vòng 7 ngày
+                </span>
+              </div>
             </div>
           </div>
           <div
@@ -218,18 +304,37 @@ const ProductPage = () => {
             <div className="mb-4 text-sm">
               {product?.saleprice === 0 ? (
                 <span className="text-lg lg:text-xl mr-2 text-primary">
-                  {product?.price ? product?.price.toLocaleString() : "0"} đ
+                  {product?.price
+                    ? (
+                        product?.price +
+                        ((selectedWarranty.warrantyName).toLowerCase() === "bảo hành vàng" ? 1000000 : 0)
+                      ).toLocaleString()
+                    : "0"}{" "}
+                  đ
                 </span>
               ) : (
                 <>
                   <span className="text-lg lg:text-lg mr-2 text-primary">
                     {product?.saleprice
-                      ? product?.saleprice.toLocaleString()
-                      : ""}
+                      ? (
+                          product?.saleprice +
+                          ((selectedWarranty.warrantyName).toLowerCase() === "bảo hành vàng"
+                            ? 1000000
+                            : 0)
+                        ).toLocaleString()
+                      : ""}{" "}
                     đ
                   </span>
                   <span className="text-gray-500 text-sm lg:text-base line-through">
-                    {product?.price ? product?.price.toLocaleString() : "0"}đ
+                    {product?.price
+                      ? (
+                          product?.price +
+                          ((selectedWarranty.warrantyName).toLowerCase() === "bảo hành vàng"
+                            ? 1000000
+                            : 0)
+                        ).toLocaleString()
+                      : "0"}{" "}
+                    đ
                   </span>
                 </>
               )}
@@ -251,74 +356,70 @@ const ProductPage = () => {
               />
             </div>
 
+            {warrantiesData.length > 0 && (
+              <>
+                {/* Kiểm tra xem có "bảo hàng vàng" trong danh sách không */}
+                {warrantiesData.some(
+                  (warranty) => warranty.name.toLowerCase() === "bảo hành vàng"
+                ) && (
+                  <div className="mb-4 flex flex-col gap-4 items-start">
+                    <h3 className="text-sm lg:text-base font-semibold">
+                      Chọn gói bảo hành:
+                    </h3>
+                    {/* Render tất cả các gói bảo hành */}
+                    {warrantiesData.map((warranty, index) => (
+                      <div key={index} className="flex flex-col gap-3">
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="warranty"   // Đặt name chung cho các radio buttons để chúng là một nhóm
+                            value={warranty._id}   // Đặt giá trị là _id của bảo hành
+                            className="form-radio"
+                            checked={selectedWarranty.id === warranty._id}   // Kiểm tra nếu _id của bảo hành trùng với giá trị trong state
+                            onChange={handleWarrantyChange}  // Hàm xử lý khi thay đổi lựa chọn
+                          />
+                          <span className="text-sm">
+                            {warranty.name} ({warranty.description})
+                          </span>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
             <div className="mb-6 flex gap-4 items-center">
               <BsCart3
                 onClick={addToCart}
                 className="text-primary cursor-pointer"
                 size={30}
               />
-             
-                <Link
-                  to={"checkout"}
-                  state={{ id: state?.id, quantity: quantity }}
-                  className="w-full"
+
+              <Link
+                to={`/products/checkout/${product?.slug}?quantity=${quantity}&mbh=${selectedWarranty.id}&bhv=${(selectedWarranty.warrantyName).toLowerCase()=== "bảo hành vàng"?'true':'false'}`}
+                state={{ id: state?.id, quantity: quantity }}
+                className="w-full"
+              >
+                <button
+                  type="button"
+                  className="text-sm w-full lg:text-base px-5 py-2 font-semibold tracking-wide bg-white text-primary border border-primary hover:bg-primary hover:text-white rounded-md"
                 >
-                   <button
-                type="button"
-                className="text-sm w-full lg:text-base px-5 py-2 font-semibold tracking-wide bg-white text-primary border border-primary hover:bg-primary hover:text-white rounded-md"
-              >Mua ngay</button>
-                </Link>
+                  Mua ngay
+                </button>
+              </Link>
             </div>
-            {product?.specifications?.length > 0 ? (
-              <div className="mb-16">
+            {product?.specifications ? (
+              <div className="mb-8">
                 <h3 className="text-sm lg:text-base mb-1 font-semibold">
                   Thông số kỹ thuật:
                 </h3>
-                <div className="relative">
-                  <div
-                    className={`overflow-hidden ${
-                      isMobile && !showMore ? "max-h-[256px]" : "max-h-full"
-                    } transition-all`}
-                  >
-                    <table className="w-full border text-xs">
-                      <thead>
-                        <tr>
-                          <th className="px-4 py-2 border font-medium whitespace-nowrap">
-                            Thông số
-                          </th>
-                          <th className="px-4 py-2 border font-medium">
-                            Giá trị
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {product?.specifications?.map((spec, index) => (
-                          <tr
-                            key={index}
-                            className="even:bg-gray-50 hover:bg-gray-100"
-                          >
-                            <td className="px-4 py-2 border">{spec?.name}</td>
-                            <td className="px-4 py-2 border">{spec?.value}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  {isMobile && product?.specifications?.length > 0 && (
-                  <div className="mt-2 text-primary absolute flex justify-center items-center w-full">
-                      <button
-                      onClick={() => setShowMore(!showMore)}
-                    >
-                      {showMore ? <span className="flex items-center gap-2">Ẩn bớt <MdKeyboardArrowUp /></span> :<span className="flex items-center gap-2">Xem thêm <MdKeyboardArrowDown /></span>}
-                    </button>
-                  </div>
-                  )}
-                </div>
+                <Specifications data={product.specifications} />
+                <hr />
               </div>
-            ) : (
-              ""
-            )}
-            <div className="flex items-center gap-8 px-4 py-3 border">
+            ) : null}
+
+            <div className="flex lg:hidden items-center gap-8 px-4 py-3 border">
               <img src={freedelivery} alt="" />
               <div>
                 <h3 className="font-semibold">Giao hàng miễn phí</h3>
@@ -327,7 +428,7 @@ const ProductPage = () => {
                 </span>
               </div>
             </div>
-            <div className="flex items-center gap-8 px-4 py-3 border">
+            <div className="flex lg:hidden items-center gap-8 px-4 py-3 border">
               <img src={ReturnDelivery} alt="" />
               <div>
                 <h3 className="font-semibold">Trả hàng</h3>
@@ -336,14 +437,71 @@ const ProductPage = () => {
                 </span>
               </div>
             </div>
+            <div className="px-4 py-3 border mt-4">
+              <h3 className="text-sm lg:text-base mb-1 font-semibold">
+                Chế độ bảo hành
+              </h3>
+              <ul className="text-sm list-disc ml-8 mb-6 mt-2">
+                <li>
+                  <strong>Gói bảo hàng mặc định: </strong>Bảo hành 12 tháng - 1
+                  đổi 1 trong 30 ngày nếu có lỗi từ nhà sản xuất{" "}
+                </li>
+                <li>
+                  <strong>Gói bảo hàng vàng: </strong>Bảo hành 24 tháng - 1 đổi
+                  1 trong 12 tháng nếu có lỗi từ nhà sản xuất{" "}
+                </li>
+                <li>
+                  <strong>Bảo hành phần cứng:</strong>Bao gồm nguồn, màn hình
+                </li>
+                <li>
+                  <strong>Không bảo hành:</strong>Chập cháy, va đập, roi rớt,
+                  vào nước, thiên tai
+                </li>
+              </ul>
+              <h3 className="text-sm lg:text-base mb-1 font-semibold">
+                Ondia Digital - Xiaomi Store Bắc giang cam kết
+              </h3>
+              <ul className="text-sm list-disc ml-8 mb-6 mt-2">
+                <li>Hành chính hãng 100%</li>
+                <li>Mới nguyên hộp 100%</li>
+                <li>
+                  Kiểm tra hàng trước khi thanh toán, bao mọi rủi ro trong quá
+                  trình vận chuyển
+                </li>
+                <li>Cam kết hài lòng khách hàng</li>
+              </ul>
+            </div>
           </div>
         </div>
         <h2 className="text-xl lg:text-xl font-semibold mt-10 mb-1">Mô tả</h2>
         <hr />
-        <div
-          className="ql-editor"
-          dangerouslySetInnerHTML={{ __html: product?.description }}
-        />
+        <div className="relative productpage">
+          <div
+            ref={contentRef}
+            className={`ql-editor transition-all overflow-hidden ${
+              showMoreDescription ? "max-h-full" : "max-h-[400px]"
+            }`}
+            dangerouslySetInnerHTML={{ __html: product?.description }}
+          />
+          {isOverflowing && (
+            <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-white to-transparent flex justify-center pt-2">
+              <button
+                onClick={() => setShowMoreDescription(!showMoreDescription)}
+                className="text-primary font-medium"
+              >
+                {showMoreDescription ? (
+                  <span className="flex items-center gap-2">
+                    Ẩn bớt <MdKeyboardArrowUp />
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    Xem thêm <MdKeyboardArrowDown />
+                  </span>
+                )}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       <div className="">
         <h2 className="text-xl lg:text-xl font-semibold mb-1">Bình Luận</h2>

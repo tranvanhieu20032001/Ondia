@@ -102,7 +102,7 @@ function Header() {
 
   return (
     <div>
-      <div className="sub-header bg-black text-white text-center text-[12px] py-3">
+      <div className="sub-header bg-primary text-white text-center text-[12px] py-2">
         <span>
           Mua ngay và tiết kiệm lớn - Miễn phí giao hàng cho tất cả các đơn hàng
         </span>

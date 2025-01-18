@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RiDeleteBack2Line } from "react-icons/ri";
 import { backendDomain, SummaryApi } from "../../../common";
 import { Navigate } from "react-router-dom";
@@ -12,10 +12,9 @@ import EditorToolbar, {
 } from "./texteditor/EditorToolbar.jsx";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { removeAccents } from "../../../utils/helpers.js";
 
 const AddProductModal = ({ categories, warranties, onClose }) => {
-  const [specKey, setSpecKey] = useState("");
-  const [specValue, setSpecValue] = useState("");
   const [product, setProduct] = useState({
     avatar: "",
     name: "",
@@ -25,11 +24,12 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
     images: [],
     mainCategory: "",
     inventory: "",
-    warranties: "",
+    slug: "",
+    warranties: [],
     subCategory: null,
     tags: [], // <-- Thêm mảng tags vào state
     company: "",
-    specifications: [],
+    specifications: "",
   });
 
   const [imagePreview, setImagePreview] = useState([]);
@@ -86,17 +86,27 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
 
   const handleSave = async () => {
     try {
-      if (
-        product.avatar &&
-        product.name &&
-        product.price &&
-        product.company &&
-        product.mainCategory &&
-        product.warranties
-      ) {
-        let updatedDescription = product.description;
+      // Kiểm tra xem thông tin sản phẩm đã đầy đủ chưa
+      const requiredFields = [
+        "avatar",
+        "name",
+        "price",
+        "company",
+        "mainCategory",
+        "warranties",
+      ];
 
-        // Parse description để tìm ảnh base64 trong thẻ <img>
+      for (let field of requiredFields) {
+        if (!product[field]) {
+          alert("Vui lòng điền đầy đủ thông tin!");
+          return;
+        }
+      }
+
+      let updatedDescription = product.description;
+
+      // Xử lý ảnh base64 trong mô tả sản phẩm
+      if (product.description) {
         const parser = new DOMParser();
         const doc = parser.parseFromString(product.description, "text/html");
         const imgTags = doc.querySelectorAll("img");
@@ -130,66 +140,67 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
 
           updatedDescription = doc.body.innerHTML;
         }
+      }
 
-        const updatedProduct = {
-          ...product,
-          description: updatedDescription,
-        };
+      // Cập nhật sản phẩm với mô tả đã xử lý
+      const updatedProduct = {
+        ...product,
+        description: updatedDescription,
+        slug: removeAccents(product?.name),
+      };
 
-        // Upload avatar
-        if (avatarFile) {
-          const avatarFormData = new FormData();
-          avatarFormData.append("images", avatarFile); // Upload file từ state
+      // Upload avatar nếu có
+      if (avatarFile) {
+        const avatarFormData = new FormData();
+        avatarFormData.append("images", avatarFile);
 
-          const avatarUploadResponse = await axios({
-            url: SummaryApi.uploadImage.url,
-            method: SummaryApi.uploadImage.method,
-            data: avatarFormData,
-            headers: { "Content-Type": "multipart/form-data" },
-            withCredentials: true,
-          });
-
-          const avatarPath = avatarUploadResponse.data.images[0];
-          updatedProduct.avatar = `${avatarPath}`; // Cập nhật URL avatar thực tế
-        }
-
-        // Thêm sản phẩm
-        const productResponse = await axios({
-          url: SummaryApi.addProduct.url,
-          method: SummaryApi.addProduct.method,
-          data: updatedProduct,
+        const avatarUploadResponse = await axios({
+          url: SummaryApi.uploadImage.url,
+          method: SummaryApi.uploadImage.method,
+          data: avatarFormData,
+          headers: { "Content-Type": "multipart/form-data" },
           withCredentials: true,
-          credentials: "include",
         });
 
-        // Upload các file khác
-        const fileInputs = document.getElementById("file-upload");
-        const files = fileInputs ? fileInputs.files : [];
+        const avatarPath = avatarUploadResponse.data.images[0];
+        updatedProduct.avatar = `${avatarPath}`; // Cập nhật URL avatar thực tế
+      }
 
-        if (files.length > 0) {
-          const fileFormData = new FormData();
-          Array.from(files).forEach((file) => {
-            fileFormData.append("images", file);
-          });
+      // Thêm sản phẩm
+      const productResponse = await axios({
+        url: SummaryApi.addProduct.url,
+        method: SummaryApi.addProduct.method,
+        data: updatedProduct,
+        withCredentials: true,
+        credentials: "include",
+      });
 
-          await axios({
-            url: SummaryApi.uploadImage.url,
-            method: SummaryApi.uploadImage.method,
-            data: fileFormData,
-            headers: { "Content-Type": "multipart/form-data" },
-            withCredentials: true,
-          });
-        }
+      // Upload các file khác nếu có
+      const fileInputs = document.getElementById("file-upload");
+      const files = fileInputs ? fileInputs.files : [];
 
-        alert("Thêm sản phẩm thành công!");
-        if (typeof onClose === "function") {
-          onClose();
-          window.location.reload();
-        } else {
-          Navigate("/products");
-        }
+      if (files.length > 0) {
+        const fileFormData = new FormData();
+        Array.from(files).forEach((file) => {
+          fileFormData.append("images", file);
+        });
+
+        await axios({
+          url: SummaryApi.uploadImage.url,
+          method: SummaryApi.uploadImage.method,
+          data: fileFormData,
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+        });
+      }
+
+      alert("Thêm sản phẩm thành công!");
+
+      if (typeof onClose === "function") {
+        onClose();
+        window.location.reload();
       } else {
-        alert("Vui lòng điền đầy đủ thông tin!");
+        Navigate("/products");
       }
     } catch (error) {
       console.error("Lỗi trong quá trình thêm sản phẩm:", error);
@@ -236,28 +247,94 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
       }));
     }
   };
-  const handleAddSpecification = () => {
-    if (specKey && specValue) {
-      setProduct((prev) => ({
-        ...prev,
-        specifications: [
-          ...prev.specifications,
-          { name: specKey, value: specValue }, // Thêm object mới vào mảng
-        ],
-      }));
-      setSpecKey("");
-      setSpecValue("");
-    } else {
-      alert("Vui lòng nhập cả tên và giá trị thông số kỹ thuật!");
+  // const handleAddSpecification = () => {
+  //   if (specKey && specValue) {
+  //     setProduct((prev) => ({
+  //       ...prev,
+  //       specifications: [
+  //         ...prev.specifications,
+  //         { name: specKey, value: specValue }, // Thêm object mới vào mảng
+  //       ],
+  //     }));
+  //     setSpecKey("");
+  //     setSpecValue("");
+  //   } else {
+  //     alert("Vui lòng nhập cả tên và giá trị thông số kỹ thuật!");
+  //   }
+  // };
+
+  // const handleRemoveSpecification = (index) => {
+  //   setProduct((prev) => ({
+  //     ...prev,
+  //     specifications: prev.specifications.filter((_, idx) => idx !== index),
+  //   }));
+  // };
+
+  const handleTabKey = (e, value, setValue) => {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      const textarea = e.target;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+
+      // Chèn ký tự tab (\t)
+      const newValue = value.substring(0, start) + "\t" + value.substring(end);
+
+      // Cập nhật giá trị mới
+      setValue(newValue);
+
+      // Đặt lại vị trí con trỏ
+      setTimeout(() => {
+        textarea.selectionStart = textarea.selectionEnd = start + 1;
+      }, 0);
     }
   };
+  const [goldWarrantyId, setGoldWarrantyId] = useState(""); // Lưu ID của "Bảo hành vàng"
 
-  const handleRemoveSpecification = (index) => {
+  useEffect(() => {
+    // Lấy ID của "Bảo hành vàng"
+    if (warranties?.length > 0) {
+      const goldWarranty = warranties.find(
+        (warranty) => warranty.name.toLowerCase() === "bảo hành vàng"
+      );
+      if (goldWarranty) {
+        setGoldWarrantyId(goldWarranty._id);
+      }
+    }
+  }, [warranties]);
+
+  const handleSelectChange = (e) => {
+    const selectedId = e.target.value;
+
+    setProduct((prev) => {
+      // Thay thế gói bảo hành thường đã chọn (nếu có) bằng gói mới
+      const updatedWarranties = prev.warranties.filter(
+        (id) => id === goldWarrantyId // Giữ lại "Bảo hành vàng" nếu đã chọn
+      );
+
+      return {
+        ...prev,
+        warranties: selectedId
+          ? [...updatedWarranties, selectedId] // Thêm gói bảo hành mới
+          : updatedWarranties, // Không thêm nếu chọn "Trống"
+      };
+    });
+  };
+
+  const handleCheckboxChange = (e) => {
+    const isChecked = e.target.checked;
+
     setProduct((prev) => ({
       ...prev,
-      specifications: prev.specifications.filter((_, idx) => idx !== index),
+      warranties: isChecked
+        ? [...prev.warranties, goldWarrantyId] // Thêm "Bảo hành vàng"
+        : prev.warranties.filter((id) => id !== goldWarrantyId), // Bỏ "Bảo hành vàng"
     }));
   };
+
+  const hasSelectedWarranty = product.warranties.some(
+    (id) => id !== goldWarrantyId
+  );
 
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-70 z-50">
@@ -405,7 +482,7 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 items-end mb-4">
+          <div className="grid grid-cols-4 gap-4 items-end mb-4">
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
                 Danh mục
@@ -415,7 +492,7 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
                 name="mainCategory"
                 value={product.subCategory || product.mainCategory}
                 onChange={(e) => handleCategory(e.target.value)}
-                className="mt-1 px-3 py-1 text-sm w-full border rounded outline-none outline-none"
+                className="mt-1 px-3 py-1 text-sm w-full border rounded outline-none"
               >
                 <option value="">-- Chọn danh mục --</option>
                 {categories.map((category) => (
@@ -431,29 +508,6 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
                 ))}
               </select>
             </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Gói bảo hành
-              </label>
-              <select
-                id="warranties"
-                name="warranties"
-                value={product.warranties || ""}
-                onChange={(e) =>
-                  setProduct({ ...product, warranties: e.target.value })
-                }
-                className="mt-1 px-3 py-1 text-sm w-full border rounded outline-none"
-              >
-                <option value="">-- Chọn gói bảo hành --</option>
-                {warranties?.map((warranty) => (
-                  <option key={warranty?._id} value={warranty?._id}>
-                    {warranty?.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
                 Thương hiệu
@@ -475,13 +529,56 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
                   "Xiaomi-Redmi",
                   "Lumias",
                   "KingSmith",
-                  "Khác"
+                  "Khác",
                 ].map((company, index) => (
                   <option key={index} value={company}>
                     {company}
                   </option>
                 ))}
               </select>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Gói bảo hành
+              </label>
+              <select
+                id="warranties"
+                name="warranties"
+                value={
+                  product.warranties.find((id) => id !== goldWarrantyId) || "" // Lấy ID của gói bảo hành thường
+                }
+                onChange={handleSelectChange}
+                className="mt-1 px-3 py-1 text-sm w-full border rounded outline-none"
+              >
+                <option value="">-- Chọn gói bảo hành --</option>
+                {warranties
+                  ?.filter(
+                    (warranty) =>
+                      warranty.name.toLowerCase() !== "bảo hành vàng" // Loại bỏ "Bảo hành vàng"
+                  )
+                  .map((warranty) => (
+                    <option key={warranty._id} value={warranty._id}>
+                      {warranty.name}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            {/* Checkbox riêng cho "Bảo hành vàng" */}
+            <div className="mb-4">
+              <label className="inline-flex items-center">
+                <input
+                  type="checkbox"
+                  disabled={!hasSelectedWarranty} // Vô hiệu hóa nếu chưa chọn gói bảo hành thường
+                  checked={product.warranties.includes(goldWarrantyId)}
+                  onChange={handleCheckboxChange}
+                  className="rounded border-gray-300 text-primary focus:ring-primary"
+                />
+                <span className="ml-2 text-sm text-gray-700">
+                  Bảo hành vàng
+                </span>
+              </label>
             </div>
           </div>
           <div className="">
@@ -523,65 +620,41 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
               ))}
             </div>
           </div>
+          {/* <div className="mb-4 col-span-3">
+            <label className="block text-sm font-medium text-gray-700">
+              Thoong so
+            </label>
+            <textarea
+              type="text"
+              value={product.thongso}
+              onChange={(e) =>
+                setProduct({ ...product, thongso: e.target.value })
+              }
+              onKeyDown={(e) =>
+                handleTabKey(e, product.thongso, (newValue) =>
+                  setProduct({ ...product, thongso: newValue })
+                )
+              }
+              className="mt-1 px-3 py-1 text-sm w-full border rounded outline-none"
+            />
+          </div> */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
               Thông số kỹ thuật
             </label>
-            <table className="mt-2 w-full border text-sm">
-              <thead>
-                <tr>
-                  <th className="border px-2 py-1 font-medium">Tên thông số</th>
-                  <th className="border px-2 py-1 font-medium">Giá trị</th>
-                  <th className="border px-2 py-1 font-medium">Hành động</th>
-                </tr>
-              </thead>
-              <tbody>
-                {product.specifications.map((spec, index) => (
-                  <tr key={index}>
-                    <td className="border px-2 py-1">{spec.name}</td>
-                    <td className="border px-2 py-1">{spec.value}</td>
-                    <td className="border px-2 py-1 text-center">
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveSpecification(index)}
-                        className="text-red-500"
-                      >
-                        <AiTwotoneDelete size={20} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-                <tr>
-                  <td className="border px-2 py-1">
-                    <input
-                      type="text"
-                      placeholder="Tên thông số"
-                      value={specKey}
-                      onChange={(e) => setSpecKey(e.target.value)}
-                      className="px-2 py-1 outline-none border-b w-full focus:border-b-primary"
-                    />
-                  </td>
-                  <td className="border px-2 py-1">
-                    <input
-                      type="text"
-                      placeholder="Giá trị"
-                      value={specValue}
-                      onChange={(e) => setSpecValue(e.target.value)}
-                      className="px-2 py-1 outline-none border-b w-full focus:border-b-primary"
-                    />
-                  </td>
-                  <td className="border px-2 py-1 text-center">
-                    <button
-                      type="button"
-                      onClick={handleAddSpecification}
-                      className="px-2 py-1 bg-primary text-white rounded"
-                    >
-                      <IoIosSend size={20} />
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <textarea
+              type="text"
+              value={product.specifications}
+              onChange={(e) =>
+                setProduct({ ...product, specifications: e.target.value })
+              }
+              onKeyDown={(e) =>
+                handleTabKey(e, product.specifications, (newValue) =>
+                  setProduct({ ...product, specifications: newValue })
+                )
+              }
+              className="mt-1 px-3 py-1 text-sm w-full min-h-[30vh] border rounded outline-none"
+            />
           </div>
 
           <div className="mb-4">

@@ -61,18 +61,18 @@ function ViewOrder({ order, onClose }) {
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
       <div className="bg-white p-6 rounded-lg">
-        <h2 className="text-lg font-medium mb-4">Order Details</h2>
+        <h2 className="text-lg font-medium mb-4">Chi tiết đơn hàng</h2>
         <table className="min-w-full table-auto">
           <thead className="bg-gray-100">
             <tr>
               <th className="px-2 py-3 text-left text-xs font-medium text-gray-500">
-                Order ID
+                Mã đơn hàng
               </th>
               <th className="px-2 py-3 text-left text-xs font-medium text-gray-500">
-                Date
+                Ngày
               </th>
               <th className="px-2 py-3 text-left text-xs font-medium text-gray-500">
-                Ship To
+                Địa chỉ
               </th>
               <th className="px-2 py-3 text-left text-xs font-medium text-gray-500">
                 Điện thoại
@@ -161,27 +161,27 @@ function ViewOrder({ order, onClose }) {
 
         {/* Hiển thị chi tiết các sản phẩm trong table */}
         <div className="mt-4">
-          <h3 className="text-lg font-medium mb-2">Products</h3>
+          <h3 className="text-lg font-medium mb-2">Sản phẩm</h3>
           <table className="min-w-full table-auto border-t border-gray-200">
             <thead className="bg-gray-100">
               <tr>
                 <th className="px-2 py-3 text-left text-xs font-medium text-gray-500">
-                  Image
+                  Hình ảnh
                 </th>
                 <th className="px-2 py-3 text-left text-xs font-medium text-gray-500">
-                  Name
+                  Tên sản phẩm
                 </th>
                 <th className="px-2 py-3 text-left text-xs font-medium text-gray-500">
-                  Price
+                  Giá
                 </th>
                 <th className="px-2 py-3 text-left text-xs font-medium text-gray-500">
-                  Quantity
+                  Số lượng
                 </th>
                 <th className="px-2 py-3 text-left text-xs font-medium text-gray-500">
-                  Total
+                  Tổng
                 </th>
                 <th className="px-2 py-3 text-left text-xs font-medium text-gray-500">
-                  Warranty Code
+                  Mã bảo hành
                 </th>
               </tr>
             </thead>
@@ -190,7 +190,7 @@ function ViewOrder({ order, onClose }) {
                 products.map((product, index) => (
                   <tr key={index}>
                     <td className="px-2 py-3 text-xs text-gray-700 border">
-                      {product?.images?.length > 0 && (
+                      {product?.avatar?.length > 0 && (
                         <img
                           src={`${backendDomain}/${product.avatar}`}
                           alt={product?.name}

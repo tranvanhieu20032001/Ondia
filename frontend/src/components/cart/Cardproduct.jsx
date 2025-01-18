@@ -8,58 +8,97 @@ import noimages from "../../assets/images/noimages.jpg";
 import axios from "axios";
 import { backendDomain, SummaryApi } from "../../common";
 import { toast } from "react-toastify";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import Context from "../../context";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
-
 const Cardproduct = ({ item }) => {
+  console.log("item warranties", item.warranties);
+
   const { setCart, userData } = useContext(Context); // Lấy setCart từ context
+  const [warrantyId, setWarrantyId] = useState("");
+
+  const getWarranty = async (idWarranty) => {
+    try {
+      const response = await axios({
+        url: SummaryApi.getWarrantyById.url.replace(":id", idWarranty),
+        method: SummaryApi.getWarrantyById.method,
+        withCredentials: true,
+      });
+
+      // Xử lý dữ liệu trả về từ API
+      console.log("Thông tin bảo hành:", response.data.warranty.name);
+
+      return response.data.warranty.name; // Trả về tên bảo hành
+    } catch (error) {
+      console.error("Lỗi khi lấy thông tin bảo hành:", error);
+      throw error; // Có thể ném lỗi nếu muốn xử lý tại nơi gọi hàm này
+    }
+  };
 
   const addToCart = async () => {
     const cartKey = "cart";
-
-    if (!userData) {
-      const cartFromStorage = JSON.parse(localStorage.getItem(cartKey)) || [];
-      const existingProductIndex = cartFromStorage.findIndex(
-        (product) => product.productId === item._id
-      );
+    
+    try {
+      // Chờ kết quả từ getWarranty để so sánh bảo hành vàng
+      const warrantyName = await getWarranty(item.warranties[0]);
+      console.log("warrantyName", warrantyName.toLowerCase());
   
-      if (existingProductIndex !== -1) {
-        cartFromStorage[existingProductIndex].quantity += 1;
+      // Cập nhật warrantyId sau khi có tên bảo hành
+      let selectedWarrantyId;
+      if (warrantyName.toLowerCase() === "bảo hành vàng") {
+        selectedWarrantyId = item.warranties[1]; // Chọn bảo hành thường
       } else {
-        cartFromStorage.push({
-          productId: item._id,
-          quantity: 1,
-          price: item.saleprice !== 0 ? item.saleprice : item.price,
-        });
+        selectedWarrantyId = item.warranties[0]; // Chọn bảo hành vàng
       }
   
-      localStorage.setItem(cartKey, JSON.stringify(cartFromStorage));
-      toast.success("Sản phẩm đã được thêm vào giỏ hàng");
-      setCart({ products: cartFromStorage });
-      return;
-    }
+      // Cập nhật state warrantyId sau khi chọn bảo hành
+      setWarrantyId(selectedWarrantyId);
+      console.log("selectedWarrantyId", selectedWarrantyId);
+  
+      if (!userData) {
+        const cartFromStorage = JSON.parse(localStorage.getItem(cartKey)) || [];
+        const existingProductIndex = cartFromStorage.findIndex(
+          (product) => product.productId === item._id
+        );
+  
+        if (existingProductIndex !== -1) {
+          cartFromStorage[existingProductIndex].quantity += 1;
+        } else {
+          cartFromStorage.push({
+            productId: item._id,
+            quantity: 1,
+            price: item.saleprice !== 0 ? item.saleprice : item.price,
+            warrantyIds: selectedWarrantyId, // Gắn ID bảo hành đã chọn vào giỏ
+          });
+        }
+  
+        localStorage.setItem(cartKey, JSON.stringify(cartFromStorage));
+        toast.success("Sản phẩm đã được thêm vào giỏ hàng");
+        setCart({ products: cartFromStorage });
+        return;
+      }
+  
       if (item.inventory === 0) {
-      toast.error("Sản phẩm đã hết hàng");
-      return;
-    }
+        toast.error("Sản phẩm đã hết hàng");
+        return;
+      }
   
-    const data = {
-      productId: item._id,
-      quantity: 1,
-      price: item.saleprice !== 0 ? item.saleprice : item.price,
-      variantId: null,
-    };
+      const data = {
+        productId: item._id,
+        quantity: 1,
+        price: item.saleprice !== 0 ? item.saleprice : item.price,
+        variantId: null,
+        warrantyIds: selectedWarrantyId, // Gắn ID bảo hành đã chọn vào giỏ
+      };
   
-    try {
       const response = await axios({
         url: SummaryApi.addToCart.url,
         method: SummaryApi.addToCart.method,
         data: data,
         withCredentials: true,
       });
-      toast.success("Sản phẩm đã được thêm vào giỏ hàng");
   
+      toast.success("Sản phẩm đã được thêm vào giỏ hàng");
       setCart(response.data.cart);
     } catch (error) {
       console.error("Failed to add to cart:", error);
@@ -78,9 +117,9 @@ const Cardproduct = ({ item }) => {
           }`}
         >
           <img
-            className="object-cover w-full hover:scale-105 transition-all duration-500 ease-in-out"
+            className="object-cover w-full group-hover/cart:scale-105 transition-all duration-500 ease-in-out"
             src={
-              item.images?.length > 0
+              item.avatar?.length > 0
                 ? `${backendDomain}${item.avatar}`
                 : noimages
             }
@@ -103,7 +142,7 @@ const Cardproduct = ({ item }) => {
         )}
         {item.inventory !== 0 && (
           <button
-            className="absolute bottom-0 right-0 left-0 opacity-0 group-hover/cart:opacity-100 group-hover/cart:translate-y-0 transform translate-y-2 transition-all duration-500 ease-in-out flex w-full items-center justify-center rounded-md bg-slate-900 px-2 py-2 text-center text-sm font-medium text-white hover:bg-primary focus:outline-none focus:ring-1 focus:ring-blue-300"
+            className="absolute bottom-0 right-0 left-0 opacity-0 group-hover/cart:opacity-100 group-hover/cart:translate-y-0 transform translate-y-2 transition-all duration-500 ease-in-out flex w-full items-center justify-center rounded-md bg-primary px-2 py-2 text-center text-sm font-medium text-white hover:bg-primary focus:outline-none focus:ring-1 focus:ring-blue-300"
             onClick={addToCart}
             disabled={item.inventory === 0}
           >
