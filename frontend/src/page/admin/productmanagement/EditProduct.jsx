@@ -13,6 +13,7 @@ import EditorToolbar, {
 } from "./texteditor/EditorToolbar.jsx";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { removeAccents } from "../../../utils/helpers.js";
 
 const EditProduct = () => {
   const [product, setProduct] = useState({
@@ -24,6 +25,7 @@ const EditProduct = () => {
     subCategory: null, // Danh mục phụ
     warranties: [],
     inventory: "",
+    slug: "",
     company: "", // Công ty
     description: "", // Mô tả sản phẩm
     flashsale: false, // Trạng thái flash sale
@@ -193,6 +195,7 @@ const EditProduct = () => {
 
       // Cập nhật mô tả mới vào updatedProduct
       updatedProduct.description = updatedDescription;
+      updatedProduct.slug = removeAccents(product?.name);
 
       // Upload avatar
       if (avatarFile) {
