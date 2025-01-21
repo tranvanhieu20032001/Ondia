@@ -26,6 +26,7 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
     inventory: "",
     slug: "",
     warranties: [],
+    warrantiesDescriptions:"",
     subCategory: null,
     tags: [], // <-- Thêm mảng tags vào state
     company: "",
@@ -224,10 +225,16 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
     return new File([u8arr], filename, { type: mime });
   }
 
+  const cleanHtml = (html) => {
+    const cleaned = html.trim().replace(/<p><br><\/p>/g, "<p><br></p>");
+    return cleaned === "" || cleaned === "<p><br></p>" ? null : cleaned;
+  };
+
   const handleDescritionsChange = (value) => {
+    const cleanedValue = cleanHtml(value);
     setProduct((prevProduct) => ({
       ...prevProduct,
-      description: value,
+      description: cleanedValue,
     }));
   };
 
@@ -639,9 +646,10 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
             />
           </div> */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Thông số kỹ thuật (định dạng key: value )
+            <label className="block text-sm font-semibold text-gray-700">
+              Thông số kỹ thuật (key: value )
             </label>
+            <p className="text-xs text-red-500">Chú ý:Key và value cách nhau 1 tab (/t), hai thông số cách nhau bằng xuống dòng (/n)</p>
             <textarea
               type="text"
               value={product.specifications}
@@ -658,7 +666,25 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-semibold text-gray-700">
+              Chế độ bảo hành
+            </label>
+            <EditorToolbar toolbarId={"t3"} />
+            <ReactQuill
+              theme="snow"
+              value={product.warrantiesDescriptions}
+              onChange={(value) =>
+                setProduct({ ...product, warrantiesDescriptions: cleanHtml(value) })
+              }
+              placeholder={"Write something awesome..."}
+              modules={modules("t3")}
+              formats={formats}
+            />
+
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-sm font-semibold text-gray-700">
               Mô tả
             </label>
             <EditorToolbar toolbarId={"t2"} />
@@ -671,7 +697,6 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
               formats={formats}
             />
 
-            {/* <HtmlEditor value={product.description} onChange={handleDescritionsChange}/> */}
           </div>
         </div>
       </div>

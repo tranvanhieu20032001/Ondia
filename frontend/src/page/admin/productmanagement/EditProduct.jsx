@@ -24,6 +24,7 @@ const EditProduct = () => {
     mainCategory: "",
     subCategory: null, // Danh mục phụ
     warranties: [],
+    warrantiesDescriptions: "",
     inventory: "",
     slug: "",
     company: "", // Công ty
@@ -33,10 +34,15 @@ const EditProduct = () => {
     specifications: "", // Mảng thông số kỹ thuật
   });
 
+  const cleanHtml = (html) => {
+    const cleaned = html.trim().replace(/<p><br><\/p>/g, "<p><br></p>");
+    return cleaned === "" || cleaned === "<p><br></p>" ? null : cleaned;
+  };
+
   const handleDescriptionChange = (value) => {
     setProduct((prev) => ({
       ...prev,
-      description: value,
+      description: cleanHtml(value),
     }));
   };
 
@@ -331,38 +337,38 @@ const EditProduct = () => {
     }
   };
 
-  const handleAddSpecification = () => {
-    if (specKey && specValue) {
-      setProduct((prev) => ({
-        ...prev,
-        specifications: Array.isArray(prev.specifications)
-          ? [...prev.specifications, { name: specKey, value: specValue }]
-          : [{ name: specKey, value: specValue }],
-      }));
-      setSpecKey("");
-      setSpecValue("");
-    } else {
-      alert("Vui lòng nhập cả tên và giá trị thông số kỹ thuật!");
-    }
-  };
+  // const handleAddSpecification = () => {
+  //   if (specKey && specValue) {
+  //     setProduct((prev) => ({
+  //       ...prev,
+  //       specifications: Array.isArray(prev.specifications)
+  //         ? [...prev.specifications, { name: specKey, value: specValue }]
+  //         : [{ name: specKey, value: specValue }],
+  //     }));
+  //     setSpecKey("");
+  //     setSpecValue("");
+  //   } else {
+  //     alert("Vui lòng nhập cả tên và giá trị thông số kỹ thuật!");
+  //   }
+  // };
 
-  const handleRemoveSpecification = (index) => {
-    setProduct((prev) => ({
-      ...prev,
-      specifications: prev.specifications.filter((_, idx) => idx !== index),
-    }));
-  };
+  // const handleRemoveSpecification = (index) => {
+  //   setProduct((prev) => ({
+  //     ...prev,
+  //     specifications: prev.specifications.filter((_, idx) => idx !== index),
+  //   }));
+  // };
 
-  const handleSpecificationChange = (index, field, value) => {
-    setProduct((prev) => ({
-      ...prev,
-      specifications: Array.isArray(prev.specifications)
-        ? prev.specifications.map((spec, idx) =>
-            idx === index ? { ...spec, [field]: value } : spec
-          )
-        : [],
-    }));
-  };
+  // const handleSpecificationChange = (index, field, value) => {
+  //   setProduct((prev) => ({
+  //     ...prev,
+  //     specifications: Array.isArray(prev.specifications)
+  //       ? prev.specifications.map((spec, idx) =>
+  //           idx === index ? { ...spec, [field]: value } : spec
+  //         )
+  //       : [],
+  //   }));
+  // };
 
   const handleTabKey = (e, value, setValue) => {
     if (e.key === "Tab") {
@@ -390,52 +396,52 @@ const EditProduct = () => {
     fetchWarranties();
   }, [id]);
 
-    const [goldWarrantyId, setGoldWarrantyId] = useState(""); // Lưu ID của "Bảo hành vàng"
-  
-    useEffect(() => {
-      // Lấy ID của "Bảo hành vàng"
-      if (warranties?.length > 0) {
-        const goldWarranty = warranties.find(
-          (warranty) => warranty.name.toLowerCase() === "bảo hành vàng"
-        );
-        if (goldWarranty) {
-          setGoldWarrantyId(goldWarranty._id);
-        }
+  const [goldWarrantyId, setGoldWarrantyId] = useState(""); // Lưu ID của "Bảo hành vàng"
+
+  useEffect(() => {
+    // Lấy ID của "Bảo hành vàng"
+    if (warranties?.length > 0) {
+      const goldWarranty = warranties.find(
+        (warranty) => warranty.name.toLowerCase() === "bảo hành vàng"
+      );
+      if (goldWarranty) {
+        setGoldWarrantyId(goldWarranty._id);
       }
-    }, [warranties]);
-  
-    const handleSelectChange = (e) => {
-      const selectedId = e.target.value;
-  
-      setProduct((prev) => {
-        // Thay thế gói bảo hành thường đã chọn (nếu có) bằng gói mới
-        const updatedWarranties = prev.warranties.filter(
-          (id) => id === goldWarrantyId // Giữ lại "Bảo hành vàng" nếu đã chọn
-        );
-  
-        return {
-          ...prev,
-          warranties: selectedId
-            ? [...updatedWarranties, selectedId] // Thêm gói bảo hành mới
-            : updatedWarranties, // Không thêm nếu chọn "Trống"
-        };
-      });
-    };
-  
-    const handleCheckboxChange = (e) => {
-      const isChecked = e.target.checked;
-  
-      setProduct((prev) => ({
+    }
+  }, [warranties]);
+
+  const handleSelectChange = (e) => {
+    const selectedId = e.target.value;
+
+    setProduct((prev) => {
+      // Thay thế gói bảo hành thường đã chọn (nếu có) bằng gói mới
+      const updatedWarranties = prev.warranties.filter(
+        (id) => id === goldWarrantyId // Giữ lại "Bảo hành vàng" nếu đã chọn
+      );
+
+      return {
         ...prev,
-        warranties: isChecked
-          ? [...prev.warranties, goldWarrantyId] // Thêm "Bảo hành vàng"
-          : prev.warranties.filter((id) => id !== goldWarrantyId), // Bỏ "Bảo hành vàng"
-      }));
-    };
-  
-    const hasSelectedWarranty = product.warranties.some(
-      (id) => id !== goldWarrantyId
-    );
+        warranties: selectedId
+          ? [...updatedWarranties, selectedId] // Thêm gói bảo hành mới
+          : updatedWarranties, // Không thêm nếu chọn "Trống"
+      };
+    });
+  };
+
+  const handleCheckboxChange = (e) => {
+    const isChecked = e.target.checked;
+
+    setProduct((prev) => ({
+      ...prev,
+      warranties: isChecked
+        ? [...prev.warranties, goldWarrantyId] // Thêm "Bảo hành vàng"
+        : prev.warranties.filter((id) => id !== goldWarrantyId), // Bỏ "Bảo hành vàng"
+    }));
+  };
+
+  const hasSelectedWarranty = product.warranties.some(
+    (id) => id !== goldWarrantyId
+  );
 
   if (!product) {
     return <LoadingPage />;
@@ -694,7 +700,7 @@ const EditProduct = () => {
                   "Xiaomi-Redmi",
                   "Lumias",
                   "KingSmith",
-                  "Khác"
+                  "Khác",
                 ].map((company, index) => (
                   <option key={index} value={company}>
                     {company}
@@ -791,8 +797,12 @@ const EditProduct = () => {
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
-              Thông số kỹ thuật
+              Thông số kỹ thuật (key: value )
             </label>
+            <p className="text-xs text-red-500">
+              Chú ý:Key và value cách nhau 1 tab (/t), hai thông số cách nhau
+              bằng xuống dòng (/n)
+            </p>
             <textarea
               type="text"
               value={product.specifications}
@@ -807,6 +817,32 @@ const EditProduct = () => {
               className="mt-1 px-3 py-1 text-sm w-full min-h-[30vh] border rounded outline-none"
             />
           </div>
+
+          <div className="flex gap-4">
+            <div className="w-full relative rounded p-1">
+              <div className="-mt-4 absolute tracking-wider px-1 capitalize text-xs">
+                <label
+                  htmlFor="warrantiesDescriptions"
+                  className="bg-white text-gray-600 px-1"
+                >
+                  Chế độ bảo hành
+                </label>
+              </div>
+              <div className="gap-6 w-full">
+                <EditorToolbar toolbarId={"t3"} />
+                <ReactQuill
+                  theme="snow"
+                  value={product.warrantiesDescriptions}
+                  onChange={(value) =>
+                    setProduct({ ...product, warrantiesDescriptions: cleanHtml(value) })
+                  }
+                  placeholder={"Write something awesome..."}
+                  modules={modules("t3")}
+                  formats={formats}
+                />
+              </div>
+            </div>
+          </div>
           {/* Mô tả sản phẩm */}
           <div className="flex gap-4">
             <div className="w-full relative rounded p-1">
@@ -819,10 +855,6 @@ const EditProduct = () => {
                 </label>
               </div>
               <div className="gap-6 w-full">
-                {/* <HtmlEditor
-                  value={product.description}
-                  onChange={handleDescriptionChange}
-                /> */}
                 <EditorToolbar toolbarId={"t2"} />
                 <ReactQuill
                   theme="snow"

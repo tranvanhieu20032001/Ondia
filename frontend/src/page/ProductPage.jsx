@@ -34,7 +34,6 @@ const ProductPage = () => {
   const [isOverflowing, setIsOverflowing] = useState(false);
   const contentRef = useRef(null);
 
-
   useEffect(() => {
     if (contentRef.current) {
       // Kiểm tra nếu chiều cao nội dung lớn hơn 400px
@@ -72,7 +71,7 @@ const ProductPage = () => {
   const [warrantiesData, setWarrantiesData] = useState([]);
   const [selectedWarranty, setSelectedWarranty] = useState({
     id: "",
-    warrantyName: ""
+    warrantyName: "",
   });
 
   useEffect(() => {
@@ -89,9 +88,11 @@ const ProductPage = () => {
           })
         );
         setWarrantiesData(warranties); // Lưu dữ liệu vào state
-  
+
         // Set giá trị mặc định nếu có
-        const defaultWarranty = warranties.find(w => w.name.toLowerCase() !== "bảo hành vàng");
+        const defaultWarranty = warranties.find(
+          (w) => w.name.toLowerCase() !== "bảo hành vàng"
+        );
         if (defaultWarranty) {
           setSelectedWarranty({
             id: defaultWarranty._id, // Đặt id của bảo hành vàng
@@ -102,23 +103,21 @@ const ProductPage = () => {
         console.error("Lỗi khi lấy thông tin bảo hành:", error);
       }
     };
-  
+
     if (product?.warranties?.length) {
       fetchWarranties(); // Gọi fetchWarranties khi warranties có giá trị
     }
   }, [product?.warranties]);
-  
 
   const handleWarrantyChange = (event) => {
     const { value } = event.target;
-    const warranty = warrantiesData.find(w => w._id === value);
+    const warranty = warrantiesData.find((w) => w._id === value);
 
     setSelectedWarranty({
       id: value, // Lưu _id của gói bảo hành đã chọn
-     warrantyName: warranty ? warranty.name : ""
+      warrantyName: warranty ? warranty.name : "",
     });
     console.log("Gói bảo hành đã chọn:", selectedWarranty); // In ra tên và _id của gói bảo hành đã chọn
-
   };
   const handleAddToLocalCart = (product) => {
     const cartKey = "cart";
@@ -307,7 +306,10 @@ const ProductPage = () => {
                   {product?.price
                     ? (
                         product?.price +
-                        ((selectedWarranty.warrantyName).toLowerCase() === "bảo hành vàng" ? 1000000 : 0)
+                        (selectedWarranty.warrantyName.toLowerCase() ===
+                        "bảo hành vàng"
+                          ? 1000000
+                          : 0)
                       ).toLocaleString()
                     : "0"}{" "}
                   đ
@@ -318,7 +320,8 @@ const ProductPage = () => {
                     {product?.saleprice
                       ? (
                           product?.saleprice +
-                          ((selectedWarranty.warrantyName).toLowerCase() === "bảo hành vàng"
+                          (selectedWarranty.warrantyName.toLowerCase() ===
+                          "bảo hành vàng"
                             ? 1000000
                             : 0)
                         ).toLocaleString()
@@ -329,7 +332,8 @@ const ProductPage = () => {
                     {product?.price
                       ? (
                           product?.price +
-                          ((selectedWarranty.warrantyName).toLowerCase() === "bảo hành vàng"
+                          (selectedWarranty.warrantyName.toLowerCase() ===
+                          "bảo hành vàng"
                             ? 1000000
                             : 0)
                         ).toLocaleString()
@@ -372,11 +376,11 @@ const ProductPage = () => {
                         <label className="flex items-center gap-2">
                           <input
                             type="radio"
-                            name="warranty"   // Đặt name chung cho các radio buttons để chúng là một nhóm
-                            value={warranty._id}   // Đặt giá trị là _id của bảo hành
+                            name="warranty" // Đặt name chung cho các radio buttons để chúng là một nhóm
+                            value={warranty._id} // Đặt giá trị là _id của bảo hành
                             className="form-radio"
-                            checked={selectedWarranty.id === warranty._id}   // Kiểm tra nếu _id của bảo hành trùng với giá trị trong state
-                            onChange={handleWarrantyChange}  // Hàm xử lý khi thay đổi lựa chọn
+                            checked={selectedWarranty.id === warranty._id} // Kiểm tra nếu _id của bảo hành trùng với giá trị trong state
+                            onChange={handleWarrantyChange} // Hàm xử lý khi thay đổi lựa chọn
                           />
                           <span className="text-sm">
                             {warranty.name} ({warranty.description})
@@ -397,7 +401,14 @@ const ProductPage = () => {
               />
 
               <Link
-                to={`/products/checkout/${product?.slug}?quantity=${quantity}&mbh=${selectedWarranty.id}&bhv=${(selectedWarranty.warrantyName).toLowerCase()=== "bảo hành vàng"?'true':'false'}`}
+                to={`/products/checkout/${
+                  product?.slug
+                }?quantity=${quantity}&mbh=${selectedWarranty.id}&bhv=${
+                  selectedWarranty.warrantyName.toLowerCase() ===
+                  "bảo hành vàng"
+                    ? "true"
+                    : "false"
+                }`}
                 state={{ id: state?.id, quantity: quantity }}
                 className="w-full"
               >
@@ -437,40 +448,17 @@ const ProductPage = () => {
                 </span>
               </div>
             </div>
-            <div className="px-4 py-3 border mt-4">
-              <h3 className="text-sm lg:text-base mb-1 font-semibold">
-                Chế độ bảo hành
-              </h3>
-              <ul className="text-sm list-disc ml-8 mb-6 mt-2">
-                <li>
-                  <strong>Gói bảo hàng mặc định: </strong>Bảo hành 12 tháng - 1
-                  đổi 1 trong 30 ngày nếu có lỗi từ nhà sản xuất{" "}
-                </li>
-                <li>
-                  <strong>Gói bảo hàng vàng: </strong>Bảo hành 24 tháng - 1 đổi
-                  1 trong 12 tháng nếu có lỗi từ nhà sản xuất{" "}
-                </li>
-                <li>
-                  <strong>Bảo hành phần cứng:</strong>Bao gồm nguồn, màn hình
-                </li>
-                <li>
-                  <strong>Không bảo hành:</strong>Chập cháy, va đập, roi rớt,
-                  vào nước, thiên tai
-                </li>
-              </ul>
-              <h3 className="text-sm lg:text-base mb-1 font-semibold">
-                Ondia Digital - Xiaomi Store Bắc giang cam kết
-              </h3>
-              <ul className="text-sm list-disc ml-8 mb-6 mt-2">
-                <li>Hành chính hãng 100%</li>
-                <li>Mới nguyên hộp 100%</li>
-                <li>
-                  Kiểm tra hàng trước khi thanh toán, bao mọi rủi ro trong quá
-                  trình vận chuyển
-                </li>
-                <li>Cam kết hài lòng khách hàng</li>
-              </ul>
-            </div>
+            {product?.warrantiesDescriptions ? (
+              <>
+                <div className="px-4 py-3 border mt-4">
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: product?.warrantiesDescriptions,
+                    }}
+                  />
+                </div>
+              </>
+            ) : null}
           </div>
         </div>
         <h2 className="text-xl lg:text-xl font-semibold mt-10 mb-1">Mô tả</h2>
