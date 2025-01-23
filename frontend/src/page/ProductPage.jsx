@@ -450,8 +450,8 @@ const ProductPage = () => {
             </div>
             {product?.warrantiesDescriptions ? (
               <>
-                <div className="px-4 py-3 border mt-4">
-                  <div
+                <div className="px-4 py-3 border mt-4 relative productpage">
+                  <div className="ql-editor"
                     dangerouslySetInnerHTML={{
                       __html: product?.warrantiesDescriptions,
                     }}
