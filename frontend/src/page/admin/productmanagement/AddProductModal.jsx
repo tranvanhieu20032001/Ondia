@@ -669,7 +669,7 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
             <label className="block text-sm font-semibold text-gray-700">
               Chế độ bảo hành
             </label>
-            <EditorToolbar toolbarId={"t3"} />
+            <EditorToolbar toolbarId={"t1"} />
             <ReactQuill
               theme="snow"
               value={product.warrantiesDescriptions}
@@ -677,7 +677,7 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
                 setProduct({ ...product, warrantiesDescriptions: cleanHtml(value) })
               }
               placeholder={"Write something awesome..."}
-              modules={modules("t3")}
+              modules={modules("t1")}
               formats={formats}
             />
 

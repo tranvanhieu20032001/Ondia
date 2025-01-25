@@ -1,32 +1,37 @@
 /* Set content for font-families */
-.ql-font-arial,
-.ql-font span[data-value="arial"]::before {
-  font-family: Arial, sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+/* Sử dụng các font trong Quill */
+.ql-font-lato,
+.ql-font span[data-value="Lato"]::before {
+  font-family: 'Lato', sans-serif;
 }
-.ql-font-comic-sans,
-.ql-font span[data-value="comic-sans"]::before {
-  font-family: "Comic Sans MS", cursive, sans-serif;
-}
-.ql-font-courier-new,
-.ql-font span[data-value="courier-new"]::before {
-  font-family: "Courier New";
-}
-.ql-font-georgia,
-.ql-font span[data-value="georgia"]::before {
-  font-family: Georgia, serif;
-}
-.ql-font-helvetica,
-.ql-font span[data-value="helvetica"]::before {
-  font-family: Helvetica, sans-serif;
-}
+
 .ql-font-Inter,
 .ql-font span[data-value="Inter"]::before {
   font-family: 'Inter', sans-serif;
 }
-.ql-font-lucida,
-.ql-font span[data-value="lucida"]::before {
-  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+
+.ql-font-roboto,
+.ql-font span[data-value="Roboto"]::before {
+  font-family: 'Roboto', sans-serif !important;
 }
+
+.ql-font-nunito-sans,
+.ql-font span[data-value="Nunito Sans"]::before {
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+.ql-font-gilroy,
+.ql-font span[data-value="Gilroy"]::before {
+  font-family: 'Gilroy', sans-serif;
+}
+
+
+
+
 
 /* Set content for sizes */
 .ql-size-extra-small,

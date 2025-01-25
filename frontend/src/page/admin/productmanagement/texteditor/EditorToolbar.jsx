@@ -1,7 +1,8 @@
 import React from "react";
 import { Quill } from "react-quill";
-import "./TextEditor.css"
+import "./TextEditor.css";
 
+// Đoạn mã các nút Undo, Redo
 const CustomUndo = () => (
   <svg viewBox="0 0 18 18">
     <polygon className="ql-fill ql-stroke" points="6 10 4 12 2 10 6 10" />
@@ -22,6 +23,7 @@ const CustomRedo = () => (
   </svg>
 );
 
+// Hàm undo, redo
 function undoChange() {
   this.quill.history.undo();
 }
@@ -29,6 +31,7 @@ function redoChange() {
   this.quill.history.redo();
 }
 
+// Thiết lập size cho Quill
 const Size = Quill.import("formats/size");
 Size.whitelist = [
   "10px",
@@ -45,19 +48,19 @@ Size.whitelist = [
 ];
 Quill.register(Size, true);
 
-// Add fonts to whitelist and register them
+// Đăng ký font
 const Font = Quill.import("formats/font");
 Font.whitelist = [
-  "arial",
-  "comic-sans",
-  "courier-new",
-  "georgia",
-  "helvetica",
+  "roboto",
   "Inter",
   "lucida",
+  "gilroy",
+  "lato",
+  "nunito-sans",
 ];
 Quill.register(Font, true);
 
+// Thiết lập các modules cho Quill
 export const modules = (props) => ({
   toolbar: {
     container: "#" + props,
@@ -108,22 +111,18 @@ export const QuillToolbar = (props) => {
           </span>
           <span className="ql-formats">
             <select className="ql-font">
-              <option value="arial"> Arial </option>
-              <option value="comic-sans">Comic Sans</option>
-              <option value="courier-new">Courier New</option>
-              <option value="georgia">Georgia</option>
-              <option value="helvetica">Helvetica</option>
-              <option value="Inter" selected>
-                Inter
-              </option>
-              <option value="lucida">Lucida</option>
+              <option value="roboto">Roboto</option>
+              <option value="Inter">Inter</option>
+              <option value="gilroy" selected>Gilroy</option>
+              <option value="lato">Lato</option>
+              <option value="nunito-sans">Nunito Sans</option>
             </select>
             <select className="ql-size">
               <option value="10px">10px</option>
               <option value="11px">11px</option>
-              <option value="13px" selected>13px</option>
+              <option value="13px">13px</option>
               <option value="14px">14px</option>
-              <option value="16px">16px</option>
+              <option value="16px" selected>16px</option>
               <option value="18px">18px</option>
               <option value="20px">20px</option>
               <option value="24px">24px</option>
@@ -131,7 +130,6 @@ export const QuillToolbar = (props) => {
               <option value="36px">36px</option>
               <option value="40px">40px</option>
             </select>
-
             <select className="ql-header">
               <option value="1">Heading 1</option>
               <option value="2">Heading 2</option>
@@ -184,4 +182,5 @@ export const QuillToolbar = (props) => {
     </>
   );
 };
+
 export default QuillToolbar;
