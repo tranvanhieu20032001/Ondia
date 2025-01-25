@@ -49,8 +49,7 @@ const EditProduct = () => {
   const [categories, setCategories] = useState([]);
   const [warranties, setWarrenties] = useState([]);
   const [imagePreview, setImagePreview] = useState([]);
-  const [specKey, setSpecKey] = useState("");
-  const [specValue, setSpecValue] = useState("");
+
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -686,7 +685,7 @@ const EditProduct = () => {
               <select
                 id="company"
                 name="company"
-                value={product.company || ""}
+                value={product?.company || ""}
                 onChange={(e) =>
                   setProduct({ ...product, company: e.target.value })
                 }
@@ -743,7 +742,7 @@ const EditProduct = () => {
                 <input
                   type="checkbox"
                   disabled={!hasSelectedWarranty} // Vô hiệu hóa nếu chưa chọn gói bảo hành thường
-                  checked={product.warranties.includes(goldWarrantyId)}
+                  checked={product?.warranties.includes(goldWarrantyId)}
                   onChange={handleCheckboxChange}
                   className="rounded border-gray-300 text-primary focus:ring-primary"
                 />
@@ -805,7 +804,7 @@ const EditProduct = () => {
             </p>
             <textarea
               type="text"
-              value={product.specifications}
+              value={product?.specifications}
               onChange={(e) =>
                 setProduct({ ...product, specifications: e.target.value })
               }
@@ -832,7 +831,7 @@ const EditProduct = () => {
                 <EditorToolbar toolbarId={"t3"} />
                 <ReactQuill
                   theme="snow"
-                  value={product.warrantiesDescriptions}
+                  value={product?.warrantiesDescriptions}
                   onChange={(value) =>
                     setProduct({ ...product, warrantiesDescriptions: cleanHtml(value) })
                   }
@@ -858,7 +857,7 @@ const EditProduct = () => {
                 <EditorToolbar toolbarId={"t2"} />
                 <ReactQuill
                   theme="snow"
-                  value={product.description}
+                  value={product?.description}
                   onChange={handleDescriptionChange}
                   placeholder={"Write something awesome..."}
                   modules={modules("t2")}
