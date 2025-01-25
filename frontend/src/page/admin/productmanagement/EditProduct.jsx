@@ -46,6 +46,13 @@ const EditProduct = () => {
     }));
   };
 
+  const handlewarrantiesDescriptions = (value) => {
+    setProduct((prev) => ({
+      ...prev,
+      warrantiesDescriptions: cleanHtml(value),
+    }));
+  };
+
   const [categories, setCategories] = useState([]);
   const [warranties, setWarrenties] = useState([]);
   const [imagePreview, setImagePreview] = useState([]);
@@ -828,15 +835,13 @@ const EditProduct = () => {
                 </label>
               </div>
               <div className="gap-6 w-full">
-                <EditorToolbar toolbarId={"t3"} />
+                <EditorToolbar toolbarId={"t1"} />
                 <ReactQuill
                   theme="snow"
                   value={product?.warrantiesDescriptions}
-                  onChange={(value) =>
-                    setProduct({ ...product, warrantiesDescriptions: cleanHtml(value) })
-                  }
+                  onChange={handlewarrantiesDescriptions}
                   placeholder={"Write something awesome..."}
-                  modules={modules("t3")}
+                  modules={modules("t1")}
                   formats={formats}
                 />
               </div>

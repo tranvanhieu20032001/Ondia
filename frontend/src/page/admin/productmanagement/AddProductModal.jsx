@@ -238,6 +238,13 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
     }));
   };
 
+  const handlewarrantiesDescriptions = (value) => {
+    setProduct((prev) => ({
+      ...prev,
+      warrantiesDescriptions: cleanHtml(value),
+    }));
+  };
+
   const handleCategory = (value) => {
     const item = categories.find((cat) => cat._id === value);
     if (item.parentCategory) {
@@ -673,9 +680,7 @@ const AddProductModal = ({ categories, warranties, onClose }) => {
             <ReactQuill
               theme="snow"
               value={product.warrantiesDescriptions}
-              onChange={(value) =>
-                setProduct({ ...product, warrantiesDescriptions: cleanHtml(value) })
-              }
+              onChange={handlewarrantiesDescriptions}
               placeholder={"Write something awesome..."}
               modules={modules("t1")}
               formats={formats}
