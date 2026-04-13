@@ -5,9 +5,7 @@ import { Pagination, Navigation, Autoplay } from "swiper/modules";
 import "swiper/swiper-bundle.css";
 import "swiper/css/navigation";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import Countdown from "../../countdown/Countdown";
-import { SummaryApi } from "../../../common";
-import axios from "axios";
+import { fetchAllProductsCached } from "../../../utils/catalogApi";
 
 function SectionProducts({type, title, subtitle}) {
   const [viewAll, setViewAll] = useState(false);
@@ -15,14 +13,8 @@ function SectionProducts({type, title, subtitle}) {
   
   const renderProduct = async () => {
     try {
-      const dataResponse = await axios({
-        url: `${SummaryApi.getAllProducts.url}?page=1&limit=100`,
-        method: SummaryApi.getAllProducts.method,
-        withCredentials: true,
-        credentials: "include",
-      });
-      const dataApi = await dataResponse.data;
-      setProducts(dataApi.products.filter((product) => product.tags.includes(type)));
+      const products = await fetchAllProductsCached();
+      setProducts(products.filter((product) => product.tags.includes(type)));
     } catch (error) {
       console.log(error);
     }

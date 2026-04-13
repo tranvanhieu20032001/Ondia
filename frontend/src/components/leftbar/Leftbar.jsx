@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
-import axios from "axios";
-import { SummaryApi } from "../../common";
 import Category from "./Category";
-import { useSelector } from "react-redux";
+import { fetchAllCategoriesCached } from "../../utils/catalogApi";
 
 function Leftbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,17 +20,11 @@ function Leftbar() {
 
   const getAllCategories = async () => {
     try {
-      const dataResponse = await axios({
-        url: SummaryApi.getAllCategories.url,
-        method: SummaryApi.getAllCategories.method,
-        withCredentials: true,
-        credentials: "include",
-      });
-      const dataApi = dataResponse.data;
-      const parentCategories = dataApi.categories.filter(
+      const allCategories = await fetchAllCategoriesCached();
+      const parentCategories = allCategories.filter(
         (category) => category.parentCategory === null
       );
-      const childCategories = dataApi.categories.filter(
+      const childCategories = allCategories.filter(
         (category) => category.parentCategory !== null
       );
       setCategories(parentCategories);

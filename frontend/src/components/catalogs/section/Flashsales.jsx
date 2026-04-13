@@ -6,8 +6,7 @@ import "swiper/swiper-bundle.css";
 import "swiper/css/navigation";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import Countdown from "../../countdown/Countdown";
-import { SummaryApi } from "../../../common";
-import axios from "axios";
+import { fetchAllProductsCached } from "../../../utils/catalogApi";
 
 function Flashsales() {
   const [viewAll, setViewAll] = useState(false);
@@ -15,14 +14,8 @@ function Flashsales() {
   
   const renderProduct = async () => {
     try {
-      const dataResponse = await axios({
-        url: `${SummaryApi.getAllProducts.url}?page=1&limit=100`,
-        method: SummaryApi.getAllProducts.method,
-        withCredentials: true,
-        credentials: "include",
-      });
-      const dataApi = await dataResponse.data;
-      setProducts(dataApi.products.filter((product) => product.tags.includes('flashsale')));
+      const products = await fetchAllProductsCached();
+      setProducts(products.filter((product) => product.tags.includes("flashsale")));
     } catch (error) {
       console.log(error);
     }

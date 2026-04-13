@@ -1,28 +1,19 @@
 import React, { useEffect, useState } from "react";
 import Flashsales from "./section/Flashsales";
-import Catagory from "./section/Catagory";
-import BestSelling from "./section/BestSelling";
 import SpecialEvent from "./section/SpecialEvent";
-import ExploreOurProducts from "./section/ExploreOurProducts";
 import NewArrival from "./section/NewArrival";
 import Service from "./section/Service";
 import SectionProducts from "./section/SectionProducts";
-import { SummaryApi } from "../../common";
-import axios from "axios";
 import ProductsByCategory from "./section/ProductsByCategory";
 import Brands from "../../assets/images/Brands";
+import { fetchAllCategoriesCached } from "../../utils/catalogApi";
 
 function Catalog() {
    const [categories, setCategories] = useState([]); // Danh mục sản phẩm
   const getCategories = async () => {
     try {
-      const dataResponse = await axios({
-        url: SummaryApi.getAllCategories.url,
-        method: SummaryApi.getAllCategories.method,
-        withCredentials: true,
-      });
-      const dataApi = dataResponse.data;
-      const rootCategories = dataApi.categories.filter(
+      const categories = await fetchAllCategoriesCached();
+      const rootCategories = categories.filter(
         (category) => category.parentCategory === null
       );
       setCategories(rootCategories);

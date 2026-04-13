@@ -7,6 +7,7 @@ import "swiper/css/navigation";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { SummaryApi } from "../../../common";
 import axios from "axios";
+import { fetchAllCategoriesCached } from "../../../utils/catalogApi";
 
 function ProductsByCategory({ category }) {
   const [viewAll, setViewAll] = useState(false);
@@ -17,15 +18,9 @@ function ProductsByCategory({ category }) {
   // Lấy danh mục con của danh mục cha
   const getCategories = async () => {
     try {
-      const dataResponse = await axios({
-        url: SummaryApi.getAllCategories.url,
-        method: SummaryApi.getAllCategories.method,
-        withCredentials: true,
-      });
-      const dataApi = dataResponse.data;
-      
+      const allCategories = await fetchAllCategoriesCached();
       // Lọc danh mục con dựa trên _id của danh mục cha
-      const subCategories = dataApi.categories.filter(
+      const subCategories = allCategories.filter(
         (cat) => cat?.parentCategory?._id === category._id
       );
 
@@ -145,3 +140,5 @@ function ProductsByCategory({ category }) {
 }
 
 export default ProductsByCategory;
+
+
